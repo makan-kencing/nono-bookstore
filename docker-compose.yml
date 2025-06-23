@@ -14,12 +14,12 @@ services:
             - "443:443"
             - "443:443/udp"
     db:
-        image: mysql:alpine
+        image: mariadb
         environment:
-            MYSQL_RANDOM_ROOT_PASSWORD: yes
-            MYSQL_DATABASE: webstore
-            MYSQL_USER: user
-            MYSQL_PASSWORD: password
+            MARIADB_RANDOM_ROOT_PASSWORD: yes
+            MARIADB_DATABASE: webstore
+            MARIADB_USER: user
+            MARIADB_PASSWORD: password
         volumes:
             -  ./var/mysql:/var/lib/mysql:zz
     web:
