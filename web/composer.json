@@ -1,6 +1,5 @@
 {
     "require": {
-        "delight-im/auth": "^9.0",
         "stripe/stripe-php": "^17.3",
         "flightphp/core": "^3.15"
     }
