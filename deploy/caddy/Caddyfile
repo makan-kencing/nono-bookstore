@@ -8,20 +8,30 @@
 }
 
 {$SITE_URL} {
-    root * /var/www/webapp/public
-
-    handle
-
     log {
         output file /var/log/caddy/webapp.access.log
         format console
     }
+
+    handle_path /static/* {
+        root * /var/www/webapp/assets
+        file_server
+    }
+
+    handle_path /media/* {
+        root * /var/www/webapp/media
+        file_server
+
+        header Content-Disposition inline
+    }
+
+    root * /var/www/webapp/public
 
     encode zstd gzip
 
     php_fastcgi web:9000
 
     request_body {
-        max_size 100MB
+        max_size 10MB
     }
 }
