@@ -1,0 +1,31 @@
+services:
+    reverse-proxy:
+        image: caddy:alpine
+        environment:
+            STATIC_URL: /static
+            STATIC_PATH: /var/www/static
+        volumes:
+            - ./Caddyfile:/etc/caddy/Caddyfile:ro
+            - ./var/caddy/data:/data/caddy:z
+            - ./var/caddy/config:/config/caddy:z
+            - ./assets:/var/www/static:ro
+        ports:
+            - "80:80"
+            - "443:443"
+            - "443:443/udp"
+    db:
+        image: mysql:alpine
+        environment:
+            MYSQL_RANDOM_ROOT_PASSWORD: yes
+            MYSQL_DATABASE: webstore
+            MYSQL_USER: user
+            MYSQL_PASSWORD: password
+        volumes:
+            -  ./var/mysql:/var/lib/mysql:zz
+    web:
+        build: .
+    phpmyadmin:
+        image: phpmyadmin:alpine
+        environment:
+            PMA_ARBITRARY: 1
+            PMA_ABSOLUTE_URI: https://

@@ -1,0 +1,14 @@
+services:
+    reverse-proxy:
+        environment:
+            SITE_URL: localhost
+            SERVER_HOST: localhost
+    db:
+        ports:
+            - "3306:3306"
+    web:
+        ports:
+            - "8080:8080"
+    phpmyadmin:
+        ports:
+            - "8081:8080"

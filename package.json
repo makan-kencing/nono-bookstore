@@ -1,0 +1,13 @@
+{
+    "name": "webstore",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "build": ""
+    },
+    "devDependencies": {
+        "sass": "^1.89.2"
+    },
+    "private": true
+}
