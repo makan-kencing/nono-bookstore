@@ -1,18 +1,21 @@
 services:
-    reverse-proxy:
+    webserver:
         image: caddy:alpine
+        working_dir: /var/www/webapp
         environment:
             STATIC_URL: /static
-            STATIC_PATH: /var/www/static
+            STATIC_PATH: /var/www/webapp/assets
         volumes:
-            - ./Caddyfile:/etc/caddy/Caddyfile:ro
+            - ./deploy/caddy:/etc/caddy:ro
             - ./var/caddy/data:/data/caddy:z
             - ./var/caddy/config:/config/caddy:z
-            - ./assets:/var/www/static:ro
-        ports:
-            - "80:80"
-            - "443:443"
-            - "443:443/udp"
+            - ./web:/var/www/webapp
+    web:
+        build: web
+        working_dir: /var/www/webapp
+        volumes:
+            - ./web:/var/www/webapp
+            - ./deploy/php-fpm/php-overrides.ini:/etc/php/8.4/fpm/conf.d/90-overrides.ini
     db:
         image: mariadb
         environment:
@@ -21,9 +24,7 @@ services:
             MARIADB_USER: user
             MARIADB_PASSWORD: password
         volumes:
-            -  ./var/mysql:/var/lib/mysql:zz
-    web:
-        build: .
+            - ./var/mysql:/var/lib/mysql:z
     phpmyadmin:
         image: phpmyadmin:alpine
         environment:
