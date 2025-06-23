@@ -1,0 +1,27 @@
+# Logging configuration for Caddy
+{
+    log default {
+       format console
+       output file /var/log/caddy/system.log
+       exclude http.log.access
+    }
+}
+
+{$SITE_URL} {
+    root * /var/www/webapp/public
+
+    handle
+
+    log {
+        output file /var/log/caddy/webapp.access.log
+        format console
+    }
+
+    encode zstd gzip
+
+    php_fastcgi web:9000
+
+    request_body {
+        max_size 100MB
+    }
+}
