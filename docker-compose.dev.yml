@@ -4,16 +4,24 @@ services:
             - "80:80"
             - "443:443"
             - "443:443/udp"
+    db:
+        ports:
+            - "3306:3306"
     web:
+        build:
+            context: web
+            target: development
         environment:
             PHP_IDE_CONFIG: "serverName=Docker"
         volumes:
             - ./deploy/php-fpm/php-dev.ini:/etc/php/8.4/cli/conf.d/91-dev-overrides.ini
         ports:
             - "9000:9000"
-    db:
-        ports:
-            - "3306:3306"
+        develop:
+            watch:
+                - action: sync
+                  path: ./web
+                  target: /var/www/webapp
     phpmyadmin:
         ports:
             - "8081:8080"

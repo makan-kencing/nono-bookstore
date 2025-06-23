@@ -10,6 +10,27 @@ services:
             - ./var/caddy/data:/data/caddy:z
             - ./var/caddy/config:/config/caddy:z
             - ./web:/var/www/webapp
+    db:
+        image: mariadb
+        environment:
+            MARIADB_RANDOM_ROOT_PASSWORD: yes
+            MARIADB_DATABASE: webstore
+            MARIADB_USER: user
+            MARIADB_PASSWORD: password
+        volumes:
+            - ./var/mysql:/var/lib/mysql:z
+        healthcheck:
+            test:
+              [
+                  "CMD",
+                  "/usr/local/bin/healthcheck.sh",
+                  "--su-mysql",
+                  "--connect",
+                  "--innodb_initialized",
+              ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
     web:
         build: web
         working_dir: /var/www/webapp
