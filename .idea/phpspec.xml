@@ -3,7 +3,7 @@
   <component name="PHPSpec">
     <suites>
       <PhpSpecSuiteConfiguration>
-        <option name="myPath" value="$PROJECT_DIR$" />
+        <option name="myPath" value="$PROJECT_DIR$/web" />
       </PhpSpecSuiteConfiguration>
     </suites>
   </component>
