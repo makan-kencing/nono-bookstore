@@ -13,7 +13,7 @@
         format console
     }
 
-    handle_path /static/* {
+    handle_path /assets/* {
         root * /var/www/webapp/assets
         file_server
     }
