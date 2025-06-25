@@ -3,6 +3,8 @@ services:
         ports:
             - "3306:3306"
     webserver:
+        environment:
+            SITE_URL: localhost
         ports:
             - "80:80"
             - "443:443"

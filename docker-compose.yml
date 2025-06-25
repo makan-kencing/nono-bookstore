@@ -23,9 +23,6 @@ services:
     webserver:
         image: caddy:alpine
         working_dir: /var/www/webapp
-        environment:
-            STATIC_URL: /static
-            STATIC_PATH: /var/www/webapp/assets
         volumes:
             - ./deploy/caddy:/etc/caddy:ro
             - ./web:/var/www/webapp:z
