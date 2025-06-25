@@ -41,4 +41,3 @@ services:
         image: phpmyadmin
         environment:
             PMA_HOST: db
-            PMA_ABSOLUTE_URI: https://

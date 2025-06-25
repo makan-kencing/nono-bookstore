@@ -18,5 +18,5 @@ services:
         ports:
             - "9000:9000"
     phpmyadmin:
-        ports:
-            - "8080:80"
+        environment:
+            PMA_ABSOLUTE_URI: https://localhost/phpmyadmin/

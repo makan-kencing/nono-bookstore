@@ -25,6 +25,10 @@
         header Content-Disposition inline
     }
 
+    handle_path /phpmyadmin/* {
+        reverse_proxy phpmyadmin:80
+    }
+
     root * /var/www/webapp/public
 
     encode zstd gzip
