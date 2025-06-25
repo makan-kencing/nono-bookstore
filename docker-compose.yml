@@ -41,7 +41,7 @@ services:
             db:
                 condition: service_healthy
     phpmyadmin:
-        image: phpmyadmin:alpine
+        image: phpmyadmin
         environment:
             PMA_HOST: db
             PMA_ABSOLUTE_URI: https://
