@@ -2,12 +2,23 @@
     "name": "webstore",
     "version": "1.0.0",
     "description": "",
-    "main": "index.js",
+    "private": true,
     "scripts": {
-        "build": ""
+        "build": "",
+        "dev": "",
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/makan-kencing/pupular-webstore.git"
+    },
+    "author": "",
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/makan-kencing/pupular-webstore/issues"
+    },
+    "homepage": "https://github.com/makan-kencing/pupular-webstore",
     "devDependencies": {
         "sass": "^1.89.2"
-    },
-    "private": true
+    }
 }
