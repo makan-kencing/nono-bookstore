@@ -1,16 +1,4 @@
 services:
-    webserver:
-        image: caddy:alpine
-        working_dir: /var/www/webapp
-        environment:
-            STATIC_URL: /static
-            STATIC_PATH: /var/www/webapp/assets
-        volumes:
-            - ./deploy/caddy:/etc/caddy:ro
-            - ./var/caddy/data:/data/caddy:z
-            - ./var/caddy/config:/config/caddy:z
-            - ./web/assets:/var/www/webapp/assets
-            - ./var/webapp/media:/var/www/webapp/media
     db:
         image: mariadb
         environment:
@@ -32,10 +20,23 @@ services:
             interval: 10s
             timeout: 5s
             retries: 5
+    webserver:
+        image: caddy:alpine
+        working_dir: /var/www/webapp
+        environment:
+            STATIC_URL: /static
+            STATIC_PATH: /var/www/webapp/assets
+        volumes:
+            - ./deploy/caddy:/etc/caddy:ro
+            - ./web:/var/www/webapp:z
+            - ./var/caddy/data:/data/caddy:z
+            - ./var/caddy/config:/config/caddy:z
     web:
         build: web
+        working_dir: /var/www/webapp
         volumes:
             - ./deploy/php-fpm/php-overrides.ini:/etc/php/8.4/fpm/conf.d/90-overrides.ini
+            - ./web:/var/www/webapp:z
         depends_on:
             db:
                 condition: service_healthy
