@@ -24,11 +24,12 @@
     <include_path>
       <path value="$PROJECT_DIR$/web/vendor/composer" />
       <path value="$PROJECT_DIR$/web/vendor/stripe/stripe-php" />
-      <path value="$PROJECT_DIR$/web/vendor/twig/twig" />
       <path value="$PROJECT_DIR$/web/vendor/symfony/deprecation-contracts" />
       <path value="$PROJECT_DIR$/web/vendor/symfony/polyfill-ctype" />
       <path value="$PROJECT_DIR$/web/vendor/symfony/polyfill-mbstring" />
       <path value="$PROJECT_DIR$/web/vendor/nikic/fast-route" />
+      <path value="$PROJECT_DIR$/web/vendor/filp/whoops" />
+      <path value="$PROJECT_DIR$/web/vendor/psr/log" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.4" />
