@@ -1,10 +1,11 @@
 {
-    "name": "",
+    "name": "pupular/webstore",
     "description": "",
     "license": "Apache-2.0",
     "require": {
         "stripe/stripe-php": "^17.3",
-        "nikic/fast-route": "^v1.3.0"
+        "nikic/fast-route": "^v1.3.0",
+        "filp/whoops": "^2.18.3"
     },
     "autoload": {
         "psr-4": {
