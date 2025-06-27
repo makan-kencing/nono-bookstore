@@ -1,7 +1,7 @@
 {
-    "name": "webstore",
+    "name": "nono-bookstore",
     "version": "1.0.0",
-    "description": "",
+    "description": "The Novelty N' Nonsense online bookstore",
     "private": true,
     "scripts": {
         "build": "",
@@ -10,14 +10,14 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/makan-kencing/pupular-webstore.git"
+        "url": "git+https://github.com/makan-kencing/nono-bookstore.git"
     },
     "author": "",
     "license": "Apache-2.0",
     "bugs": {
-        "url": "https://github.com/makan-kencing/pupular-webstore/issues"
+        "url": "https://github.com/makan-kencing/nono-bookstore/issues"
     },
-    "homepage": "https://github.com/makan-kencing/pupular-webstore",
+    "homepage": "https://github.com/makan-kencing/nono-bookstore",
     "devDependencies": {
         "sass": "^1.89.2"
     }

@@ -1,6 +1,6 @@
 {
-    "name": "pupular/webstore",
-    "description": "",
+    "name": "novelty/nono-bookstore",
+    "description": "The Novelty N' Nonsense online bookstore",
     "license": "Apache-2.0",
     "require": {
         "stripe/stripe-php": "^17.3",
