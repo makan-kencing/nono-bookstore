@@ -8,6 +8,8 @@ class HelloController
 {
     public function index($vars) : void
     {
-        echo View::render('base.php');
+        echo View::render('home.php', [
+            'home' => 'wahahaha'
+        ]);
     }
 }
