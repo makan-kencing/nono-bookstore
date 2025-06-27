@@ -14,13 +14,11 @@ else
     });
 $whoops->register();
 
-$routeDefinitionCallback = function (\FastRoute\RouteCollector $r) {
-    foreach (ROUTES as $route) {
-        $r->addRoute($route[0], $route[1], $route[2]);
-    }
-};
 
-$dispatcher = FastRoute\simpleDispatcher($routeDefinitionCallback);
+$dispatcher = FastRoute\simpleDispatcher(function (\FastRoute\RouteCollector $r) {
+    foreach (ROUTES as $route)
+        $r->addRoute($route[0], $route[1], $route[2]);
+});
 
 $httpMethod = $_SERVER['REQUEST_METHOD'];
 $uri = $_SERVER['REQUEST_URI'];
