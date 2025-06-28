@@ -14,9 +14,7 @@ services:
         environment:
             PHP_IDE_CONFIG: "serverName=Docker"
         volumes:
-            - ./deploy/php-fpm/php-dev.ini:/etc/php/8.4/cli/conf.d/91-dev-overrides.ini
-        ports:
-            - "9000:9000"
+            - ./deploy/php-fpm/php-xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
     phpmyadmin:
         environment:
             PMA_ABSOLUTE_URI: https://localhost/phpmyadmin/

@@ -32,7 +32,7 @@ services:
         build: web
         working_dir: /var/www/webapp
         volumes:
-            - ./deploy/php-fpm/php-overrides.ini:/etc/php/8.4/fpm/conf.d/90-overrides.ini
+            - ./deploy/php-fpm/php-overrides.ini:/usr/local/etc/php/php.ini
             - ./web:/var/www/webapp:z
         depends_on:
             db:
