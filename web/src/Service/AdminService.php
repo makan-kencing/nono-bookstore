@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Controller;
+namespace App\Service;
 
-class AdminUserController
+class AdminService
 {
     public function viewUserList($vars) :void{}
     public function addStaff($vars) :void{}
@@ -10,5 +10,4 @@ class AdminUserController
     public function editUser($vars) :void{}
     public function addMember($vars) :void{}
     public function delMember($vars) :void{}
-
 }
