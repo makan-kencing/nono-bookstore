@@ -9,7 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title><?= $title ?? '' ?></title>
 
-
+    <script src="/dist/bundle.js"></script>
 </head>
 <body>
     <?php include __DIR__ . "/partials/_header.php" ?>
