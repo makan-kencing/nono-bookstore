@@ -4,8 +4,6 @@
     "description": "The Novelty N' Nonsense online bookstore",
     "private": true,
     "scripts": {
-        "build": "webpack --mode production",
-        "dev": "webpack --watch --progress --mode development",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
@@ -18,14 +16,6 @@
         "url": "https://github.com/makan-kencing/nono-bookstore/issues"
     },
     "homepage": "https://github.com/makan-kencing/nono-bookstore",
-    "devDependencies": {
-        "webpack": "^5.99.9",
-        "webpack-cli": "^6.0.1",
-        "css-loader": "^7.1.2",
-        "style-loader": "^4.0.0",
-        "sass": "^1.89.2",
-        "sass-loader": "^16.0.5"
-    },
     "dependencies": {
         "jquery": "^3.7.1"
     }

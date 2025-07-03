@@ -9,7 +9,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title><?= $title ?? '' ?></title>
 
-    <script src="/dist/bundle.js"></script>
+    <script src="/static/js/index.js" type="module"></script>
+    <link rel="stylesheet" href="/static/styles/index.css">
 </head>
 <body>
     <?php include __DIR__ . "/partials/_header.php" ?>
