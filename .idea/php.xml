@@ -2,7 +2,7 @@
 <project version="4">
   <component name="MessDetector">
     <phpmd_settings>
-      <phpmd_by_interpreter asDefaultInterpreter="true" interpreter_id="0b30aa54-2493-4369-979e-f99df0667d66" timeout="30000" />
+      <MessDetectorConfiguration asDefaultInterpreter="true" timeout="30000" />
     </phpmd_settings>
   </component>
   <component name="MessDetectorOptionsConfiguration">
@@ -17,7 +17,7 @@
   </component>
   <component name="PhpCodeSniffer">
     <phpcs_settings>
-      <phpcs_by_interpreter asDefaultInterpreter="true" interpreter_id="0b30aa54-2493-4369-979e-f99df0667d66" timeout="30000" />
+      <PhpCSConfiguration asDefaultInterpreter="true" timeout="30000" />
     </phpcs_settings>
   </component>
   <component name="PhpIncludePathManager">
@@ -27,6 +27,7 @@
       <path value="$PROJECT_DIR$/web/vendor/nikic/fast-route" />
       <path value="$PROJECT_DIR$/web/vendor/filp/whoops" />
       <path value="$PROJECT_DIR$/web/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/web/vendor/mark-gerarts/auto-mapper-plus" />
     </include_path>
   </component>
   <component name="PhpProjectServersManager">
@@ -41,7 +42,7 @@
   <component name="PhpProjectSharedConfiguration" php_language_level="8.4" />
   <component name="PhpStan">
     <PhpStan_settings>
-      <phpstan_by_interpreter asDefaultInterpreter="true" interpreter_id="0b30aa54-2493-4369-979e-f99df0667d66" timeout="60000" />
+      <PhpStanConfiguration asDefaultInterpreter="true" timeout="60000" />
     </PhpStan_settings>
   </component>
   <component name="PhpStanOptionsConfiguration">
@@ -54,7 +55,7 @@
   </component>
   <component name="Psalm">
     <Psalm_settings>
-      <psalm_fixer_by_interpreter asDefaultInterpreter="true" interpreter_id="0b30aa54-2493-4369-979e-f99df0667d66" timeout="60000" />
+      <PsalmConfiguration asDefaultInterpreter="true" timeout="60000" />
     </Psalm_settings>
   </component>
   <component name="PsalmOptionsConfiguration">
