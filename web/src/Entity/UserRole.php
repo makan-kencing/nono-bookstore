@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-enum Role
+enum UserRole
 {
     case USER;
     case STAFF;
