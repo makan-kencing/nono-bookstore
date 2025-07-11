@@ -8,7 +8,7 @@ class User extends Entity
 {
     private string $username {
         get => $this->username;
-        set => $this->username = $value;
+        set => $this->username;
     }
 
     private string $email {
@@ -17,25 +17,25 @@ class User extends Entity
 
     private string $hashed_password {
         get => $this->hashed_password;
-        set => $this->hashed_password = $value;
+        set => $this->hashed_password;
     }
 
     private UserRole $role {
         get => $this->role;
-        set => $this->role = $value;
+        set => $this->role;
     }
 
-    private UserProfile $user_profile {
+    private UserProfile $profile {
         get {
-            $this->user_profile = $this->user_profile ?? new UserProfile();
-            return $this->user_profile;
+            $this->profile = $this->profile ?? new UserProfile();
+            return $this->profile;
         }
-        set => $this->user_profile = $value;
+        set => $this->profile;
     }
 
     private bool $is_verified = false {
         get => $this->is_verified;
-        set => $this->is_verified = $value;
+        set => $this->is_verified;
     }
 
     private ?string $last_ip {

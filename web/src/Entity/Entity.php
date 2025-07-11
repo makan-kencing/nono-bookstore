@@ -6,6 +6,6 @@ abstract class Entity
 {
     private int $id {
         get => $this->id;
-        set => $this->id = $value;
+        set => $this->id;
     }
 }
