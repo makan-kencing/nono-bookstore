@@ -5,7 +5,7 @@
       <tool tool_name="PHPSpec">
         <settings>
           <configurations>
-            <local_configuration executable_path="$PROJECT_DIR$/web/vendor/phpspec/phpspec/bin/phpspec" />
+            <local_configuration executable_path="$PROJECT_DIR$/vendor/phpspec/phpspec/bin/phpspec" />
           </configurations>
         </settings>
       </tool>
