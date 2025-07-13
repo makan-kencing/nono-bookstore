@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="LaravelPint">
+    <laravel_pint_settings>
+      <LaravelPintConfiguration asDefaultInterpreter="true" />
+    </laravel_pint_settings>
+  </component>
   <component name="MessDetector">
     <phpmd_settings>
-      <MessDetectorConfiguration asDefaultInterpreter="true" timeout="30000" />
+      <MessDetectorConfiguration tool_path="$PROJECT_DIR$/web/vendor/bin/phpmd" timeout="30000" />
+      <MessDetectorConfiguration asDefaultInterpreter="true" deletedFromTheList="true" tool_path="$PROJECT_DIR$/web/vendor/bin/phpmd" timeout="30000" />
     </phpmd_settings>
   </component>
   <component name="MessDetectorOptionsConfiguration">
@@ -80,6 +86,11 @@
       <path value="$PROJECT_DIR$/web/vendor/phpunit/phpunit" />
       <path value="$PROJECT_DIR$/web/vendor/squizlabs/php_codesniffer" />
       <path value="$PROJECT_DIR$/web/vendor/php-cs-fixer/shim" />
+      <path value="$PROJECT_DIR$/web/vendor/phpmd/phpmd" />
+      <path value="$PROJECT_DIR$/web/vendor/pdepend/pdepend" />
+      <path value="$PROJECT_DIR$/web/vendor/symfony/dependency-injection" />
+      <path value="$PROJECT_DIR$/web/vendor/symfony/config" />
+      <path value="$PROJECT_DIR$/web/vendor/symfony/filesystem" />
     </include_path>
   </component>
   <component name="PhpProjectServersManager">

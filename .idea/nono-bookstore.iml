@@ -14,12 +14,14 @@
       <excludeFolder url="file://$MODULE_DIR$/web/vendor/doctrine/instantiator" />
       <excludeFolder url="file://$MODULE_DIR$/web/vendor/myclabs/deep-copy" />
       <excludeFolder url="file://$MODULE_DIR$/web/vendor/nikic/php-parser" />
+      <excludeFolder url="file://$MODULE_DIR$/web/vendor/pdepend/pdepend" />
       <excludeFolder url="file://$MODULE_DIR$/web/vendor/phar-io/manifest" />
       <excludeFolder url="file://$MODULE_DIR$/web/vendor/phar-io/version" />
       <excludeFolder url="file://$MODULE_DIR$/web/vendor/php-cs-fixer/shim" />
       <excludeFolder url="file://$MODULE_DIR$/web/vendor/phpdocumentor/reflection-common" />
       <excludeFolder url="file://$MODULE_DIR$/web/vendor/phpdocumentor/reflection-docblock" />
       <excludeFolder url="file://$MODULE_DIR$/web/vendor/phpdocumentor/type-resolver" />
+      <excludeFolder url="file://$MODULE_DIR$/web/vendor/phpmd/phpmd" />
       <excludeFolder url="file://$MODULE_DIR$/web/vendor/phpspec/php-diff" />
       <excludeFolder url="file://$MODULE_DIR$/web/vendor/phpspec/phpspec" />
       <excludeFolder url="file://$MODULE_DIR$/web/vendor/phpspec/prophecy" />
@@ -46,8 +48,11 @@
       <excludeFolder url="file://$MODULE_DIR$/web/vendor/sebastian/version" />
       <excludeFolder url="file://$MODULE_DIR$/web/vendor/squizlabs/php_codesniffer" />
       <excludeFolder url="file://$MODULE_DIR$/web/vendor/staabm/side-effects-detector" />
+      <excludeFolder url="file://$MODULE_DIR$/web/vendor/symfony/config" />
       <excludeFolder url="file://$MODULE_DIR$/web/vendor/symfony/console" />
+      <excludeFolder url="file://$MODULE_DIR$/web/vendor/symfony/dependency-injection" />
       <excludeFolder url="file://$MODULE_DIR$/web/vendor/symfony/event-dispatcher" />
+      <excludeFolder url="file://$MODULE_DIR$/web/vendor/symfony/filesystem" />
       <excludeFolder url="file://$MODULE_DIR$/web/vendor/symfony/finder" />
       <excludeFolder url="file://$MODULE_DIR$/web/vendor/symfony/polyfill-ctype" />
       <excludeFolder url="file://$MODULE_DIR$/web/vendor/symfony/polyfill-mbstring" />
