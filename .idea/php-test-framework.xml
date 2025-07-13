@@ -11,4 +11,22 @@
       </tool>
     </test_tools>
   </component>
+  <component name="PhpTestFrameworkVersionCache">
+    <tools_cache>
+      <tool tool_name="PHPSpec">
+        <cache>
+          <versions>
+            <info id="Local/web/vendor/phpspec/phpspec/bin/phpspec" version="2.0.1" />
+          </versions>
+        </cache>
+      </tool>
+      <tool tool_name="PHPUnit">
+        <cache>
+          <versions>
+            <info id="Local/web/vendor/autoload.php" version="12.2.7" />
+          </versions>
+        </cache>
+      </tool>
+    </tools_cache>
+  </component>
 </project>
