@@ -12,12 +12,20 @@
     <option name="transferred" value="true" />
   </component>
   <component name="PHPCodeSnifferOptionsConfiguration">
+    <option name="codingStandard" value="PSR12" />
     <option name="highlightLevel" value="WARNING" />
     <option name="transferred" value="true" />
   </component>
+  <component name="PhpCSFixer">
+    <phpcsfixer_settings>
+      <PhpCSFixerConfiguration tool_path="$PROJECT_DIR$/web/vendor/bin/php-cs-fixer" />
+      <PhpCSFixerConfiguration asDefaultInterpreter="true" deletedFromTheList="true" />
+    </phpcsfixer_settings>
+  </component>
   <component name="PhpCodeSniffer">
     <phpcs_settings>
-      <PhpCSConfiguration asDefaultInterpreter="true" timeout="30000" />
+      <PhpCSConfiguration beautifier_path="$PROJECT_DIR$/web/vendor/bin/phpcbf" standards="MySource;PEAR;PSR1;PSR12;PSR2;Squiz;Zend" tool_path="$PROJECT_DIR$/web/vendor/bin/phpcs" timeout="30000" />
+      <PhpCSConfiguration asDefaultInterpreter="true" deletedFromTheList="true" beautifier_path="$PROJECT_DIR$/web/vendor/bin/phpcbf" standards="MySource;PEAR;PSR1;PSR12;PSR2;Squiz;Zend" tool_path="$PROJECT_DIR$/web/vendor/bin/phpcs" timeout="30000" />
     </phpcs_settings>
   </component>
   <component name="PhpIncludePathManager">
@@ -49,8 +57,6 @@
       <path value="$PROJECT_DIR$/web/vendor/symfony/polyfill-mbstring" />
       <path value="$PROJECT_DIR$/web/vendor/symfony/finder" />
       <path value="$PROJECT_DIR$/web/vendor/symfony/console" />
-      <path value="$PROJECT_DIR$/web/vendor/symfony/process" />
-      <path value="$PROJECT_DIR$/web/vendor/symfony/debug" />
       <path value="$PROJECT_DIR$/web/vendor/phar-io/version" />
       <path value="$PROJECT_DIR$/web/vendor/phar-io/manifest" />
       <path value="$PROJECT_DIR$/web/vendor/theseer/tokenizer" />
@@ -72,6 +78,8 @@
       <path value="$PROJECT_DIR$/web/vendor/phpunit/php-file-iterator" />
       <path value="$PROJECT_DIR$/web/vendor/phpunit/php-code-coverage" />
       <path value="$PROJECT_DIR$/web/vendor/phpunit/phpunit" />
+      <path value="$PROJECT_DIR$/web/vendor/squizlabs/php_codesniffer" />
+      <path value="$PROJECT_DIR$/web/vendor/php-cs-fixer/shim" />
     </include_path>
   </component>
   <component name="PhpProjectServersManager">

@@ -11,7 +11,9 @@
     "require-dev": {
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^12.2",
-        "phpspec/phpspec": "^2.0"
+        "phpspec/phpspec": "^2.0",
+        "squizlabs/php_codesniffer": "^3.13",
+        "php-cs-fixer/shim": "^3.82"
     },
     "autoload": {
         "classmap": [
