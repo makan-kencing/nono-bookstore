@@ -15,7 +15,7 @@
         "ergebnis/composer-normalize": "^2.47.0",
         "friendsofphp/php-cs-fixer": "^3.82",
         "phpmd/phpmd": "^2.15",
-        "phpspec/phpspec": "dev-^8.0.x",
+        "phpspec/phpspec": "^8.0.x-dev",
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^12.2",
         "squizlabs/php_codesniffer": "^3.13"
