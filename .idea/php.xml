@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="LaravelPint">
+    <laravel_pint_settings>
+      <LaravelPintConfiguration asDefaultInterpreter="true" />
+    </laravel_pint_settings>
+  </component>
   <component name="MessDetector">
     <phpmd_settings>
       <MessDetectorConfiguration tool_path="$PROJECT_DIR$/web/vendor/bin/phpmd" />
@@ -33,6 +38,7 @@
   <component name="PhpCodeSniffer">
     <phpcs_settings>
       <PhpCSConfiguration beautifier_path="$PROJECT_DIR$/web/vendor/bin/phpcbf" tool_path="$PROJECT_DIR$/web/vendor/bin/phpcs" />
+      <PhpCSConfiguration asDefaultInterpreter="true" beautifier_path="$PROJECT_DIR$/web/vendor/bin/phpcbf" tool_path="$PROJECT_DIR$/web/vendor/bin/phpcs" />
     </phpcs_settings>
   </component>
   <component name="PhpIncludePathManager">
@@ -141,6 +147,7 @@
   <component name="PhpStan">
     <PhpStan_settings>
       <PhpStanConfiguration tool_path="$PROJECT_DIR$/web/vendor/bin/phpstan" />
+      <PhpStanConfiguration asDefaultInterpreter="true" tool_path="$PROJECT_DIR$/web/vendor/bin/phpstan" />
     </PhpStan_settings>
   </component>
   <component name="PhpStanOptionsConfiguration">
