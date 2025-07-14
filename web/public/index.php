@@ -9,6 +9,8 @@ require_once __DIR__ . '/../config/config.php';
 use App\Core\View;
 use FastRoute\RouteCollector;
 
+View::$viewPath = __DIR__ . "/../views";
+
 $whoops = new Whoops\Run();
 if (DEBUG) {
     $whoops->pushHandler(new Whoops\Handler\PrettyPageHandler());
