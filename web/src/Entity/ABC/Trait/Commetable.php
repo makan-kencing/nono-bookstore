@@ -1,11 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity\ABC\Trait;
 
 trait Commetable
 {
-    private string $comment {
-        get => $this->comment;
-        set => $this->comment;
-    }
+    public string $comment;
 }

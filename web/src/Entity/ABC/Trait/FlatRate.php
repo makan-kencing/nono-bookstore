@@ -1,11 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity\ABC\Trait;
 
 trait FlatRate
 {
-    private int $amount {
-        get => $this->amount;
-        set => $this->amount;
-    }
+    public int $amount;
 }

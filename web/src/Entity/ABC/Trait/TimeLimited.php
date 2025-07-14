@@ -1,18 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity\ABC\Trait;
 
 use DateTime;
 
 trait TimeLimited
 {
-    private DateTime $from_date {
-        get => $this->from_date;
-        set => $this->from_date;
-    }
-
-    private ?DateTime $thru_date {
-        get => $this->thru_date;
-        set => $this->thru_date;
-    }
+    public DateTime $from_date;
+    public ?DateTime $thru_date;
 }

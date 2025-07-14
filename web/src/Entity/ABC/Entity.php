@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity\ABC;
 
 abstract class Entity
 {
-    private int $id {
-        get => $this->id;
-        set => $this->id;
+    public readonly ?int $id;
+
+    public function __construct(?int $id = null)
+    {
+        $this->id = $id;
     }
 }

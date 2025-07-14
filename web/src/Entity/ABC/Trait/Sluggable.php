@@ -1,11 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity\ABC\Trait;
 
 trait Sluggable
 {
-    private string $slug {
-        get => $this->slug;
-        set => $this->slug;
-    }
+    public string $slug;
 }
