@@ -20,7 +20,7 @@ class View
         ob_start();
         extract($data);
 
-        include View::$viewPath . '/' . $file;
+        include self::$viewPath . '/' . $file;
 
         $content = ob_get_clean();
         return !$content ? '' : $content;
