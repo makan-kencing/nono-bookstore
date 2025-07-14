@@ -2,4 +2,4 @@
 
 declare(strict_types=1);
 
-const DEBUG = true;
+define('DEBUG', $_ENV['APP_ENV'] == 'dev');

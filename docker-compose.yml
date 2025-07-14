@@ -4,8 +4,8 @@ services:
         environment:
             MARIADB_RANDOM_ROOT_PASSWORD: yes
             MARIADB_DATABASE: webstore
-            MARIADB_USER: user
-            MARIADB_PASSWORD: password
+            MARIADB_USER: ${DATABASE_USER}
+            MARIADB_PASSWORD: ${DATABASE_PASSWORD}
         volumes:
             - ./var/mysql:/var/lib/mysql:z
         healthcheck:
@@ -34,6 +34,10 @@ services:
         volumes:
             - ./deploy/php-fpm/php-overrides.ini:/usr/local/etc/php/php.ini
             - ./web:/var/www/webapp:z
+        env_file:
+            - .env
+            - path: .env.local
+              required: false
         depends_on:
             db:
                 condition: service_healthy
