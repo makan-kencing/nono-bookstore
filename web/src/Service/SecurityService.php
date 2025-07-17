@@ -11,18 +11,28 @@ class SecurityService
     /**
      * @var string[]
      */
-    public const array USERS = [];
+    public const array USERS = [
+        'ST0001' => [
+            'username' => 'admin',
+            'email' => 'admin@gmail.com',
+            'password' => '123abc!!!', // hashed pass demo
+            'role' => UserRole::ADMIN,
+            'status' => 'active',
+        ]
+    ];
 
-    public function register(string $username, string $password): void
+    public function register(string $username, string $email, string $password): void
     {
         // check password valid
         if (!$this->checkPasswordValidity($password)) {
             echo "Invalid password";
+            return;
         }
 
         // check username already exists?
         if (isset(self::USERS[$username])) {
             echo "Username already exists";
+            return;
         }
 
         // hash password
@@ -31,7 +41,10 @@ class SecurityService
         // create the account
         self::USERS[$username] = [
             'username' => $username,
-            'password' => $hashedPassword
+            'email' => $email,
+            'password' => $password, // Optional: hash here
+            'role' => UserRole::USER,
+            'status' => 'active',
         ];
     }
 
@@ -49,9 +62,9 @@ class SecurityService
     public function logout(): void
     {
         // unset auth session
-        if (session_status() === PHP_SESSION_ACTIVE) {
-            session_destroy();
-        }
+//        if (session_status() === PHP_SESSION_ACTIVE) {
+//            session_destroy();
+//        }
     }
 
     public function requestPasswordReset(): void
@@ -64,9 +77,9 @@ class SecurityService
     public function changePassword(string $email, string $newPassword): void
     {
         // check password valid
-        if (!$this->checkPasswordValidity($newPassword)) {
-            echo "Invalid password";
-        }
+//        if (!$this->checkPasswordValidity($newPassword)) {
+//            echo "Invalid password";
+//        }
         // change password
     }
 
@@ -91,32 +104,33 @@ class SecurityService
         // Mark email as verified
     }
 
-    public function checkPasswordValidity(string $password): bool
+    public function checkPasswordValidity(string $password): void
     {
         // Minimum length
         // Contains uppercase
         // Contains lowercase
         // Contains numbers
         // Contains special characters
-        return true;
+        // return true;
     }
 
     public function isLoggedIn(): bool
     {
-        return isset($_SESSION['user']);
+        // return isset($_SESSION['user']);
     }
 
     public function hasRole(UserRole ...$role): bool
     {
-        if (!$this->isLoggedIn()) {
-            return false;
-        }
-
-        // Check if user has any of the specified roles
-        return false;
+//        if (!$this->isLoggedIn()) {
+//            return false;
+//        }
+//
+//        // Check if user has any of the specified roles
+//        return false;
     }
 
     private function createSession(string $email): void
     {
+
     }
 }
