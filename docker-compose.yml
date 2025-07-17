@@ -3,7 +3,7 @@ services:
         image: mariadb
         environment:
             MARIADB_RANDOM_ROOT_PASSWORD: yes
-            MARIADB_DATABASE: webstore
+            MARIADB_DATABASE: ${DATABASE_NAME}
             MARIADB_USER: ${DATABASE_USER}
             MARIADB_PASSWORD: ${DATABASE_PASSWORD}
         volumes:
