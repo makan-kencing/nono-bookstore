@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\Entity\Book;
 
-use App\Entity\Rating\Rating;
-use DateTime;
 use App\Entity\ABC\Entity;
 use App\Entity\ABC\Trait\Sluggable;
 use App\Entity\Book\Author\AuthorDefinition;
 use App\Entity\Book\Category\CategoryDefinition;
-use App\Entity\Product\Cost;
-use App\Entity\Product\Price\PriceDefinition;
+use App\Entity\Rating\Rating;
+use DateTime;
 
 class Book extends Entity
 {
