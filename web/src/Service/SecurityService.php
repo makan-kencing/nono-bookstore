@@ -2,9 +2,7 @@
 
 namespace App\Service;
 
-use App\Entity\User\User;
 use App\Entity\User\UserRole;
-use App\Entity\User\UserStatus;
 
 class SecurityService
 {

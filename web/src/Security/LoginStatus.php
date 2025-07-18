@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Entity\User;
+declare(strict_types=1);
 
-enum UserStatus
+namespace App\Security;
+
+enum LoginStatus
 {
     case SUCCESS;
     case TWO_FACTOR_REQUIRED;
