@@ -1,87 +1,45 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity\Book;
 
+use App\Entity\Rating\Rating;
+use DateTime;
 use App\Entity\ABC\Entity;
-use App\Entity\ABC\Trait\Publishable;
 use App\Entity\ABC\Trait\Sluggable;
 use App\Entity\Book\Author\AuthorDefinition;
 use App\Entity\Book\Category\CategoryDefinition;
-use App\Entity\Book\Price\Cost;
-use App\Entity\Book\Price\PriceDefinition;
-use ValueError;
+use App\Entity\Product\Cost;
+use App\Entity\Product\Price\PriceDefinition;
 
 class Book extends Entity
 {
-    use Sluggable, Publishable;
+    use Sluggable;
 
-    private string $isbn {
-        get => $this->isbn;
-        set {
-            // trim "-"
-            $value = str_replace('-', '', $value);
-            if (!preg_match('/\d{13}/', $value))
-                throw new ValueError($value . ' is not a isbn.');
-
-            $this->isbn = $value;
-        }
-    }
-
-    private string $title {
-        get => $this->title;
-        set => $this->title;
-    }
-
-    private string $description {
-        get => $this->description;
-        set => $this->description;
-    }
-
+    public ?int $id;
+    public string $isbn;
+    public string $title;
+    public string $description;
     /**
-     * @var string[]
+     * @var BookImage[]
      */
-    private array $image_urls = [] {
-        get => $this->image_urls;
-    }
-
+    public ?array $images;
     /**
      * @var AuthorDefinition[]
      */
-    private array $authors = [] {
-        get => $this->authors;
-    }
-
+    public ?array $authors;
     /**
      * @var CategoryDefinition[]
      */
-    private array $categories = [] {
-        get => $this->categories;
-    }
-
-    private string $language {
-        get => $this->language;
-        set => $this->language;
-    }
-
-    private int $number_of_pages {
-        get => $this->number_of_pages;
-        set => $this->number_of_pages;
-    }
-
-    private BookCoverType $cover_type {
-        get => $this->cover_type;
-        set => $this->cover_type;
-    }
-
-    private Cost $cost {
-        get => $this->cost;
-        set => $this->cost;
-    }
-
+    public ?array $categories;
     /**
-     * @var PriceDefinition[]
+     * @var Rating[]
      */
-    private array $prices = [] {
-        get => $this->prices;
-    }
+    public ?array $ratings;
+    public string $publisher;
+    public DateTime $publishedAt;
+    public int $numberOfPages;
+    public string $language;
+    public string $dimensions;
 }

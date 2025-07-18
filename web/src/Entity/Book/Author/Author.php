@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity\Book\Author;
 
 use App\Entity\ABC\Entity;
@@ -9,13 +11,7 @@ class Author extends Entity
 {
     use Sluggable;
 
-    private string $name {
-        get => $this->name;
-        set => $this->name;
-    }
-
-    private string $description {
-        get => $this->description;
-        set => $this->description;
-    }
+    public ?int $id;
+    public string $name;
+    public string $description;
 }

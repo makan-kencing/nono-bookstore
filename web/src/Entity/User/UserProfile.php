@@ -1,21 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity\User;
 
+use App\Entity\ABC\Entity;
 use DateTime;
 
-class UserProfile
+class UserProfile extends Entity
 {
-    private ?string $contact_no {
-        get => $this->contact_no;
-        set => $this->contact_no;
-    }
-
-    private ?DateTime $dob {
-        get => $this->dob;
-        set {
-            if ($value instanceof DateTime)
-                $this->dob = $value->setTime(0, 0);
-        }
-    }
+    public ?string $contactNo;
+    public ?DateTime $dob;
 }

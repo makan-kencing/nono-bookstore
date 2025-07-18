@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity\Book\Category;
 
 use App\Entity\ABC\Entity;
@@ -9,20 +11,12 @@ class Category extends Entity
 {
     use Sluggable;
 
-    private string $name {
-        get => $this->name;
-        set => $this->name;
-    }
-
-    private string $description {
-        get => $this->description;
-        set => $this->description;
-    }
-
+    public ?int $id;
+    public string $name;
+    public string $description;
+    public Category $parent;
     /**
      * @var Category[]
      */
-    private array $subcategories = [] {
-        get => $this->subcategories;
-    }
+    public ?array $subcategories;
 }

@@ -2,19 +2,15 @@
 
 namespace App\Entity\Book\Author;
 
+use App\Entity\ABC\Entity;
 use App\Entity\ABC\Trait\Commetable;
+use App\Entity\Book\Book;
 
-class AuthorDefinition
+class AuthorDefinition extends Entity
 {
     use Commetable;
 
-    private Author $author {
-        get => $this->author;
-        set => $this->author;
-    }
-
-    private AuthorDefinitionType $type {
-        get => $this->type;
-        set => $this->type;
-    }
+    public Book $book;
+    public Author $author;
+    public AuthorDefinitionType $type;
 }

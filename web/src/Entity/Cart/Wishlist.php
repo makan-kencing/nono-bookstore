@@ -1,17 +1,16 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Entity\Cart;
 
 use App\Entity\ABC\Entity;
+use App\Entity\Book\Book;
 use App\Entity\User\User;
 
-class Cart extends Entity
+class Wishlist extends Entity
 {
     public User $user;
     /**
-     * @var CartItem[]
+     * @var Book[]
      */
-    public ?array $items;
+    public ?array $books;
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity\Order;
 
 use App\Entity\ABC\Entity;
@@ -10,18 +12,8 @@ class Shipment extends Entity
 {
     use Updatable;
 
-    private ?DateTime $ready_at {
-        get => $this->ready_at;
-        set => $this->ready_at;
-    }
-
-    private ?DateTime $shipped_at {
-        get => $this->shipped_at;
-        set => $this->shipped_at;
-    }
-
-    private ?DateTime $arrived_at {
-        get => $this->arrived_at;
-        set => $this->arrived_at;
-    }
+    public Order $order;
+    public ?DateTime $readyAt;
+    public ?DateTime $shippedAt;
+    public ?DateTime $arrivedAt;
 }

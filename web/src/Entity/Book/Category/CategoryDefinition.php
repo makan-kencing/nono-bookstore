@@ -1,16 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity\Book\Category;
 
+use App\Entity\ABC\Entity;
 use App\Entity\ABC\Trait\Commetable;
 use App\Entity\ABC\Trait\TimeLimited;
+use App\Entity\Book\Book;
 
-class CategoryDefinition
+class CategoryDefinition extends Entity
 {
-    use TimeLimited, Commetable;
+    use Commetable;
+    use TimeLimited;
 
-    private Category $category {
-        get => $this->category;
-        set => $this->category;
-    }
+    public Book $book;
+    public Category $category;
+    public bool $isPrimary = false;
 }

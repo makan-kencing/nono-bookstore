@@ -10,8 +10,7 @@ use DateTime;
 /**
  * @phpstan-require-extends Entity
  */
-trait TimeLimited
+trait SoftDeletable
 {
-    public DateTime $from_date;
-    public ?DateTime $thru_date;
+    public ?DateTime $deleted_at;
 }

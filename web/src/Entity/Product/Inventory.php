@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Entity\Cart;
+namespace App\Entity\Product;
 
 use App\Entity\ABC\Entity;
-use App\Entity\Product\Product;
 
-class CartItem extends Entity
+class Inventory extends Entity
 {
     public Product $product;
     public int $quantity;
