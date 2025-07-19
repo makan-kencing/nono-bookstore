@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-class SecurityController
+class SecurityController extends Controller
 {
     public function register(): void
     {

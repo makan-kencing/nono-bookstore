@@ -6,7 +6,7 @@ use PDO;
 
 abstract readonly class Repository
 {
-    private PDO $conn;
+    protected PDO $conn;
 
     public function __construct(PDO $conn)
     {
