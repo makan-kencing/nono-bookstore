@@ -7,7 +7,7 @@ namespace App\Exception;
 use Exception;
 use Throwable;
 
-class UnprocessableEntity extends Exception
+class UnprocessableEntityException extends Exception
 {
     /** @var list<array{field: string, type: string, reason: string}> */
     public readonly array $details;
