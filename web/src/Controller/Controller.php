@@ -7,10 +7,10 @@ namespace App\Controller;
 use App\Core\View;
 use PDO;
 
-abstract class Controller
+abstract readonly class Controller
 {
-    protected readonly PDO $pdo;
-    protected readonly View $view;
+    protected PDO $pdo;
+    protected View $view;
 
     public function __construct(PDO $pdo, View $view)
     {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-class AdminUserController extends Controller
+readonly class AdminUserController extends Controller
 {
     public function viewUserList($vars): void
     {
