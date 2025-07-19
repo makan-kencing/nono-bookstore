@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../config/routes.php';
-require_once __DIR__ . '/../config/config.php';
 
 use App\Core\View;
 use FastRoute\RouteCollector;
@@ -12,7 +11,7 @@ use FastRoute\RouteCollector;
 View::$viewPath = __DIR__ . "/../views";
 
 $whoops = new Whoops\Run();
-if (DEBUG) {
+if ($_ENV['APP_ENV'] == 'dev') {
     $whoops->pushHandler(new Whoops\Handler\PrettyPageHandler());
 } else {
     $whoops->pushHandler(function ($e) {
