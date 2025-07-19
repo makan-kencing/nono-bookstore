@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-class AdminService
+readonly class AdminService extends Service
 {
     public function viewUserList($vars): void
     {

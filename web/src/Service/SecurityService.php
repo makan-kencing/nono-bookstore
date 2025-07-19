@@ -6,7 +6,7 @@ namespace App\Service;
 
 use App\Entity\User\UserRole;
 
-class SecurityService
+readonly class SecurityService extends Service
 {
     /**
      * @var string[]
