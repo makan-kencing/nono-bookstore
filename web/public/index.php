@@ -60,17 +60,11 @@ switch ($routeInfo[0]) {
         http_response_code(405);
         break;
     case FastRoute\Dispatcher::FOUND:
-        /**
-         * @var class-string<Controller> $className
-         */
+        /** @var class-string<Controller> $className */
         $className = $routeInfo[1][0];
-        /**
-         * @var callable-string<Controller> $method
-         */
+        /** @var callable-string<Controller> $method */
         $method = $routeInfo[1][1];
-        /**
-         * @var array<string, mixed> $vars
-         */
+        /** @var array<string, mixed> $vars */
         $vars = $routeInfo[2];
 
         $class = new $className($pdo, $view);
