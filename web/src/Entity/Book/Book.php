@@ -8,6 +8,7 @@ use App\Entity\ABC\Entity;
 use App\Entity\ABC\Trait\Sluggable;
 use App\Entity\Book\Author\AuthorDefinition;
 use App\Entity\Book\Category\CategoryDefinition;
+use App\Entity\Book\Series\Series;
 use App\Entity\Rating\Rating;
 use DateTime;
 
@@ -19,25 +20,18 @@ class Book extends Entity
     public string $isbn;
     public string $title;
     public string $description;
-    /**
-     * @var BookImage[]
-     */
+    /** @var BookImage[] */
     public ?array $images;
-    /**
-     * @var AuthorDefinition[]
-     */
+    /** @var AuthorDefinition[] */
     public ?array $authors;
-    /**
-     * @var CategoryDefinition[]
-     */
+    /** @var CategoryDefinition[] */
     public ?array $categories;
-    /**
-     * @var Rating[]
-     */
+    /** @var Rating[] */
     public ?array $ratings;
     public string $publisher;
     public DateTime $publishedAt;
     public int $numberOfPages;
+    public ?Series $series;
     public string $language;
     public string $dimensions;
 }
