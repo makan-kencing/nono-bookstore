@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../config/routes.php';
+require_once __DIR__ . '/../config/error_handler.php';
 
 use App\Core\View;
+use App\Exception\MethodNotAllowedException;
+use App\Exception\NotFoundException;
+use App\Exception\Wrapper\ApiExceptionWrapper;
+use App\Exception\Wrapper\WebExceptionWrapper;
 use FastRoute\RouteCollector;
 
 $view = new View();
@@ -19,19 +24,6 @@ $pdo = new PDO(
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
     ]
 );
-
-$whoops = new Whoops\Run();
-if ($_ENV['APP_ENV'] == 'dev') {
-    $whoops->pushHandler(new Whoops\Handler\PrettyPageHandler());
-} else {
-    $whoops->pushHandler(function ($e) {
-        global $view;
-        http_response_code(500);
-        echo $view->render("errors/500.php");
-    });
-}
-$whoops->register();
-
 
 $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     foreach (ROUTES as $route) {
@@ -51,14 +43,11 @@ $uri = rawurldecode($uri);
 $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::NOT_FOUND:
-        http_response_code(404);
-        echo $view->render("errors/404.php");
-        break;
+        throw new WebExceptionWrapper(new NotFoundException());
     case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
         $allowedMethods = $routeInfo[1];
 
-        http_response_code(405);
-        break;
+        throw new ApiExceptionWrapper(new MethodNotAllowedException($allowedMethods));
     case FastRoute\Dispatcher::FOUND:
         /** @var class-string<Controller> $className */
         $className = $routeInfo[1][0];
