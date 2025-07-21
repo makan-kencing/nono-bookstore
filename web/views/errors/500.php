@@ -1,6 +1,7 @@
-<?php declare(strict_types=1); ?>
-
 <?php
+
+declare(strict_types=1);
+
 $title = "Not Found";
 
 ob_start();
