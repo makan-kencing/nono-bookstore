@@ -1,12 +1,13 @@
 create or replace table rating
 (
-    id      bigint unsigned auto_increment
+    id       bigint unsigned auto_increment
         primary key,
-    book_id bigint unsigned      not null,
-    user_id bigint unsigned      not null,
-    rating  smallint(6) unsigned not null,
-    title   varchar(255)         not null,
-    content text                 not null,
+    book_id  bigint unsigned                      not null,
+    user_id  bigint unsigned                      not null,
+    rating   smallint(6) unsigned                 not null,
+    title    varchar(255)                         not null,
+    content  text                                 not null,
+    rated_at datetime default current_timestamp() not null,
     constraint rating_ibfk_1
         foreign key (book_id) references book (id),
     constraint rating_ibfk_2

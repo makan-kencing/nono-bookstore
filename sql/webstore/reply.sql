@@ -1,10 +1,11 @@
 create or replace table reply
 (
-    id        bigint unsigned auto_increment
+    id         bigint unsigned auto_increment
         primary key,
-    rating_id bigint unsigned not null,
-    user_id   bigint unsigned not null,
-    content   text            not null,
+    rating_id  bigint unsigned                      not null,
+    user_id    bigint unsigned                      not null,
+    content    text                                 not null,
+    replied_at datetime default current_timestamp() not null,
     constraint reply_ibfk_1
         foreign key (rating_id) references rating (id),
     constraint reply_ibfk_2
