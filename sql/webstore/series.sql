@@ -4,7 +4,7 @@ create or replace table series
         primary key,
     slug        varchar(255) not null,
     name        varchar(255) not null,
-    description text         not null,
+    description text         null,
     constraint slug
         unique (slug)
 );

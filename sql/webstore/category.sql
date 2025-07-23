@@ -4,7 +4,7 @@ create or replace table category
         primary key,
     slug        varchar(255)    not null,
     name        varchar(255)    not null,
-    description text            not null,
+    description text            null,
     parent_id   bigint unsigned null,
     constraint name
         unique (name),

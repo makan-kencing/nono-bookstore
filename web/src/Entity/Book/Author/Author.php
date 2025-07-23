@@ -13,5 +13,5 @@ class Author extends Entity
 
     public ?int $id;
     public string $name;
-    public string $description;
+    public ?string $description;
 }

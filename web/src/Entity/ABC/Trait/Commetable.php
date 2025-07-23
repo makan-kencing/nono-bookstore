@@ -11,5 +11,5 @@ use App\Entity\ABC\Entity;
  */
 trait Commetable
 {
-    public string $comment;
+    public ?string $comment;
 }

@@ -4,7 +4,7 @@ create or replace table author
         primary key,
     slug        varchar(255) not null,
     name        varchar(255) not null,
-    description text         not null,
+    description text         null,
     constraint id
         unique (id),
     constraint name

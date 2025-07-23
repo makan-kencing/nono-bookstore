@@ -12,7 +12,7 @@ class Series extends Entity
 
     public ?int $id;
     public string $name;
-    public string $description;
+    public ?string $description;
     /** @var Book[] */
     public ?array $books;
 }
