@@ -22,6 +22,7 @@ class QueryUserListing extends Query
                    u.hashed_password `user.hashedPassword`,
                    u.role            `user.role`,
                    u.is_verified     `user.isVerified`,
+                   up.user_id        `user.profile.id`,
                    up.contact_no     `user.profile.contactNo`,
                    up.dob            `user.profile.dob`
             from user u

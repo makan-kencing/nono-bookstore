@@ -40,6 +40,7 @@ class QueryBookWithFullDetail extends Query
                    c.slug              `book.categories.category.slug`,
                    c.name              `book.categories.category.name`,
                    c.description       `book.categories.category.description`,
+                   c.parent_id         `book.categories.category.parent.id`,
                    cd.is_primary       `book.categories.isPrimary`,
                    cd.comment          `book.categories.comment`,
                    cd.from_date        `book.categories.fromDate`,
