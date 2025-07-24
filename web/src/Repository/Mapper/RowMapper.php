@@ -25,7 +25,7 @@ abstract readonly class RowMapper
      *
      * @param array<int|string,mixed> $row
      * @param string $prefix
-     * @return T
+     * @return ?T
      */
     abstract public function mapRow(mixed $row, string $prefix = '');
 }
