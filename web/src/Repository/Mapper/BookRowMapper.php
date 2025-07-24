@@ -19,10 +19,8 @@ readonly class BookRowMapper extends RowMapper
     public function map(PDOStatement $stmt, string $prefix = '')
     {
         $authorDefinitionRowMapper = new AuthorDefinitionRowMapper();
-        $authorRowMapper = new AuthorRowMapper();
         $bookImageRowMapper = new BookImageRowMapper();
         $categoryDefinitionRowMapper = new CategoryDefinitionRowMapper();
-        $categoryRowMapper = new CategoryRowMapper();
         $ratingRowMapper = new RatingRowMapper();
         $replyRowMapper = new ReplyRowMapper();
 
