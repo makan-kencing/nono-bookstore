@@ -10,7 +10,7 @@ $title = $book->title ?? 'Book';
 
 ob_start();
 ?>
-    <?php var_dump($book) ?>
+    <?= '<pre>' . var_export($book, true) . '</pre>' ?>
 <?php
 $content = ob_get_clean();
 
