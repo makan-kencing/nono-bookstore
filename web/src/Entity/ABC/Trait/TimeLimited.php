@@ -12,6 +12,6 @@ use DateTime;
  */
 trait TimeLimited
 {
-    public DateTime $from_date;
-    public ?DateTime $thru_date;
+    public DateTime $fromDate;
+    public ?DateTime $thruDate;
 }
