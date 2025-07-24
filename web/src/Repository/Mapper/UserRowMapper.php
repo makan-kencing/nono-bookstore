@@ -20,6 +20,7 @@ readonly class UserRowMapper extends RowMapper
     public function __construct()
     {
         $this->userProfileRowMapper = new UserProfileRowMapper();
+        $this->membershipRowMapper = new MembershipRowMapper();
     }
 
     /**
