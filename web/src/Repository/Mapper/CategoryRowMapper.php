@@ -8,6 +8,9 @@ use App\Entity\Book\Category\Category;
 use PDOStatement;
 use Throwable;
 
+/**
+ * @extends RowMapper<Category>
+ */
 readonly class CategoryRowMapper extends RowMapper
 {
     /**

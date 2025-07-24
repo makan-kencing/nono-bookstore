@@ -34,7 +34,7 @@ readonly class BookRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function map(PDOStatement $stmt, string $prefix = '')
+    public function map(PDOStatement $stmt, string $prefix = ''): array
     {
         /** @var array<int, Book> $bookMap */
         $bookMap = [];

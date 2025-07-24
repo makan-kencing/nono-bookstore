@@ -24,7 +24,7 @@ readonly class UserRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function map(PDOStatement $stmt, string $prefix = '')
+    public function map(PDOStatement $stmt, string $prefix = ''): array
     {
         /** @var array<int, User> $userMap */
         $userMap = [];
