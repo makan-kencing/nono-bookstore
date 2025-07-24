@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Core\View;
+use App\Repository\Query\QueryUserCount;
 use App\Repository\Query\QueryUserListing;
 use App\Repository\UserRepository;
 use PDO;
@@ -32,9 +33,17 @@ readonly class AdminUserController extends Controller
 
     public function viewUserDetails(): void
     {
-        $query = new QueryUserDetails();
+    }
 
-        $users = $this->userRepository->get($query);
+    public function checkUsernameExists(): void
+    {
+        $query = new QueryUserCount();
+        $query->username = $_GET['username'];
+
+        $count = $this->userRepository->count($query);
+
+        header('Content-type: application/json');
+        echo json_encode(['exists' => $count != 0]);
     }
 
     public function addStaff($vars): void

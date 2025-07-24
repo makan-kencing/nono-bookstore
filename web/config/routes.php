@@ -11,4 +11,6 @@ const ROUTES = [
     ['GET', '/book/{isbn:\d{13}}[/{slug:[a-zA-Z0-9-]+}]', ['App\Controller\BookController', 'viewBook']],
 
     ['GET', '/admin/users', ['App\Controller\AdminUserController', 'viewUserList']],
+
+    ['GET', '/api/user/exists', ['App\Controller\AdminUserController', 'checkUsernameExists']],
 ];
