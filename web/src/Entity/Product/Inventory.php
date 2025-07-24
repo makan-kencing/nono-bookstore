@@ -8,6 +8,8 @@ use App\Entity\ABC\Entity;
 
 class Inventory extends Entity
 {
+    public ?int $id;
     public Product $product;
+    public InventoryLocation $location;
     public int $quantity;
 }
