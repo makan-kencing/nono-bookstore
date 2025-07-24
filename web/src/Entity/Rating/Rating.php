@@ -7,6 +7,7 @@ namespace App\Entity\Rating;
 use App\Entity\ABC\Entity;
 use App\Entity\Book\Book;
 use App\Entity\User\User;
+use DateTime;
 
 class Rating extends Entity
 {
@@ -20,4 +21,5 @@ class Rating extends Entity
      * @var Reply[]
      */
     public ?array $replies;
+    public DateTime $ratedAt;
 }
