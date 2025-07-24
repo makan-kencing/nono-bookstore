@@ -6,6 +6,7 @@ namespace App\Repository\Mapper;
 
 use App\Entity\Book\BookImage;
 use PDOStatement;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -16,15 +17,16 @@ readonly class BookImageRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function map(PDOStatement $stmt, string $prefix = '')
+    public function map(PDOStatement $stmt, string $prefix = ''): array
     {
         // TODO: Implement map() method.
+        throw new RuntimeException('Not Implemented');
     }
 
     /**
      * @inheritDoc
      */
-    public function mapRow(mixed $row, string $prefix = '')
+    public function mapRow(array $row, string $prefix = ''): ?BookImage
     {
         $id = $row[$prefix . 'id'] ?? null;
         if ($id == null) {

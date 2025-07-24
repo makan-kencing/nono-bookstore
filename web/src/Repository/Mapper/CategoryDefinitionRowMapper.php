@@ -7,6 +7,7 @@ namespace App\Repository\Mapper;
 use App\Entity\Book\Category\CategoryDefinition;
 use PDOStatement;
 use DateTime;
+use RuntimeException;
 
 /**
  * @extends RowMapper<CategoryDefinition>
@@ -16,15 +17,16 @@ readonly class CategoryDefinitionRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function map(PDOStatement $stmt, string $prefix = '')
+    public function map(PDOStatement $stmt, string $prefix = ''): array
     {
         // TODO: Implement map() method.
+        throw new RuntimeException('Not Implemented');
     }
 
     /**
      * @inheritDoc
      */
-    public function mapRow(mixed $row, string $prefix = '')
+    public function mapRow(array $row, string $prefix = ''): ?CategoryDefinition
     {
         $categoryRowMapper = new CategoryRowMapper();
 

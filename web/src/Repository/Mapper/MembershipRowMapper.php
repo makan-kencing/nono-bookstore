@@ -7,6 +7,7 @@ namespace App\Repository\Mapper;
 use App\Entity\User\Membership;
 use DateTime;
 use PDOStatement;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -17,15 +18,16 @@ readonly class MembershipRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function map(PDOStatement $stmt, string $prefix = '')
+    public function map(PDOStatement $stmt, string $prefix = ''): array
     {
         // TODO: Implement map() method.
+        throw new RuntimeException('Not Implemented');
     }
 
     /**
      * @inheritDoc
      */
-    public function mapRow(array $row, string $prefix = '')
+    public function mapRow(array $row, string $prefix = ''): ?Membership
     {
         $id = $row[$prefix . 'id'] ?? null;
         if ($id == null) {

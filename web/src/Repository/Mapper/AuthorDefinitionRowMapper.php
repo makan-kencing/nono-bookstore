@@ -7,6 +7,7 @@ namespace App\Repository\Mapper;
 use App\Entity\Book\Author\AuthorDefinition;
 use App\Entity\Book\Author\AuthorDefinitionType;
 use PDOStatement;
+use RuntimeException;
 
 /**
  * @extends RowMapper<AuthorDefinition>
@@ -23,15 +24,16 @@ readonly class AuthorDefinitionRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function map(PDOStatement $stmt, string $prefix = '')
+    public function map(PDOStatement $stmt, string $prefix = ''): array
     {
         // TODO: Implement map() method.
+        throw new RuntimeException('Not Implemented');
     }
 
     /**
      * @inheritDoc
      */
-    public function mapRow(mixed $row, string $prefix = '')
+    public function mapRow(array $row, string $prefix = ''): ?AuthorDefinition
     {
         $authorDefinition = new AuthorDefinition();
 

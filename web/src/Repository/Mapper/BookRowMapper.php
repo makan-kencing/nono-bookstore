@@ -98,7 +98,7 @@ readonly class BookRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function mapRow(mixed $row, string $prefix = '')
+    public function mapRow(array $row, string $prefix = ''): ?Book
     {
         $id = $row[$prefix . 'id'] ?? null;
         if ($id == null) {

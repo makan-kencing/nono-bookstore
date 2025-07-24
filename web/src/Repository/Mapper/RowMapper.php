@@ -19,7 +19,7 @@ abstract readonly class RowMapper
      * @param string $prefix
      * @return T[]
      */
-    abstract public function map(PDOStatement $stmt, string $prefix = '');
+    abstract public function map(PDOStatement $stmt, string $prefix = ''): array;
 
     /**
      * Map a row from PDOStatement into an instance of T.
@@ -28,7 +28,7 @@ abstract readonly class RowMapper
      * @param string $prefix
      * @return ?T
      */
-    abstract public function mapRow(mixed $row, string $prefix = '');
+    abstract public function mapRow(array $row, string $prefix = ''): mixed;
 
     /**
      * Returns true if the exception is related to an invalid array key access.
