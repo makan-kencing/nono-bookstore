@@ -18,12 +18,4 @@ abstract readonly class Repository
         $this->conn = $conn;
     }
 
-    /**
-     * Map a row from PDOStatement into an instance of T.
-     *
-     * @param array<int|string,mixed> $row
-     * @param string $prefix
-     * @return T
-     */
-    abstract public function mapRow(mixed $row, string $prefix = '');
 }
