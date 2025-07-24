@@ -48,7 +48,7 @@ readonly class RatingRowMapper extends RowMapper
             $rating->content = $row[$prefix . 'content'];
             $rating->ratedAt = DateTime::createFromFormat('Y-m-d H:i:s', $row[$prefix . 'ratedAt']);
         } catch (Throwable $e) {
-            if (!str_contains($e->getMessage(), 'Undefined array key')) {
+            if (!$this->isInvalidArrayAccess($e)) {
                 throw $e;
             }
 

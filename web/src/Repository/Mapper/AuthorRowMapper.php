@@ -38,7 +38,7 @@ readonly class AuthorRowMapper extends RowMapper
             $author->name = $row[$prefix . 'name'];
             $author->description = $row[$prefix . 'description'];
         } catch (Throwable $e) {
-            if (!str_contains($e->getMessage(), 'Undefined array key')) {
+            if (!$this->isInvalidArrayAccess($e)) {
                 throw $e;
             }
 

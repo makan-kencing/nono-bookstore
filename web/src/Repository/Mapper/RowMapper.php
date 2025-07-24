@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository\Mapper;
 
 use PDOStatement;
+use Throwable;
 
 /**
  * @template T
@@ -28,4 +29,14 @@ abstract readonly class RowMapper
      * @return ?T
      */
     abstract public function mapRow(mixed $row, string $prefix = '');
+
+    /**
+     * Returns true if the exception is related to an invalid array key access.
+     * @param Throwable $e
+     * @return bool
+     */
+    protected function isInvalidArrayAccess(Throwable $e): bool
+    {
+        return str_contains($e->getMessage(), 'Undefined array key');
+    }
 }

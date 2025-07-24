@@ -63,7 +63,7 @@ readonly class UserRowMapper extends RowMapper
             $user->isVerified = (bool)$row[$prefix . 'isVerified'];
             $user->profile = $this->userProfileRowMapper->mapRow($row, prefix: $prefix . 'profile.');
         } catch (Throwable $e) {
-            if (!str_contains($e->getMessage(), 'Undefined array key')) {
+            if (!$this->isInvalidArrayAccess($e)) {
                 throw $e;
             }
 

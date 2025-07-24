@@ -36,7 +36,7 @@ readonly class BookImageRowMapper extends RowMapper
         try {
             $bookImage->imageUrl = $row[$prefix . 'imageUrl'];
         } catch (Throwable $e) {
-            if (!str_contains($e->getMessage(), 'Undefined array key')) {
+            if (!$this->isInvalidArrayAccess($e)) {
                 throw $e;
             }
 

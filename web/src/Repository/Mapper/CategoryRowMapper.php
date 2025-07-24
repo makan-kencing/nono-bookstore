@@ -36,7 +36,7 @@ readonly class CategoryRowMapper extends RowMapper
             $category->description = $row[$prefix . 'description'];
             $category->parent = $this->mapRow($row, prefix: $prefix . 'parent.');
         } catch (Throwable $e) {
-            if (!str_contains($e->getMessage(), 'Undefined array key')) {
+            if (!$this->isInvalidArrayAccess($e)) {
                 throw $e;
             }
 

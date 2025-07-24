@@ -37,7 +37,7 @@ readonly class UserProfileRowMapper extends RowMapper
             $userProfile->contactNo = $row[$prefix . 'contactNo'];
             $userProfile->dob = $row[$prefix . 'dob'];
         } catch (Throwable $e) {
-            if (!str_contains($e->getMessage(), 'Undefined array key')) {
+            if (!$this->isInvalidArrayAccess($e)) {
                 throw $e;
             }
 

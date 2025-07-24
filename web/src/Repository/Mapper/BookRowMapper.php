@@ -119,7 +119,7 @@ readonly class BookRowMapper extends RowMapper
             $book->dimensions = $row[$prefix . 'dimensions'];
             $book->series = $this->seriesRowMapper->mapRow($row, prefix: $prefix . 'series.');
         } catch (Throwable $e) {
-            if (!str_contains($e->getMessage(), 'Undefined array key')) {
+            if (!$this->isInvalidArrayAccess($e)) {
                 throw $e;
             }
 

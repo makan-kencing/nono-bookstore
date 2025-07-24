@@ -46,7 +46,7 @@ readonly class ReplyRowMapper extends RowMapper
             $reply->content = $row[$prefix . 'content'];
             $reply->repliedAt = DateTime::createFromFormat('Y-m-d H:i:s', $row[$prefix . 'repliedAt']);
         } catch (Throwable $e) {
-            if (!str_contains($e->getMessage(), 'Undefined array key')) {
+            if (!$this->isInvalidArrayAccess($e)) {
                 throw $e;
             }
 
