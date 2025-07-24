@@ -22,14 +22,14 @@ readonly class BookController extends Controller
     }
 
     /**
-     * @param array<string, string> $vars
+     * @param array<string, string> $pathVars
      * @return void
      * @throws WebExceptionWrapper
      */
-    public function viewBook(array $vars): void
+    public function viewBook(array $pathVars): void
     {
-        $isbn = $vars['isbn'];
-        $slug = $vars['slug'] ?? '';
+        $isbn = $pathVars['isbn'];
+        $slug = $pathVars['slug'] ?? '';
 
         $query = new QueryBookWithFullDetail();
         $query->isbn = $isbn;
@@ -50,11 +50,7 @@ readonly class BookController extends Controller
         ]);
     }
 
-    /**
-     * @param array<string, string> $vars
-     * @return void
-     */
-    public function searchBook(array $vars): void
+    public function searchBook(): void
     {
     }
 }
