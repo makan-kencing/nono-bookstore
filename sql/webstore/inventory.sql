@@ -1,9 +1,14 @@
 create or replace table inventory
 (
-    product_id bigint unsigned not null
+    id         bigint unsigned auto_increment
         primary key,
-    quantity   int unsigned    not null,
+    product_id bigint unsigned                        not null,
+    location   enum ('SHELF', 'WAREHOUSE', 'OFFSITE') not null,
+    quantity   int unsigned                           not null,
     constraint inventory_ibfk_1
         foreign key (product_id) references product (id)
 );
+
+create or replace index product_id
+    on inventory (product_id);
 
