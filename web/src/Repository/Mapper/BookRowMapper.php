@@ -18,16 +18,16 @@ readonly class BookRowMapper extends RowMapper
      */
     public function map(PDOStatement $stmt, string $prefix = '')
     {
-        $authorDefinitionRepository = new AuthorDefinitionRowMapper();
-        $authorRepository = new AuthorRowMapper();
+        $authorDefinitionRowMapper = new AuthorDefinitionRowMapper();
+        $authorRowMapper = new AuthorRowMapper();
+        $bookImageRowMapper = new BookImageRowMapper();
+        $categoryDefinitionRowMapper = new CategoryDefinitionRowMapper();
+        $categoryRowMapper = new CategoryRowMapper();
+        $ratingRowMapper = new RatingRowMapper();
+        $replyRowMapper = new ReplyRowMapper();
 
         /** @var array<int, Book> $bookMap */
         $bookMap = [];
-        $bookImagesMap = [];
-        $authorsMap = [];
-        $categoriesMap = [];
-        $ratingsMap = [];
-        $repliesMap = [];
         foreach ($stmt as $row) {
             $bookId = $row[$prefix . 'id'];
             $book = $bookMap[$bookId] ?? null;
@@ -38,36 +38,47 @@ readonly class BookRowMapper extends RowMapper
                 $bookMap[$bookId] = $book;
             }
 
+            $book->images ??= [];
             $bookImageId = $row[$prefix . 'images.id'];
-            $bookImage = $bookImagesMap[$bookImageId] ?? null;
+            $bookImage = $book->images[$bookImageId] ?? null;
             if ($bookImage == null) {
+                $bookImage = $bookImageRowMapper->mapRow($row, prefix: $prefix . 'images.');
+
+                $book->images[$bookImageId] = $bookImage;
             }
 
+            $book->authors ??= [];
             $authorId = $row[$prefix . 'authors.author.id'];
-            $author = $authorsMap[$authorId] ?? null;
+            $author = $book->authors[$authorId] ?? null;
             if ($author == null) {
-                $authorDefinition = $authorDefinitionRepository->mapRow($row, prefix: $prefix . 'authors.');
-                $authorDefinition->author = $authorRepository->mapRow($row, prefix: $prefix . 'authors.author.');
+                $author = $authorDefinitionRowMapper->mapRow($row, prefix: $prefix . 'authors.');
 
-                $book->authors ??= [];
-                $book->authors[] = $authorDefinition;
-
-                $authorsMap[$authorId] = $authorDefinition;
+                $book->authors[$authorId] = $author;
             }
 
+            $book->categories ??= [];
             $categoryId = $row[$prefix . 'categories.category.id'];
-            $category = $categoriesMap[$categoryId] ?? null;
+            $category = $book->categories[$categoryId] ?? null;
             if ($category == null) {
+                $category = $categoryDefinitionRowMapper->mapRow($row, prefix: $prefix . 'categories.');
+
+                $book->categories[$categoryId] = $category;
             }
 
+            $book->ratings ??= [];
             $ratingId = $row[$prefix . 'ratings.id'];
             $rating = $ratingsMap[$ratingId] ?? null;
             if ($rating == null) {
-            }
+                $rating = $ratingRowMapper->mapRow($row, prefix: $prefix . 'ratings.');
 
-            $replyId = $row[$prefix . 'ratings.replies.id'];
-            $reply = $repliesMap[$replyId] ?? null;
-            if ($reply == null) {
+                $rating->replies ??= [];
+                $replyId = $row[$prefix . 'ratings.replies.id'];
+                $reply = $rating->replies[$replyId] ?? null;
+                if ($reply == null) {
+                    $reply = $replyRowMapper->mapRow($row, prefix: $prefix . 'ratings.replies.');
+
+                    $rating->replies[$replyId] = $reply;
+                }
             }
         }
 

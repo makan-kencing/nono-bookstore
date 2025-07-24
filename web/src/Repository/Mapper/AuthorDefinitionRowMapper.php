@@ -27,8 +27,11 @@ readonly class AuthorDefinitionRowMapper extends RowMapper
      */
     public function mapRow(mixed $row, string $prefix = '')
     {
+        $authorRowMapper = new AuthorRowMapper();
+
         $authorDefinition = new AuthorDefinition();
 
+        $authorDefinition->author = $authorRowMapper->mapRow($row, prefix: $prefix . 'author.');
         $authorDefinition->type = AuthorDefinitionType::{$row[$prefix . 'type']};
         $authorDefinition->comment = $row[$prefix . 'comment'];
 
