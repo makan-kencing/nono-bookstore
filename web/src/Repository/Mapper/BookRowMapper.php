@@ -7,23 +7,35 @@ namespace App\Repository\Mapper;
 use App\Entity\Book\Book;
 use DateTime;
 use PDOStatement;
+use Throwable;
 
 /**
  * @extends RowMapper<Book>
  */
 readonly class BookRowMapper extends RowMapper
 {
+    private AuthorDefinitionRowMapper $authorDefinitionRowMapper;
+    private BookImageRowMapper $bookImageRowMapper;
+    private CategoryDefinitionRowMapper $categoryDefinitionRowMapper;
+    private RatingRowMapper $ratingRowMapper;
+    private ReplyRowMapper $replyRowMapper;
+    private SeriesRowMapper $seriesRowMapper;
+
+    public function __construct()
+    {
+        $this->authorDefinitionRowMapper = new AuthorDefinitionRowMapper();
+        $this->bookImageRowMapper = new BookImageRowMapper();
+        $this->categoryDefinitionRowMapper = new CategoryDefinitionRowMapper();
+        $this->ratingRowMapper = new RatingRowMapper();
+        $this->replyRowMapper = new ReplyRowMapper();
+        $this->seriesRowMapper = new SeriesRowMapper();
+    }
+
     /**
      * @inheritDoc
      */
     public function map(PDOStatement $stmt, string $prefix = '')
     {
-        $authorDefinitionRowMapper = new AuthorDefinitionRowMapper();
-        $bookImageRowMapper = new BookImageRowMapper();
-        $categoryDefinitionRowMapper = new CategoryDefinitionRowMapper();
-        $ratingRowMapper = new RatingRowMapper();
-        $replyRowMapper = new ReplyRowMapper();
-
         /** @var array<int, Book> $bookMap */
         $bookMap = [];
         foreach ($stmt as $row) {
@@ -40,7 +52,7 @@ readonly class BookRowMapper extends RowMapper
             $bookImageId = $row[$prefix . 'images.id'];
             $bookImage = $book->images[$bookImageId] ?? null;
             if ($bookImage == null) {
-                $bookImage = $bookImageRowMapper->mapRow($row, prefix: $prefix . 'images.');
+                $bookImage = $this->bookImageRowMapper->mapRow($row, prefix: $prefix . 'images.');
 
                 $book->images[$bookImageId] = $bookImage;
             }
@@ -49,7 +61,7 @@ readonly class BookRowMapper extends RowMapper
             $authorId = $row[$prefix . 'authors.author.id'];
             $author = $book->authors[$authorId] ?? null;
             if ($author == null) {
-                $author = $authorDefinitionRowMapper->mapRow($row, prefix: $prefix . 'authors.');
+                $author = $this->authorDefinitionRowMapper->mapRow($row, prefix: $prefix . 'authors.');
 
                 $book->authors[$authorId] = $author;
             }
@@ -58,7 +70,7 @@ readonly class BookRowMapper extends RowMapper
             $categoryId = $row[$prefix . 'categories.category.id'];
             $category = $book->categories[$categoryId] ?? null;
             if ($category == null) {
-                $category = $categoryDefinitionRowMapper->mapRow($row, prefix: $prefix . 'categories.');
+                $category = $this->categoryDefinitionRowMapper->mapRow($row, prefix: $prefix . 'categories.');
 
                 $book->categories[$categoryId] = $category;
             }
@@ -67,13 +79,13 @@ readonly class BookRowMapper extends RowMapper
             $ratingId = $row[$prefix . 'ratings.id'];
             $rating = $ratingsMap[$ratingId] ?? null;
             if ($rating == null) {
-                $rating = $ratingRowMapper->mapRow($row, prefix: $prefix . 'ratings.');
+                $rating = $this->ratingRowMapper->mapRow($row, prefix: $prefix . 'ratings.');
 
                 $rating->replies ??= [];
                 $replyId = $row[$prefix . 'ratings.replies.id'];
                 $reply = $rating->replies[$replyId] ?? null;
                 if ($reply == null) {
-                    $reply = $replyRowMapper->mapRow($row, prefix: $prefix . 'ratings.replies.');
+                    $reply = $this->replyRowMapper->mapRow($row, prefix: $prefix . 'ratings.replies.');
 
                     $rating->replies[$replyId] = $reply;
                 }
@@ -88,21 +100,33 @@ readonly class BookRowMapper extends RowMapper
      */
     public function mapRow(mixed $row, string $prefix = '')
     {
-        $seriesRepository = new SeriesRowMapper();
+        $id = $row[$prefix . 'id'] ?? null;
+        if ($id == null) {
+            return null;
+        }
 
         $book = new Book();
+        $book->id = $id;
+        try {
+            $book->slug = $row[$prefix . 'slug'];
+            $book->isbn = $row[$prefix . 'isbn'];
+            $book->title = $row[$prefix . 'title'];
+            $book->description = $row[$prefix . 'description'];
+            $book->publisher = $row[$prefix . 'publisher'];
+            $book->publishedAt = DateTime::createFromFormat('Y-m-d', $row[$prefix . 'publishedDate']);
+            $book->numberOfPages = $row[$prefix . 'numberOfPages'];
+            $book->language = $row[$prefix . 'language'];
+            $book->dimensions = $row[$prefix . 'dimensions'];
+            $book->series = $this->seriesRowMapper->mapRow($row, prefix: $prefix . 'series.');
+        } catch (Throwable $e) {
+            if (!str_contains($e->getMessage(), 'Undefined array key')) {
+                throw $e;
+            }
 
-        $book->id = $row[$prefix . 'id'];
-        $book->slug = $row[$prefix . 'slug'];
-        $book->isbn = $row[$prefix . 'isbn'];
-        $book->title = $row[$prefix . 'title'];
-        $book->description = $row[$prefix . 'description'];
-        $book->publisher = $row[$prefix . 'publisher'];
-        $book->publishedAt = DateTime::createFromFormat('Y-m-d', $row[$prefix . 'publishedDate']);
-        $book->numberOfPages = $row[$prefix . 'numberOfPages'];
-        $book->language = $row[$prefix . 'language'];
-        $book->dimensions = $row[$prefix . 'dimensions'];
-        $book->series = $seriesRepository->mapRow($row, prefix: $prefix . 'series.');
+            $book = new Book();
+            $book->id = $id;
+            $book->isLazy = true;
+        }
 
         return $book;
     }

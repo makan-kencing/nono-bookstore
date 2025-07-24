@@ -6,13 +6,13 @@ namespace App\Repository\Mapper;
 
 use App\Entity\User\UserProfile;
 use PDOStatement;
+use Throwable;
 
 /**
  * @extends RowMapper<UserProfile>
  */
 readonly class UserProfileRowMapper extends RowMapper
 {
-
     /**
      * @inheritDoc
      */
@@ -26,14 +26,26 @@ readonly class UserProfileRowMapper extends RowMapper
      */
     public function mapRow(mixed $row, string $prefix = '')
     {
-        // TODO: Implement mapRow() method.
+        $id = $row[$prefix . 'id'] ?? null;
+        if ($id == null) {
+            return null;
+        }
 
         $userProfile = new UserProfile();
+        $userProfile->id = $id;
+        try {
+            $userProfile->contactNo = $row[$prefix . 'contactNo'];
+            $userProfile->dob = $row[$prefix . 'dob'];
+        } catch (Throwable $e) {
+            if (!str_contains($e->getMessage(), 'Undefined array key')) {
+                throw $e;
+            }
 
-        $userProfile->contactNo = $row[$prefix.'contactNo'];
-        $userProfile->dob= $row[$prefix.'dob'];
+            $userProfile = new UserProfile();
+            $userProfile->id = $id;
+            $userProfile->isLazy = $true;
+        }
 
         return $userProfile;
-
     }
 }

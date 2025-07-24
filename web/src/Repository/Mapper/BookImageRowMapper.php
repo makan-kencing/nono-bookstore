@@ -6,6 +6,7 @@ namespace App\Repository\Mapper;
 
 use App\Entity\Book\BookImage;
 use PDOStatement;
+use Throwable;
 
 /**
  * @extends RowMapper<BookImage>
@@ -25,10 +26,24 @@ readonly class BookImageRowMapper extends RowMapper
      */
     public function mapRow(mixed $row, string $prefix = '')
     {
-        $bookImage = new BookImage();
+        $id = $row[$prefix . 'id'] ?? null;
+        if ($id == null) {
+            return null;
+        }
 
-        $bookImage->id = $row[$prefix . 'id'];
-        $bookImage->imageUrl = $row[$prefix . 'imageUrl'];
+        $bookImage = new BookImage();
+        $bookImage->id = $id;
+        try {
+            $bookImage->imageUrl = $row[$prefix . 'imageUrl'];
+        } catch (Throwable $e) {
+            if (!str_contains($e->getMessage(), 'Undefined array key')) {
+                throw $e;
+            }
+
+            $bookImage = new BookImage();
+            $bookImage->id = $id;
+            $bookImage->isLazy = true;
+        }
 
         return $bookImage;
     }

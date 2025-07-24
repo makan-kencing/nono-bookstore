@@ -6,9 +6,21 @@ namespace App\Repository\Mapper;
 
 use App\Entity\Rating\Rating;
 use PDOStatement;
+use DateTime;
+use Throwable;
 
+/**
+ * @extends RowMapper<Rating>
+ */
 readonly class RatingRowMapper extends RowMapper
 {
+    private UserRowMapper $userRowMapper;
+
+    public function __construct()
+    {
+        $this->userRowMapper = new UserRowMapper();
+    }
+
     /**
      * @inheritDoc
      */
@@ -22,16 +34,28 @@ readonly class RatingRowMapper extends RowMapper
      */
     public function mapRow(mixed $row, string $prefix = '')
     {
-        $userRowMapper = new UserRowMapper();
+        $id = $row[$prefix . 'id'] ?? null;
+        if ($id == null) {
+            return null;
+        }
 
         $rating = new Rating();
+        $rating->id = $id;
+        try {
+            $rating->user = $this->userRowMapper->mapRow($row, prefix: $prefix . 'user.');
+            $rating->rating = $row[$prefix . 'rating'];
+            $rating->title = $row[$prefix . 'title'];
+            $rating->content = $row[$prefix . 'content'];
+            $rating->ratedAt = DateTime::createFromFormat('Y-m-d H:i:s', $row[$prefix . 'ratedAt']);
+        } catch (Throwable $e) {
+            if (!str_contains($e->getMessage(), 'Undefined array key')) {
+                throw $e;
+            }
 
-        $rating->id = $row[$prefix . 'id'];
-        $rating->user = $userRowMapper->mapRow($row, prefix: $prefix . 'user.');
-        $rating->rating = $row[$prefix . 'rating'];
-        $rating->title = $row[$prefix . 'title'];
-        $rating->content = $row[$prefix . 'content'];
-
+            $rating = new Rating();
+            $rating->id = $id;
+            $rating->isLazy = true;
+        }
         return $rating;
     }
 }

@@ -7,12 +7,20 @@ namespace App\Repository\Mapper;
 use App\Entity\User\User;
 use App\Entity\User\UserRole;
 use PDOStatement;
+use Throwable;
 
 /**
  * @extends RowMapper<User>
  */
 readonly class UserRowMapper extends RowMapper
 {
+    private UserProfileRowMapper $userProfileRowMapper;
+
+    public function __construct()
+    {
+        $this->userProfileRowMapper = new UserProfileRowMapper();
+    }
+
     /**
      * @inheritDoc
      */
@@ -40,15 +48,29 @@ readonly class UserRowMapper extends RowMapper
      */
     public function mapRow(mixed $row, string $prefix = '')
     {
+        $id = $row[$prefix . 'id'] ?? null;
+        if ($id == null) {
+            return null;
+        }
+
         $user = new User();
+        $user->id = $id;
+        try {
+            $user->username = $row[$prefix . 'username'];
+            $user->email = $row[$prefix . 'email'];
+            $user->hashedPassword = $row[$prefix . 'hashedPassword'];
+            $user->role = UserRole::{$row[$prefix . 'role']};
+            $user->isVerified = (bool)$row[$prefix . 'isVerified'];
+            $user->profile = $this->userProfileRowMapper->mapRow($row, prefix: $prefix . 'profile.');
+        } catch (Throwable $e) {
+            if (!str_contains($e->getMessage(), 'Undefined array key')) {
+                throw $e;
+            }
 
-        $user->id = $row[$prefix . 'id'];
-        $user->username = $row[$prefix . 'username'];
-        $user->email = $row[$prefix . 'email'];
-        $user->hashedPassword = $row[$prefix . 'hashedPassword'];
-        $user->role = UserRole::{$row[$prefix . 'role']};
-        $user->isVerified = (bool)$row[$prefix . 'isVerified'];
-
+            $user = new User();
+            $user->id = $id;
+            $user->isLazy = true;
+        }
         return $user;
     }
 }

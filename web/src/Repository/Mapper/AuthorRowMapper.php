@@ -6,6 +6,7 @@ namespace App\Repository\Mapper;
 
 use App\Entity\Book\Author\Author;
 use PDOStatement;
+use Throwable;
 
 /**
  * @extends RowMapper<Author>
@@ -25,12 +26,26 @@ readonly class AuthorRowMapper extends RowMapper
      */
     public function mapRow(mixed $row, string $prefix = '')
     {
-        $author = new Author();
+        $id = $row[$prefix . 'id'] ?? null;
+        if ($id == null) {
+            return null;
+        }
 
-        $author->id = $row[$prefix . 'id'];
-        $author->slug = $row[$prefix . 'slug'];
-        $author->name = $row[$prefix . 'name'];
-        $author->description = $row[$prefix . 'description'];
+        $author = new Author();
+        $author->id = $id;
+        try {
+            $author->slug = $row[$prefix . 'slug'];
+            $author->name = $row[$prefix . 'name'];
+            $author->description = $row[$prefix . 'description'];
+        } catch (Throwable $e) {
+            if (!str_contains($e->getMessage(), 'Undefined array key')) {
+                throw $e;
+            }
+
+            $author = new Author();
+            $author->id = $id;
+            $author->isLazy = true;
+        }
 
         return $author;
     }
