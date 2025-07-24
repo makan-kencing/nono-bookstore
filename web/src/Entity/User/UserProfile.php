@@ -9,6 +9,7 @@ use DateTime;
 
 class UserProfile extends Entity
 {
+    public ?int $id;
     public ?string $contactNo;
     public ?DateTime $dob;
 }

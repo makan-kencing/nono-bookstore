@@ -18,7 +18,7 @@ class User extends Entity
     public UserRole $role;
     public bool $isVerified = false;
     public ?Address $defaultAddress;
-    public UserProfile $profile;
+    public ?UserProfile $profile;
     /**
      * @var Address[]
      */
