@@ -8,5 +8,7 @@ declare(strict_types=1);
 const ROUTES = [
     ['GET', '/', ['App\Controller\HomeController', 'index']],
 
-    ['GET', '/book/{isbn:\d{13}}[/{slug:[a-zA-Z0-9-]+}]', ['App\Controller\BookController', 'viewBook']]
+    ['GET', '/book/{isbn:\d{13}}[/{slug:[a-zA-Z0-9-]+}]', ['App\Controller\BookController', 'viewBook']],
+
+    ['GET', '/admin/users', ['App\Controller\AdminUserController', 'viewUserList']],
 ];

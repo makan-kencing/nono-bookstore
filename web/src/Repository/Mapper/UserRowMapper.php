@@ -18,7 +18,21 @@ readonly class UserRowMapper extends RowMapper
      */
     public function map(PDOStatement $stmt, string $prefix = '')
     {
-        // TODO: Implement map() method.
+        /** @var array<int, User> $userMap */
+        $userMap = [];
+
+        foreach ($stmt as $row) {
+            $userId = $row[$prefix . 'id'];
+            $user = $userMap[$userId] ?? null;
+
+            if ($user == null) {
+                $user = $this->mapRow($row, prefix: $prefix);
+
+                $userMap[$userId] = $user;
+            }
+        }
+
+        return array_values($userMap);
     }
 
     /**
