@@ -23,6 +23,6 @@ readonly class BookRepository extends Repository
         $stmt->execute();
 
         $rowMapper = new BookRowMapper();
-        return $rowMapper->map($stmt);
+        return $rowMapper->map($stmt, prefix: 'book.');
     }
 }
