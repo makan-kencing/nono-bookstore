@@ -15,6 +15,7 @@ use Throwable;
 readonly class UserRowMapper extends RowMapper
 {
     private UserProfileRowMapper $userProfileRowMapper;
+    private MembershipRowMapper $membershipRowMapper;
 
     public function __construct()
     {
@@ -62,6 +63,7 @@ readonly class UserRowMapper extends RowMapper
             $user->role = UserRole::{$row[$prefix . 'role']};
             $user->isVerified = (bool)$row[$prefix . 'isVerified'];
             $user->profile = $this->userProfileRowMapper->mapRow($row, prefix: $prefix . 'profile.');
+            $user->membership = $this->membershipRowMapper->mapRow($row, prefix: $prefix . 'membership.');
         } catch (Throwable $e) {
             if (!$this->isInvalidArrayAccess($e)) {
                 throw $e;
