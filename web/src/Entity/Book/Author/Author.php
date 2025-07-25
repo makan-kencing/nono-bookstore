@@ -14,4 +14,6 @@ class Author extends Entity
     public ?int $id;
     public string $name;
     public ?string $description;
+    /** @var AuthorDefinition[] */
+    public ?array $books;
 }
