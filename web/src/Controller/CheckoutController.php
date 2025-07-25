@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-readonly class CheckoutController extends Controller
+readonly class CheckoutController extends ProtectedController
 {
     public function viewCheckout(): void
     {

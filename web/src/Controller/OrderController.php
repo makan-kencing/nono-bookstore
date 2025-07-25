@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-readonly class OrderController extends Controller
+readonly class OrderController extends ProtectedController
 {
     public function viewOrders(): void
     {

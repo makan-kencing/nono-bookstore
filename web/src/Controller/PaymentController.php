@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-readonly class PaymentController extends Controller
+readonly class PaymentController extends ProtectedController
 {
     public function viewPayment(): void
     {
