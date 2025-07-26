@@ -8,7 +8,9 @@ $title = 'Users';
 
 ob_start();
 ?>
-    <?= '<pre>' . var_export($users, true) . '</pre>' ?>
+
+<?php xdebug_var_dump($users); ?>
+
 <?php
 $content = ob_get_clean();
 
