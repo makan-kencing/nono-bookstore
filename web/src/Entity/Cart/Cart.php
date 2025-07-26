@@ -9,7 +9,8 @@ use App\Entity\User\User;
 
 class Cart extends Entity
 {
-    public User $user;
+    public ?int $id;
+    public ?User $user;
     /**
      * @var CartItem[]
      */
