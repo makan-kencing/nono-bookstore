@@ -9,6 +9,8 @@ use DateTime;
 use PDOStatement;
 use Throwable;
 
+use function PHPUnit\Framework\assertNotNull;
+
 /**
  * @extends RowMapper<Book>
  */
@@ -39,55 +41,78 @@ readonly class BookRowMapper extends RowMapper
         /** @var array<int, Book> $bookMap */
         $bookMap = [];
         foreach ($stmt as $row) {
-            $bookId = $row[$prefix . 'id'];
-            $book = $bookMap[$bookId] ?? null;
+            $id = $row[$prefix . 'id'];
+            $book = $bookMap[$id] ?? null;
 
             if ($book == null) {
                 $book = $this->mapRow($row, prefix: $prefix);
+                assertNotNull($book);
 
-                $bookMap[$bookId] = $book;
+                $bookMap[$id] = $book;
             }
 
             $book->images ??= [];
-            $bookImageId = $row[$prefix . 'images.id'];
-            $bookImage = $book->images[$bookImageId] ?? null;
-            if ($bookImage == null) {
-                $bookImage = $this->bookImageRowMapper->mapRow($row, prefix: $prefix . 'images.');
+            if (($id = $row[$prefix . 'images.id']) != null) {
+                /** @noinspection PhpArrayIsAlwaysEmptyInspection */
+                $bookImage = $book->images[$id] ?? null;
+                if ($bookImage == null) {
+                    $bookImage = $this->bookImageRowMapper->mapRow($row, prefix: $prefix . 'images.');
+                    assertNotNull($bookImage);
+                    $bookImage->book = $book;
 
-                $book->images[$bookImageId] = $bookImage;
+                    $book->images[$id] = $bookImage;
+                }
             }
 
             $book->authors ??= [];
-            $authorId = $row[$prefix . 'authors.author.id'];
-            $author = $book->authors[$authorId] ?? null;
-            if ($author == null) {
-                $author = $this->authorDefinitionRowMapper->mapRow($row, prefix: $prefix . 'authors.');
+            if (($id = $row[$prefix . 'authors.author.id']) != null) {
+                /** @noinspection PhpArrayIsAlwaysEmptyInspection */
+                $author = $book->authors[$id] ?? null;
+                if ($author == null) {
+                    $author = $this->authorDefinitionRowMapper->mapRow($row, prefix: $prefix . 'authors.');
+                    assertNotNull($author);
+                    $author->book = $book;
 
-                $book->authors[$authorId] = $author;
+                    $book->authors[$id] = $author;
+                }
             }
 
             $book->categories ??= [];
-            $categoryId = $row[$prefix . 'categories.category.id'];
-            $category = $book->categories[$categoryId] ?? null;
-            if ($category == null) {
-                $category = $this->categoryDefinitionRowMapper->mapRow($row, prefix: $prefix . 'categories.');
+            if (($id = $row[$prefix . 'categories.category.id']) != null) {
+                /** @noinspection PhpArrayIsAlwaysEmptyInspection */
+                $category = $book->categories[$id] ?? null;
+                if ($category == null) {
+                    $category = $this->categoryDefinitionRowMapper->mapRow($row, prefix: $prefix . 'categories.');
+                    assertNotNull($category);
+                    $category->book = $book;
 
-                $book->categories[$categoryId] = $category;
+                    $book->categories[$id] = $category;
+                }
             }
 
             $book->ratings ??= [];
-            $ratingId = $row[$prefix . 'ratings.id'];
-            $rating = $ratingsMap[$ratingId] ?? null;
-            if ($rating == null) {
-                $rating = $this->ratingRowMapper->mapRow($row, prefix: $prefix . 'ratings.');
+            if (($id = $row[$prefix . 'ratings.id']) != null) {
+                /** @noinspection PhpArrayIsAlwaysEmptyInspection */
+                $rating = $book->ratings[$id] ?? null;
+                if ($rating == null) {
+                    $rating = $this->ratingRowMapper->mapRow($row, prefix: $prefix . 'ratings.');
+                    assertNotNull($rating);
+                    $rating->book = $book;
 
-                $rating->replies ??= [];
-                $replyId = $row[$prefix . 'ratings.replies.id'];
-                $reply = $rating->replies[$replyId] ?? null;
-                if ($reply == null) {
-                    $reply = $this->replyRowMapper->mapRow($row, prefix: $prefix . 'ratings.replies.');
+                    $book->ratings[$id] = $rating;
 
-                    $rating->replies[$replyId] = $reply;
+                    $rating->replies ??= [];
+                    if (($id = $row[$prefix . 'ratings.replies.id']) != null) {
+                        /** @noinspection PhpArrayIsAlwaysEmptyInspection */
+                        $reply = $rating->replies[$id] ?? null;
+                        if ($reply == null) {
+                            $reply = $this->replyRowMapper->mapRow($row, prefix: $prefix . 'ratings.replies.');
+                            assertNotNull($reply);
+                            $reply->rating = $rating;
+
+                            $rating->replies[$id] = $reply;
+                        }
+                    }
                 }
             }
         }
