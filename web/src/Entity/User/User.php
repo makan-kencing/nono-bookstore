@@ -19,15 +19,11 @@ class User extends Entity
     public bool $isVerified = false;
     public ?Address $defaultAddress;
     public ?UserProfile $profile;
-    /**
-     * @var Address[]
-     */
+    /** @var Address[] */
     public ?array $addresses;
     public ?Membership $membership;
     public ?Wishlist $wishlist;
     public ?Cart $cart;
-    /**
-     * @var Order[]
-     */
+    /** @var Order[] */
     public ?array $orders;
 }

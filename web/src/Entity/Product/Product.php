@@ -21,4 +21,6 @@ abstract class Product extends Entity
      */
     public ?array $priceDefinitions;
     public Cost $cost;
+    /** @var Inventory[] */
+    public ?array $inventories;
 }
