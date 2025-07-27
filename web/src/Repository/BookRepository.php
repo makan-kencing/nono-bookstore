@@ -22,7 +22,7 @@ readonly class BookRepository extends Repository
         $stmt = $query->createQuery($this->conn);
         $stmt->execute();
 
-        $rowMapper = new BookRowMapper('book.');
+        $rowMapper = new BookRowMapper();
         return $rowMapper->map($stmt);
     }
 }

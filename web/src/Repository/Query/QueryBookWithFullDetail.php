@@ -5,6 +5,16 @@ declare(strict_types=1);
 namespace App\Repository\Query;
 
 use App\Entity\Book\Book;
+use App\Repository\Mapper\AuthorDefinitionRowMapper;
+use App\Repository\Mapper\AuthorRowMapper;
+use App\Repository\Mapper\BookImageRowMapper;
+use App\Repository\Mapper\BookRowMapper;
+use App\Repository\Mapper\CategoryDefinitionRowMapper;
+use App\Repository\Mapper\CategoryRowMapper;
+use App\Repository\Mapper\RatingRowMapper;
+use App\Repository\Mapper\ReplyRowMapper;
+use App\Repository\Mapper\SeriesRowMapper;
+use App\Repository\Mapper\UserRowMapper;
 use PDO;
 use PDOStatement;
 
@@ -15,60 +25,65 @@ class QueryBookWithFullDetail extends Query
 {
     public string $isbn;
 
-    #[\Override] public function createQuery(PDO $pdo): PDOStatement
+    public function createQuery(PDO $pdo, string $prefix = ''): PDOStatement
     {
-        $stmt = $pdo->prepare('
-            SELECT b.id                `book.id`,
-                   b.slug              `book.slug`,
-                   b.isbn              `book.isbn`,
-                   b.title             `book.title`,
-                   b.description       `book.description`,
-                   b.publisher         `book.publisher`,
-                   b.published_date    `book.publishedDate`,
-                   b.number_of_pages   `book.numberOfPages`,
-                   b.language          `book.language`,
-                   b.dimensions        `book.dimensions`,
-                   bi.id               `book.images.id`,
-                   bi.image_url        `book.images.imageUrl`,
-                   a.id                `book.authors.author.id`,
-                   a.slug              `book.authors.author.slug`,
-                   a.name              `book.authors.author.name`,
-                   a.description       `book.authors.author.description`,
-                   ad.type             `book.authors.type`,
-                   ad.comment          `book.authors.comment`,
-                   c.id                `book.categories.category.id`,
-                   c.slug              `book.categories.category.slug`,
-                   c.name              `book.categories.category.name`,
-                   c.description       `book.categories.category.description`,
-                   c.parent_id         `book.categories.category.parent.id`,
-                   cd.is_primary       `book.categories.isPrimary`,
-                   cd.comment          `book.categories.comment`,
-                   cd.from_date        `book.categories.fromDate`,
-                   cd.thru_date        `book.categories.thruDate`,
-                   s.id                `book.series.id`,
-                   s.slug              `book.series.slug`,
-                   s.name              `book.series.name`,
-                   s.description       `book.series.description`,
-                   r.id                `book.ratings.id`,
-                   r.rating            `book.ratings.rating`,
-                   r.title             `book.ratings.title`,
-                   r.content           `book.ratings.content`,
-                   r.rated_at          `book.ratings.ratedAt`,
-                   ru.id               `book.ratings.user.id`,
-                   ru.username         `book.ratings.user.username`,
-                   ru.email            `book.ratings.user.email`,
-                   ru.hashed_password  `book.ratings.user.hashedPassword`,
-                   ru.role             `book.ratings.user.role`,
-                   ru.is_verified      `book.ratings.user.isVerified`,
-                   rr.id               `book.ratings.replies.id`,
-                   rr.content          `book.ratings.replies.content`,
-                   rr.replied_at       `book.ratings.replies.repliedAt`,
-                   rru.id              `book.ratings.replies.user.id`,
-                   rru.username        `book.ratings.replies.user.username`,
-                   rru.email           `book.ratings.replies.user.email`,
-                   rru.hashed_password `book.ratings.replies.user.hashedPassword`,
-                   rru.role            `book.ratings.replies.user.role`,
-                   rru.is_verified     `book.ratings.replies.user.isVerified`
+        $c = function (string $s) {
+            return $s;
+        };
+
+        // phpcs:disable
+        $stmt = $pdo->prepare("
+            SELECT b.id                `$prefix{$c(BookRowMapper::ID)}`,
+                   b.slug              `$prefix{$c(BookRowMapper::SLUG)}`,
+                   b.isbn              `$prefix{$c(BookRowMapper::ISBN)}`,
+                   b.title             `$prefix{$c(BookRowMapper::TITLE)}`,
+                   b.description       `$prefix{$c(BookRowMapper::DESCRIPTION)}`,
+                   b.publisher         `$prefix{$c(BookRowMapper::PUBLISHER)}`,
+                   b.published_date    `$prefix{$c(BookRowMapper::PUBLISHED_DATE)}`,
+                   b.number_of_pages   `$prefix{$c(BookRowMapper::NUMBER_OF_PAGES)}`,
+                   b.language          `$prefix{$c(BookRowMapper::LANGUAGE)}`,
+                   b.dimensions        `$prefix{$c(BookRowMapper::DIMENSION)}`,
+                   bi.id               `$prefix{$c(BookRowMapper::IMAGES)}{$c(BookImageRowMapper::ID)}`,
+                   bi.image_url        `$prefix{$c(BookRowMapper::IMAGES)}{$c(BookImageRowMapper::IMAGE_URL)}`,
+                   a.id                `$prefix{$c(BookRowMapper::AUTHORS)}{$c(AuthorDefinitionRowMapper::AUTHOR)}{$c(AuthorRowMapper::ID)}`,
+                   a.slug              `$prefix{$c(BookRowMapper::AUTHORS)}{$c(AuthorDefinitionRowMapper::AUTHOR)}{$c(AuthorRowMapper::SLUG)}`,
+                   a.name              `$prefix{$c(BookRowMapper::AUTHORS)}{$c(AuthorDefinitionRowMapper::AUTHOR)}{$c(AuthorRowMapper::NAME)}`,
+                   a.description       `$prefix{$c(BookRowMapper::AUTHORS)}{$c(AuthorDefinitionRowMapper::AUTHOR)}{$c(AuthorRowMapper::DESCRIPTION)}`,
+                   ad.type             `$prefix{$c(BookRowMapper::AUTHORS)}{$c(AuthorDefinitionRowMapper::TYPE)}`,
+                   ad.comment          `$prefix{$c(BookRowMapper::AUTHORS)}{$c(AuthorDefinitionRowMapper::COMMENT)}`,
+                   c.id                `$prefix{$c(BookRowMapper::CATEGORIES)}{$c(CategoryDefinitionRowMapper::CATEGORY)}{$c(CategoryRowMapper::ID)}`,
+                   c.slug              `$prefix{$c(BookRowMapper::CATEGORIES)}{$c(CategoryDefinitionRowMapper::CATEGORY)}{$c(CategoryRowMapper::SLUG)}`,
+                   c.name              `$prefix{$c(BookRowMapper::CATEGORIES)}{$c(CategoryDefinitionRowMapper::CATEGORY)}{$c(CategoryRowMapper::NAME)}`,
+                   c.description       `$prefix{$c(BookRowMapper::CATEGORIES)}{$c(CategoryDefinitionRowMapper::CATEGORY)}{$c(CategoryRowMapper::DESCRIPTION)}`,
+                   c.parent_id         `$prefix{$c(BookRowMapper::CATEGORIES)}{$c(CategoryDefinitionRowMapper::CATEGORY)}{$c(CategoryRowMapper::PARENT)}{$c(CategoryRowMapper::ID)}`,
+                   cd.is_primary       `$prefix{$c(BookRowMapper::CATEGORIES)}{$c(CategoryDefinitionRowMapper::IS_PRIMARY)}`,
+                   cd.comment          `$prefix{$c(BookRowMapper::CATEGORIES)}{$c(CategoryDefinitionRowMapper::COMMENT)}`,
+                   cd.from_date        `$prefix{$c(BookRowMapper::CATEGORIES)}{$c(CategoryDefinitionRowMapper::FROM_DATE)}`,
+                   cd.thru_date        `$prefix{$c(BookRowMapper::CATEGORIES)}{$c(CategoryDefinitionRowMapper::THRU_DATE)}`,
+                   s.id                `$prefix{$c(BookRowMapper::SLUG)}{$c(SeriesRowMapper::ID)}`,
+                   s.slug              `$prefix{$c(BookRowMapper::SLUG)}{$c(SeriesRowMapper::SLUG)}`,
+                   s.name              `$prefix{$c(BookRowMapper::SLUG)}{$c(SeriesRowMapper::NAME)}`,
+                   s.description       `$prefix{$c(BookRowMapper::SLUG)}{$c(SeriesRowMapper::DESCRIPTION)}`,
+                   r.id                `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::ID)}`,
+                   r.rating            `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::RATING)}`,
+                   r.title             `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::TITLE)}`,
+                   r.content           `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::CONTENT)}`,
+                   r.rated_at          `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::RATED_AT)}`,
+                   ru.id               `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::USER)}{$c(UserRowMapper::ID)}`,
+                   ru.username         `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::USER)}{$c(UserRowMapper::USERNAME)}`,
+                   ru.email            `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::USER)}{$c(UserRowMapper::EMAIL)}`,
+                   ru.hashed_password  `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::USER)}{$c(UserRowMapper::HASHED_PASSWORD)}`,
+                   ru.role             `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::USER)}{$c(UserRowMapper::ROLE)}`,
+                   ru.is_verified      `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::USER)}{$c(UserRowMapper::IS_VERIFIED)}`,
+                   rr.id               `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::REPLIES)}{$c(ReplyRowMapper::ID)}`,
+                   rr.content          `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::REPLIES)}{$c(ReplyRowMapper::CONTENT)}`,
+                   rr.replied_at       `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::REPLIES)}{$c(ReplyRowMapper::REPLIED_AT)}`,
+                   rru.id              `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::REPLIES)}{$c(ReplyRowMapper::USER)}{$c(UserRowMapper::ID)}`,
+                   rru.username        `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::REPLIES)}{$c(ReplyRowMapper::USER)}{$c(UserRowMapper::USERNAME)}`,
+                   rru.email           `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::REPLIES)}{$c(ReplyRowMapper::USER)}{$c(UserRowMapper::EMAIL)}`,
+                   rru.hashed_password `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::REPLIES)}{$c(ReplyRowMapper::USER)}{$c(UserRowMapper::HASHED_PASSWORD)}`,
+                   rru.role            `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::REPLIES)}{$c(ReplyRowMapper::USER)}{$c(UserRowMapper::ROLE)}`,
+                   rru.is_verified     `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::REPLIES)}{$c(ReplyRowMapper::USER)}{$c(UserRowMapper::IS_VERIFIED)}`
             FROM book b
                      LEFT JOIN book_image bi on b.id = bi.book_id
                      LEFT JOIN author_definition ad on b.id = ad.book_id
@@ -81,9 +96,10 @@ class QueryBookWithFullDetail extends Query
                      LEFT JOIN reply rr on r.id = rr.rating_id
                      LEFT JOIN user rru on rr.user_id = rru.id
             WHERE isbn = :isbn
-        ');
+        ");
+        // phpcs:enable
 
-        $stmt->bindParam(':isbn', $this->isbn);
+        $stmt->bindValue(':isbn', $this->isbn);
         return $stmt;
     }
 }
