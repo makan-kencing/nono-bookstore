@@ -64,7 +64,7 @@ class CategoryDefinitionRowMapper extends RowMapper
     {
         $this->getCategoryRowMapper()->mapOneToOne($row, $object->category);
         $this->getBookRowMapper()->mapOneToOne($row, $object->book);
-        $object->isPrimary = $this->getColumn($row, self::IS_PRIMARY);
+        $object->isPrimary = (bool)$this->getColumn($row, self::IS_PRIMARY);
         $object->comment = $this->getColumn($row, self::COMMENT);
         $object->fromDate = DateTime::createFromFormat(
             'Y-m-d H:i:s',
