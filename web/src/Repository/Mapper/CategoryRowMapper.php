@@ -26,13 +26,9 @@ readonly class CategoryRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function mapRow(array $row, string $prefix = ''): ?Category
+    public function mapRow(array $row, string $prefix = ''): Category
     {
-        $id = $row[$prefix . 'id'] ?? null;
-        if ($id == null) {
-            return null;
-        }
-
+        $id = $row[$prefix . 'id'];
         $category = new Category();
         $category->id = $id;
         try {

@@ -26,13 +26,9 @@ readonly class BookImageRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function mapRow(array $row, string $prefix = ''): ?BookImage
+    public function mapRow(array $row, string $prefix = ''): BookImage
     {
-        $id = $row[$prefix . 'id'] ?? null;
-        if ($id == null) {
-            return null;
-        }
-
+        $id = $row[$prefix . 'id'];
         $bookImage = new BookImage();
         $bookImage->id = $id;
         try {

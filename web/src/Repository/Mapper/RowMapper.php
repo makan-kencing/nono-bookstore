@@ -6,12 +6,15 @@ namespace App\Repository\Mapper;
 
 use PDOStatement;
 use Throwable;
+use OutOfRangeException;
 
 /**
  * @template T
  */
 abstract readonly class RowMapper
 {
+    public const string ID = 'id';
+
     /**
      * Consume a result set to return a list of T
      *
@@ -26,7 +29,8 @@ abstract readonly class RowMapper
      *
      * @param array<int|string,mixed> $row
      * @param string $prefix
-     * @return ?T
+     * @return T
+     * @throws OutOfRangeException
      */
     abstract public function mapRow(array $row, string $prefix = ''): mixed;
 
@@ -38,5 +42,44 @@ abstract readonly class RowMapper
     protected function isInvalidArrayAccess(Throwable $e): bool
     {
         return str_contains($e->getMessage(), 'Undefined array key');
+    }
+
+    /**
+     * Utility function for easily mapping one-to-many entities
+     *
+     * @template K
+     * @param array<int|string, mixed> $row
+     * @param ?array<K> &$attribute
+     * @param RowMapper<K> $mapper
+     * @param string $prefix
+     * @param ?callable(K): void $backreference
+     * @param-out array<K> $attribute
+     * @return void
+     */
+    public static function mapOneToMany(
+        array $row,
+        ?array &$attribute,
+        RowMapper $mapper,
+        string $prefix = '',
+        ?callable $backreference = null
+    ): void {
+        // initialize array if not already
+        $attribute ??= [];
+
+        $id = $row[$prefix . $mapper::ID] ?? null;
+        if ($id) {
+            // check if already defined
+            $child = $attribute[$id] ?? null;
+
+            // if not, map it
+            if ($child == null) {
+                $child = $mapper->mapRow($row, prefix: $prefix);
+                if ($backreference) {
+                    $backreference($child);
+                }
+
+                $attribute[$id] = $child;
+            }
+        }
     }
 }

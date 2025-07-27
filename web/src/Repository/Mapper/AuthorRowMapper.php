@@ -26,13 +26,9 @@ readonly class AuthorRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function mapRow(array $row, string $prefix = ''): ?Author
+    public function mapRow(array $row, string $prefix = ''): Author
     {
-        $id = $row[$prefix . 'id'] ?? null;
-        if ($id == null) {
-            return null;
-        }
-
+        $id = $row[$prefix . 'id'];
         $author = new Author();
         $author->id = $id;
         try {

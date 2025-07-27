@@ -34,13 +34,9 @@ readonly class ReplyRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function mapRow(array $row, string $prefix = ''): ?Reply
+    public function mapRow(array $row, string $prefix = ''): Reply
     {
-        $id = $row[$prefix . 'id'] ?? null;
-        if ($id == null) {
-            return null;
-        }
-
+        $id = $row[$prefix . 'id'];
         $reply = new Reply();
         $reply->id = $id;
         try {

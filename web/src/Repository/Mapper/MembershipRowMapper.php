@@ -27,13 +27,9 @@ readonly class MembershipRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function mapRow(array $row, string $prefix = ''): ?Membership
+    public function mapRow(array $row, string $prefix = ''): Membership
     {
-        $id = $row[$prefix . 'id'] ?? null;
-        if ($id == null) {
-            return null;
-        }
-
+        $id = $row[$prefix . 'id'];
         $membership = new Membership();
         $membership->id = $id;
         try {

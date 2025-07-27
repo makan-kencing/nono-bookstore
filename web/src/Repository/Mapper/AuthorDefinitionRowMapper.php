@@ -14,6 +14,9 @@ use RuntimeException;
  */
 readonly class AuthorDefinitionRowMapper extends RowMapper
 {
+    public const string ID = self::AUTHOR . AuthorRowMapper::ID;
+    public const string AUTHOR = 'author.';
+
     private AuthorRowMapper $authorRowMapper;
 
     public function __construct()
@@ -33,7 +36,7 @@ readonly class AuthorDefinitionRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function mapRow(array $row, string $prefix = ''): ?AuthorDefinition
+    public function mapRow(array $row, string $prefix = ''): AuthorDefinition
     {
         $authorDefinition = new AuthorDefinition();
 

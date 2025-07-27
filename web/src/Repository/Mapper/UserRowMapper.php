@@ -48,13 +48,9 @@ readonly class UserRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function mapRow(array $row, string $prefix = ''): ?User
+    public function mapRow(array $row, string $prefix = ''): User
     {
-        $id = $row[$prefix . 'id'] ?? null;
-        if ($id == null) {
-            return null;
-        }
-
+        $id = $row[$prefix . 'id'];
         $user = new User();
         $user->id = $id;
         try {

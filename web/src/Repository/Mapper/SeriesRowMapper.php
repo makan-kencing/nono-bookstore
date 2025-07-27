@@ -26,13 +26,9 @@ readonly class SeriesRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function mapRow(array $row, string $prefix = ''): ?Series
+    public function mapRow(array $row, string $prefix = ''): Series
     {
-        $id = $row[$prefix . 'id'] ?? null;
-        if ($id == null) {
-            return null;
-        }
-
+        $id = $row[$prefix . 'id'];
         $series = new Series();
         $series->id = $id;
         try {

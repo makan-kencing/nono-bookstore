@@ -15,6 +15,8 @@ use Throwable;
  */
 readonly class RatingRowMapper extends RowMapper
 {
+    public const string REPLIES = 'replies.';
+
     private UserRowMapper $userRowMapper;
 
     public function __construct()
@@ -34,13 +36,9 @@ readonly class RatingRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function mapRow(array $row, string $prefix = ''): ?Rating
+    public function mapRow(array $row, string $prefix = ''): Rating
     {
-        $id = $row[$prefix . 'id'] ?? null;
-        if ($id == null) {
-            return null;
-        }
-
+        $id = $row[$prefix . 'id'];
         $rating = new Rating();
         $rating->id = $id;
         try {

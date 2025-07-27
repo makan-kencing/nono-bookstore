@@ -26,13 +26,9 @@ readonly class UserProfileRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function mapRow(array $row, string $prefix = ''): ?UserProfile
+    public function mapRow(array $row, string $prefix = ''): UserProfile
     {
-        $id = $row[$prefix . 'id'] ?? null;
-        if ($id == null) {
-            return null;
-        }
-
+        $id = $row[$prefix . 'id'];
         $userProfile = new UserProfile();
         $userProfile->id = $id;
         try {

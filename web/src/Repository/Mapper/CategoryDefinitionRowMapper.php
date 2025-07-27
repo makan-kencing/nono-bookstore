@@ -26,7 +26,7 @@ readonly class CategoryDefinitionRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function mapRow(array $row, string $prefix = ''): ?CategoryDefinition
+    public function mapRow(array $row, string $prefix = ''): CategoryDefinition
     {
         $categoryRowMapper = new CategoryRowMapper();
 
