@@ -9,7 +9,7 @@ use App\Entity\ABC\Entity;
 /**
  * @phpstan-require-extends Entity
  */
-trait Commetable
+trait Commentable
 {
     public ?string $comment;
 }
