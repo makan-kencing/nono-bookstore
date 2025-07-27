@@ -61,9 +61,13 @@ class AuthorDefinitionRowMapper extends RowMapper
      */
     public function bindProperties(mixed $object, array $row): void
     {
-        $this->getBookRowMapper()->mapOneToOne($row, $object->book);
-        $this->getAuthorRowMapper()->mapOneToOne($row, $object->author);
         $object->type = AuthorDefinitionType::{$this->getColumn($row, self::TYPE)};
         $object->comment = $this->getColumn($row, self::COMMENT);
+        if ($v = $this->getBookRowMapper()->mapRowOrNull($row)) {
+            $object->book = $v;
+        }
+        if ($v = $this->getAuthorRowMapper()->mapRowOrNull($row)) {
+            $object->author = $v;
+        }
     }
 }

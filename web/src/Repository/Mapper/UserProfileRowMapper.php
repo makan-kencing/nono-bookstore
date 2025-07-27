@@ -33,7 +33,9 @@ class UserProfileRowMapper extends RowMapper
     public function mapRow(array $row): UserProfile
     {
         $id = $this->getColumn($row, self::ID);
-        assert(is_int($id));
+        if (!is_int($id)) {
+            throw new OutOfBoundsException();
+        }
 
         try {
             $userProfile = new UserProfile();

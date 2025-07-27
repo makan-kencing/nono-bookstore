@@ -60,7 +60,9 @@ class RatingRowMapper extends RowMapper
     public function mapRow(array $row): Rating
     {
         $id = $this->getColumn($row, self::ID);
-        assert(is_int($id));
+        if (!is_int($id)) {
+            throw new OutOfBoundsException();
+        }
 
         try {
             $rating = new Rating();
@@ -79,8 +81,6 @@ class RatingRowMapper extends RowMapper
      */
     public function bindProperties(mixed $object, array $row): void
     {
-        $this->getUserRowMapper()->mapOneToOne($row, $object->user);
-        $this->getBookRowMapper()->mapOneToOne($row, $object->book);
         $object->rating = $this->getColumn($row, self::RATING);
         $object->title = $this->getColumn($row, self::TITLE);
         $object->content = $this->getColumn($row, self::CONTENT);
@@ -88,5 +88,11 @@ class RatingRowMapper extends RowMapper
             'Y-m-d H:i:s',
             $this->getColumn($row, self::RATED_AT)
         );
+        if ($v = $this->getUserRowMapper()->mapRowOrNull($row)) {
+            $object->user = $v;
+        }
+        if ($v = $this->getBookRowMapper()->mapRowOrNull($row)) {
+            $object->book = $v;
+        }
     }
 }

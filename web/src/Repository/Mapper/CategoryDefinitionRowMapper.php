@@ -63,8 +63,6 @@ class CategoryDefinitionRowMapper extends RowMapper
      */
     public function bindProperties(mixed $object, array $row): void
     {
-        $this->getCategoryRowMapper()->mapOneToOne($row, $object->category);
-        $this->getBookRowMapper()->mapOneToOne($row, $object->book);
         $object->isPrimary = (bool)$this->getColumn($row, self::IS_PRIMARY);
         $object->comment = $this->getColumn($row, self::COMMENT);
         $object->fromDate = DateTime::createFromFormat(
@@ -74,5 +72,11 @@ class CategoryDefinitionRowMapper extends RowMapper
         $object->thruDate = ($v = $this->getColumn($row, self::THRU_DATE))
             ? DateTime::createFromFormat('Y-m-d H:i:s', $v)
             : null;
+        if ($v = $this->getCategoryRowMapper()->mapRowOrNull($row)) {
+            $object->category = $v;
+        }
+        if ($v = $this->getBookRowMapper()->mapRowOrNull($row)) {
+            $object->book = $v;
+        }
     }
 }

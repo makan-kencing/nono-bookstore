@@ -40,6 +40,21 @@ abstract class RowMapper
     abstract public function mapRow(array $row): mixed;
 
     /**
+     * Map a row from PDOStatement into an instance of T.
+     *
+     * @param array<int|string, mixed> $row
+     * @return ?T
+     */
+    public function mapRowOrNull(array $row): mixed
+    {
+        try {
+            return $this->mapRow($row);
+        } catch (OutOfBoundsException) {
+            return null;
+        }
+    }
+
+    /**
      * Utility function for easily mapping one-to-many entities
      *
      * @param array<int|string, mixed> $row
@@ -80,36 +95,6 @@ abstract class RowMapper
     }
 
     /**
-     * Map one-to-one relationship if exists, else is unassigned.
-     *
-     * @param array<int|string, mixed> $row
-     * @param T $attribute
-     * @param ?callable(T): void $backreference
-     * @param (callable(T): void)[] $nested
-     * @return void
-     */
-    public function mapOneToOne(
-        array $row,
-        mixed &$attribute,
-        ?callable $backreference = null,
-        array $nested = []
-    ): void {
-        $id = $row[$this->prefix . static::ID] ?? null;
-        if ($id) {
-            $child = $this->mapRow($row);
-            if ($backreference) {
-                $backreference($child);
-            }
-
-            $attribute = $child;
-
-            foreach ($nested as $f) {
-                $f($child);
-            }
-        }
-    }
-
-    /**
      * @param T $object
      * @param array<int|string, mixed> $row
      * @return void
@@ -120,14 +105,18 @@ abstract class RowMapper
     /**
      * A utility function to get the column by name prefixed by prefix.
      *
+     * @template TKey
      * @template TValue
-     * @param array<int|string, TValue> $row
-     * @param string $key
+     * @param array<TKey, TValue> $row
+     * @param TValue $key
      * @return ?TValue
      * @throws OutOfBoundsException
      */
-    public function getColumn(array $row, string $key): mixed
+    public function getColumn(array $row, mixed $key): mixed
     {
-        return $row[$this->prefix . $key] ?? throw new OutOfBoundsException();
+        if (!array_key_exists($this->prefix . $key, $row)) {
+            throw new OutOfBoundsException("`$this->prefix$key` is not found.");
+        }
+        return $row[$this->prefix . $key];
     }
 }

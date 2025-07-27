@@ -65,7 +65,9 @@ class UserRowMapper extends RowMapper
     public function mapRow(array $row): User
     {
         $id = $this->getColumn($row, self::ID);
-        assert(is_int($id));
+        if (!is_int($id)) {
+            throw new OutOfBoundsException();
+        }
 
         try {
             $user = new User();
@@ -89,7 +91,7 @@ class UserRowMapper extends RowMapper
         $object->hashedPassword = $this->getColumn($row, self::USERNAME);
         $object->role = UserRole::{$this->getColumn($row, self::USERNAME)};
         $object->isVerified = (bool)$this->getColumn($row, self::USERNAME);
-        $this->getUserProfileRowMapper()->mapOneToOne($row, $object->profile);
-        $this->getMembershipRowMapper()->mapOneToOne($row, $object->membership);
+        $object->profile = $this->getUserProfileRowMapper()->mapRowOrNull($row);
+        $object->membership = $this->getMembershipRowMapper()->mapRowOrNull($row);
     }
 }

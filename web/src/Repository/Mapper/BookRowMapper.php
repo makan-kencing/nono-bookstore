@@ -142,7 +142,9 @@ class BookRowMapper extends RowMapper
     public function mapRow(array $row): Book
     {
         $id = $this->getColumn($row, self::ID);
-        assert(is_int($id));
+        if (!is_int($id)) {
+            throw new OutOfBoundsException();
+        }
 
         try {
             $book = new Book();
@@ -174,6 +176,6 @@ class BookRowMapper extends RowMapper
         $object->numberOfPages = $this->getColumn($row, self::NUMBER_OF_PAGES);
         $object->language = $this->getColumn($row, self::LANGUAGE);
         $object->dimensions = $this->getColumn($row, self::DIMENSION);
-        $this->getSeriesRowMapper()->mapOneToOne($row, $object->series);
+        $object->series = $this->getSeriesRowMapper()->mapRowOrNull($row);
     }
 }

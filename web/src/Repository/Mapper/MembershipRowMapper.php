@@ -35,7 +35,9 @@ class MembershipRowMapper extends RowMapper
     public function mapRow(array $row): Membership
     {
         $id = $this->getColumn($row, self::ID);
-        assert(is_int($id));
+        if (!is_int($id)) {
+            throw new OutOfBoundsException();
+        }
 
         try {
             $membership = new Membership();

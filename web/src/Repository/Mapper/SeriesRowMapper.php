@@ -35,7 +35,9 @@ class SeriesRowMapper extends RowMapper
     public function mapRow(array $row): Series
     {
         $id = $this->getColumn($row, self::ID);
-        assert(is_int($id));
+        if (!is_int($id)) {
+            throw new OutOfBoundsException();
+        }
 
         try {
             $series = new Series();

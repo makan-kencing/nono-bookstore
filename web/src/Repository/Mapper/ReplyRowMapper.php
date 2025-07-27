@@ -50,7 +50,9 @@ class ReplyRowMapper extends RowMapper
     public function mapRow(array $row): Reply
     {
         $id = $this->getColumn($row, self::ID);
-        assert(is_int($id));
+        if (!is_int($id)) {
+            throw new OutOfBoundsException();
+        }
 
         try {
             $reply = new Reply();
@@ -70,12 +72,16 @@ class ReplyRowMapper extends RowMapper
      */
     public function bindProperties(mixed $object, array $row): void
     {
-        $this->getUserRowMapper()->mapOneToOne($row, $object->user);
-        $this->getRatingRowMapper()->mapOneToOne($row, $object->rating);
         $object->content = $this->getColumn($row, self::CONTENT);
         $object->repliedAt = DateTime::createFromFormat(
             'Y-m-d H:i:s',
             $this->getColumn($row, self::REPLIED_AT)
         );
+        if ($v = $this->getUserRowMapper()->mapRowOrNull($row)) {
+            $object->user = $v;
+        }
+        if ($v = $this->getRatingRowMapper()->mapRowOrNull($row)) {
+            $object->rating = $v;
+        }
     }
 }

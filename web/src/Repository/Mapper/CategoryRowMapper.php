@@ -53,7 +53,9 @@ class CategoryRowMapper extends RowMapper
     public function mapRow(array $row): Category
     {
         $id = $this->getColumn($row, self::ID);
-        assert(is_int($id));
+        if (!is_int($id)) {
+            throw new OutOfBoundsException();
+        }
 
         try {
             $category = new Category();
@@ -76,6 +78,6 @@ class CategoryRowMapper extends RowMapper
         $object->slug = $this->getColumn($row, self::SLUG);
         $object->name = $this->getColumn($row, self::NAME);
         $object->description = $this->getColumn($row, self::DESCRIPTION);
-        $this->getParentCategoryRowMapper()->mapOneToOne($row, $object->parent);
+        $object->parent = $this->getParentCategoryRowMapper()->mapRowOrNull($row);
     }
 }

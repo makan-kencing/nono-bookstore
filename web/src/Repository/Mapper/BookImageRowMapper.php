@@ -32,11 +32,14 @@ class BookImageRowMapper extends RowMapper
     public function mapRow(array $row): BookImage
     {
         $id = $this->getColumn($row, self::ID);
-        assert(is_int($id));
+        if (!is_int($id)) {
+            throw new OutOfBoundsException();
+        }
 
         try {
             $bookImage = new BookImage();
             $bookImage->id = $id;
+            $this->bindProperties($bookImage, $row);
         } catch (OutOfBoundsException) {
             $bookImage = new BookImage();
             $bookImage->id = $id;
