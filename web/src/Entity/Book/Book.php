@@ -29,7 +29,7 @@ class Book extends Entity
     /** @var Rating[] */
     public ?array $ratings;
     public string $publisher;
-    public DateTime $publishedAt;
+    public DateTime $publishedDate;
     public int $numberOfPages;
     public ?Series $series;
     public string $language;
