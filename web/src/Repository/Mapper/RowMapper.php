@@ -83,7 +83,7 @@ abstract class RowMapper
      * Map one-to-one relationship if exists, else is unassigned.
      *
      * @param array<int|string, mixed> $row
-     * @param ?T $attribute
+     * @param T $attribute
      * @param ?callable(T): void $backreference
      * @param (callable(T): void)[] $nested
      * @return void
