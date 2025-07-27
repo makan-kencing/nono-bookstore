@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Repository\Mapper;
 
+use App\Entity\ABC\Entity;
 use PDOStatement;
 use Throwable;
 use OutOfRangeException;
 
 /**
- * @template T
+ * @template T of Entity
  */
 abstract readonly class RowMapper
 {
@@ -47,7 +48,7 @@ abstract readonly class RowMapper
     /**
      * Utility function for easily mapping one-to-many entities
      *
-     * @template K
+     * @template K of Entity
      * @param array<int|string, mixed> $row
      * @param ?array<K> &$attribute
      * @param RowMapper<K> $mapper
