@@ -14,6 +14,7 @@ use RuntimeException;
  */
 class CategoryDefinitionRowMapper extends RowMapper
 {
+    public const string ID = self::CATEGORY . CategoryRowMapper::ID;
     public const string IS_PRIMARY = 'isPrimary';
     public const string COMMENT = 'comment';
     public const string FROM_DATE = 'fromDate';

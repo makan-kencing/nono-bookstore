@@ -14,6 +14,7 @@ use RuntimeException;
  */
 class AuthorDefinitionRowMapper extends RowMapper
 {
+    public const string ID = self::AUTHOR . AuthorRowMapper::ID;
     public const string TYPE = 'type';
     public const string COMMENT = 'comment';
     public const string AUTHOR = 'author.';
