@@ -20,10 +20,22 @@ class CategoryRowMapper extends RowMapper
     public const string PARENT = 'parent.';
     public const string SUBCATEGORIES = 'subcategories.';
 
-    public function __construct(string $prefix = '')
+    private CategoryRowMapper $parentCategoryRowMapper;
+    private CategoryRowMapper $subcategoryRowMapper;
+
+    public function getParentCategoryRowMapper(): CategoryRowMapper
     {
-        parent::__construct($prefix);
-        // TODO: figure out how to include recursive mapper without crashing the server
+        $this->parentCategoryRowMapper ??= new CategoryRowMapper($this->prefix . self::PARENT);
+        return $this->parentCategoryRowMapper;
+    }
+
+    /**
+     * @return CategoryRowMapper
+     */
+    public function getSubcategoryRowMapper(): CategoryRowMapper
+    {
+        $this->subcategoryRowMapper ??= new CategoryRowMapper($this->prefix . self::SUBCATEGORIES);
+        return $this->subcategoryRowMapper;
     }
 
     /**
@@ -61,9 +73,9 @@ class CategoryRowMapper extends RowMapper
      */
     public function bindProperties(mixed $object, array $row): void
     {
-        // TODO: map parent category
         $object->slug = $this->getColumn($row, self::SLUG);
         $object->name = $this->getColumn($row, self::NAME);
         $object->description = $this->getColumn($row, self::DESCRIPTION);
+        $this->getParentCategoryRowMapper()->mapOneToOne($row, $object->parent);
     }
 }

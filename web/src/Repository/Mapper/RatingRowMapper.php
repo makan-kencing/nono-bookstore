@@ -23,16 +23,26 @@ class RatingRowMapper extends RowMapper
     public const string USER = 'user.';
     public const string BOOK = 'book.';
 
-    public ReplyRowMapper $replyRowMapper;
-    public UserRowMapper $userRowMapper;
-    public BookRowMapper $bookRowMapper;
+    private ReplyRowMapper $replyRowMapper;
+    private UserRowMapper $userRowMapper;
+    private BookRowMapper $bookRowMapper;
 
-    public function __construct(string $prefix)
+    public function getReplyRowMapper(): ReplyRowMapper
     {
-        parent::__construct($prefix);
-        $this->replyRowMapper = new ReplyRowMapper($prefix . self::REPLIES);
-        $this->userRowMapper = new UserRowMapper($prefix . self::USER);
-        $this->bookRowMapper = new BookRowMapper($prefix . self::BOOK);
+        $this->replyRowMapper ??= new ReplyRowMapper($this->prefix . self::REPLIES);
+        return $this->replyRowMapper;
+    }
+
+    public function getUserRowMapper(): UserRowMapper
+    {
+        $this->userRowMapper ??= new UserRowMapper($this->prefix . self::USER);
+        return $this->userRowMapper;
+    }
+
+    public function getBookRowMapper(): BookRowMapper
+    {
+        $this->bookRowMapper ??= new BookRowMapper($this->prefix . self::BOOK);
+        return $this->bookRowMapper;
     }
 
     /**
@@ -50,6 +60,7 @@ class RatingRowMapper extends RowMapper
     public function mapRow(array $row): Rating
     {
         $id = $this->getColumn($row, self::ID);
+        assert(is_int($id));
 
         try {
             $rating = new Rating();
@@ -68,8 +79,8 @@ class RatingRowMapper extends RowMapper
      */
     public function bindProperties(mixed $object, array $row): void
     {
-        $this->userRowMapper->mapOneToOne($row, $object->user);
-        $this->bookRowMapper->mapOneToOne($row, $object->book);
+        $this->getUserRowMapper()->mapOneToOne($row, $object->user);
+        $this->getBookRowMapper()->mapOneToOne($row, $object->book);
         $object->rating = $this->getColumn($row, self::RATING);
         $object->title = $this->getColumn($row, self::TITLE);
         $object->content = $this->getColumn($row, self::CONTENT);

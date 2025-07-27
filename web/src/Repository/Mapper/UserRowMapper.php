@@ -30,11 +30,16 @@ class UserRowMapper extends RowMapper
     private UserProfileRowMapper $userProfileRowMapper;
     private MembershipRowMapper $membershipRowMapper;
 
-    public function __construct(string $prefix = '')
+    public function getUserProfileRowMapper(): UserProfileRowMapper
     {
-        parent::__construct($prefix);
-        $this->userProfileRowMapper = new UserProfileRowMapper($prefix . self::PROFILE);
-        $this->membershipRowMapper = new MembershipRowMapper($prefix . self::MEMBERSHIP);
+        $this->userProfileRowMapper ??= new UserProfileRowMapper($this->prefix . self::PROFILE);
+        return $this->userProfileRowMapper;
+    }
+
+    public function getMembershipRowMapper(): MembershipRowMapper
+    {
+        $this->membershipRowMapper ??= new MembershipRowMapper($this->prefix . self::MEMBERSHIP);
+        return $this->membershipRowMapper;
     }
 
     /**
@@ -84,7 +89,7 @@ class UserRowMapper extends RowMapper
         $object->hashedPassword = $this->getColumn($row, self::USERNAME);
         $object->role = UserRole::{$this->getColumn($row, self::USERNAME)};
         $object->isVerified = (bool)$this->getColumn($row, self::USERNAME);
-        $this->userProfileRowMapper->mapOneToOne($row, $object->profile);
-        $this->membershipRowMapper->mapOneToOne($row, $object->membership);
+        $this->getUserProfileRowMapper()->mapOneToOne($row, $object->profile);
+        $this->getMembershipRowMapper()->mapOneToOne($row, $object->membership);
     }
 }

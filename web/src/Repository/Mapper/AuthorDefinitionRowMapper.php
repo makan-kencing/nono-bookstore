@@ -22,11 +22,16 @@ class AuthorDefinitionRowMapper extends RowMapper
     private AuthorRowMapper $authorRowMapper;
     private BookRowMapper $bookRowMapper;
 
-    public function __construct(string $prefix = '')
+    public function getAuthorRowMapper(): AuthorRowMapper
     {
-        parent::__construct($prefix);
-        $this->authorRowMapper = new AuthorRowMapper($prefix . self::AUTHOR);
-        $this->bookRowMapper = new BookRowMapper($prefix . self::BOOK);
+        $this->authorRowMapper ??= new AuthorRowMapper($this->prefix . self::AUTHOR);
+        return $this->authorRowMapper;
+    }
+
+    public function getBookRowMapper(): BookRowMapper
+    {
+        $this->bookRowMapper ??= new BookRowMapper($this->prefix . self::BOOK);
+        return $this->bookRowMapper;
     }
 
     /**
@@ -55,8 +60,8 @@ class AuthorDefinitionRowMapper extends RowMapper
      */
     public function bindProperties(mixed $object, array $row): void
     {
-        $this->bookRowMapper->mapOneToOne($row, $object->book);
-        $this->authorRowMapper->mapOneToOne($row, $object->author);
+        $this->getBookRowMapper()->mapOneToOne($row, $object->book);
+        $this->getAuthorRowMapper()->mapOneToOne($row, $object->author);
         $object->type = AuthorDefinitionType::{$this->getColumn($row, self::TYPE)};
         $object->comment = $this->getColumn($row, self::COMMENT);
     }

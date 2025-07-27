@@ -21,14 +21,19 @@ class CategoryDefinitionRowMapper extends RowMapper
     public const string CATEGORY = 'category.';
     public const string BOOK = 'book.';
 
-    public CategoryRowMapper $categoryRowMapper;
-    public BookRowMapper $bookRowMapper;
+    private CategoryRowMapper $categoryRowMapper;
+    private BookRowMapper $bookRowMapper;
 
-    public function __construct(string $prefix = '')
+    public function getCategoryRowMapper(): CategoryRowMapper
     {
-        parent::__construct($prefix);
-        $this->categoryRowMapper = new CategoryRowMapper($prefix . self::CATEGORY);
-        $this->bookRowMapper = new BookRowMapper($prefix . self::BOOK);
+        $this->categoryRowMapper ??= new CategoryRowMapper($this->prefix . self::CATEGORY);
+        return $this->categoryRowMapper;
+    }
+
+    public function getBookRowMapper(): BookRowMapper
+    {
+        $this->bookRowMapper ??= new BookRowMapper($this->prefix . self::BOOK);
+        return $this->bookRowMapper;
     }
 
     /**
@@ -57,8 +62,8 @@ class CategoryDefinitionRowMapper extends RowMapper
      */
     public function bindProperties(mixed $object, array $row): void
     {
-        $this->categoryRowMapper->mapOneToOne($row, $object->category);
-        $this->bookRowMapper->mapOneToOne($row, $object->book);
+        $this->getCategoryRowMapper()->mapOneToOne($row, $object->category);
+        $this->getBookRowMapper()->mapOneToOne($row, $object->book);
         $object->isPrimary = $this->getColumn($row, self::IS_PRIMARY);
         $object->comment = $this->getColumn($row, self::COMMENT);
         $object->fromDate = DateTime::createFromFormat(

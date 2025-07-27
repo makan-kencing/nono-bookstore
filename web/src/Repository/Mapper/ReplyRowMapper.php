@@ -20,14 +20,19 @@ class ReplyRowMapper extends RowMapper
     public const string USER = 'user.';
     public const string RATING = 'rating.';
 
-    public UserRowMapper $userRowMapper;
-    public RatingRowMapper $ratingRowMapper;
+    private UserRowMapper $userRowMapper;
+    private RatingRowMapper $ratingRowMapper;
 
-    public function __construct(string $prefix)
+    public function getUserRowMapper(): UserRowMapper
     {
-        parent::__construct($prefix);
-        $this->userRowMapper = new UserRowMapper($prefix . self::USER);
-        $this->ratingRowMapper = new RatingRowMapper($prefix . self::RATING);
+        $this->userRowMapper ??= new UserRowMapper($this->prefix . self::USER);
+        return $this->userRowMapper;
+    }
+
+    public function getRatingRowMapper(): RatingRowMapper
+    {
+        $this->ratingRowMapper ??= new RatingRowMapper($this->prefix . self::RATING);
+        return $this->ratingRowMapper;
     }
 
     /**
@@ -65,8 +70,8 @@ class ReplyRowMapper extends RowMapper
      */
     public function bindProperties(mixed $object, array $row): void
     {
-        $this->userRowMapper->mapOneToOne($row, $object->user);
-        $this->ratingRowMapper->mapOneToOne($row, $object->rating);
+        $this->getUserRowMapper()->mapOneToOne($row, $object->user);
+        $this->getRatingRowMapper()->mapOneToOne($row, $object->rating);
         $object->content = $this->getColumn($row, self::CONTENT);
         $object->repliedAt = DateTime::createFromFormat(
             'Y-m-d H:i:s',

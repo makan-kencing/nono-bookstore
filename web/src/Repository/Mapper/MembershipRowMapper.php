@@ -20,14 +20,6 @@ class MembershipRowMapper extends RowMapper
     public const string CARD_NO = 'cardNo';
     public const string USER = 'user.';
 
-    public UserRowMapper $userRowMapper;
-
-    public function __construct(string $prefix = '')
-    {
-        parent::__construct($prefix);
-        $this->userRowMapper = new UserRowMapper($prefix . self::USER);
-    }
-
     /**
      * @inheritDoc
      */
@@ -43,6 +35,8 @@ class MembershipRowMapper extends RowMapper
     public function mapRow(array $row): Membership
     {
         $id = $this->getColumn($row, self::ID);
+        assert(is_int($id));
+
         try {
             $membership = new Membership();
             $membership->id = $id;

@@ -34,20 +34,40 @@ class BookRowMapper extends RowMapper
     public const string RATINGS = 'ratings.';
     public const string SERIES = 'series.';
 
-    public AuthorDefinitionRowMapper $authorDefinitionRowMapper;
-    public BookImageRowMapper $bookImageRowMapper;
-    public CategoryDefinitionRowMapper $categoryDefinitionRowMapper;
-    public RatingRowMapper $ratingRowMapper;
-    public SeriesRowMapper $seriesRowMapper;
+    private AuthorDefinitionRowMapper $authorDefinitionRowMapper;
+    private BookImageRowMapper $bookImageRowMapper;
+    private CategoryDefinitionRowMapper $categoryDefinitionRowMapper;
+    private RatingRowMapper $ratingRowMapper;
+    private SeriesRowMapper $seriesRowMapper;
 
-    public function __construct(string $prefix = '')
+    public function getAuthorDefinitionRowMapper(): AuthorDefinitionRowMapper
     {
-        parent::__construct($prefix);
-        $this->authorDefinitionRowMapper = new AuthorDefinitionRowMapper($prefix . self::AUTHORS);
-        $this->bookImageRowMapper = new BookImageRowMapper($prefix . self::IMAGES);
-        $this->categoryDefinitionRowMapper = new CategoryDefinitionRowMapper($prefix . self::CATEGORIES);
-        $this->ratingRowMapper = new RatingRowMapper($prefix . self::RATINGS);
-        $this->seriesRowMapper = new SeriesRowMapper($prefix . self::SERIES);
+        $this->authorDefinitionRowMapper ??= new AuthorDefinitionRowMapper($this->prefix . self::AUTHORS);
+        return $this->authorDefinitionRowMapper;
+    }
+
+    public function getBookImageRowMapper(): BookImageRowMapper
+    {
+        $this->bookImageRowMapper ??= new BookImageRowMapper($this->prefix . self::IMAGES);
+        return $this->bookImageRowMapper;
+    }
+
+    public function getCategoryDefinitionRowMapper(): CategoryDefinitionRowMapper
+    {
+        $this->categoryDefinitionRowMapper ??= new CategoryDefinitionRowMapper($this->prefix . self::CATEGORIES);
+        return $this->categoryDefinitionRowMapper;
+    }
+
+    public function getRatingRowMapper(): RatingRowMapper
+    {
+        $this->ratingRowMapper ??= new RatingRowMapper($this->prefix . self::RATINGS);
+        return $this->ratingRowMapper;
+    }
+
+    public function getSeriesRowMapper(): SeriesRowMapper
+    {
+        $this->seriesRowMapper ??= new SeriesRowMapper($this->prefix . self::SERIES);
+        return $this->seriesRowMapper;
     }
 
     /**
@@ -63,7 +83,7 @@ class BookRowMapper extends RowMapper
                 $map,
                 nested: [  // maps the one-to-many
                     function (Book $book) use ($row) {
-                        $this->bookImageRowMapper->mapOneToMany(
+                        $this->getBookImageRowMapper()->mapOneToMany(
                             $row,
                             $book->images,
                             backreference: function (BookImage $image) use ($book) {
@@ -72,7 +92,7 @@ class BookRowMapper extends RowMapper
                         );
                     },
                     function (Book $book) use ($row) {
-                        $this->authorDefinitionRowMapper->mapOneToMany(
+                        $this->getAuthorDefinitionRowMapper()->mapOneToMany(
                             $row,
                             $book->authors,
                             backreference: function (AuthorDefinition $author) use ($book) {
@@ -81,7 +101,7 @@ class BookRowMapper extends RowMapper
                         );
                     },
                     function (Book $book) use ($row) {
-                        $this->categoryDefinitionRowMapper->mapOneToMany(
+                        $this->getCategoryDefinitionRowMapper()->mapOneToMany(
                             $row,
                             $book->categories,
                             backreference: function (CategoryDefinition $category) use ($book) {
@@ -90,7 +110,7 @@ class BookRowMapper extends RowMapper
                         );
                     },
                     function (Book $book) use ($row) {
-                        $this->ratingRowMapper->mapOneToMany(
+                        $this->getRatingRowMapper()->mapOneToMany(
                             $row,
                             $book->ratings,
                             backreference: function (Rating $rating) use ($book) {
@@ -98,7 +118,7 @@ class BookRowMapper extends RowMapper
                             },
                             nested: [
                                 function (Rating $rating) use ($row) {
-                                    $this->ratingRowMapper->replyRowMapper->mapOneToMany(
+                                    $this->getRatingRowMapper()->getReplyRowMapper()->mapOneToMany(
                                         $row,
                                         $rating->replies,
                                         backreference: function (Reply $reply) use ($rating) {
@@ -154,6 +174,6 @@ class BookRowMapper extends RowMapper
         $object->numberOfPages = $this->getColumn($row, self::NUMBER_OF_PAGES);
         $object->language = $this->getColumn($row, self::LANGUAGE);
         $object->dimensions = $this->getColumn($row, self::DIMENSION);
-        $this->seriesRowMapper->mapOneToOne($row, $object->series);
+        $this->getSeriesRowMapper()->mapOneToOne($row, $object->series);
     }
 }
