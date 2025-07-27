@@ -19,7 +19,7 @@ use PDOStatement;
  */
 class BookRowMapper extends RowMapper
 {
-    public const string SLUG = 'slug.';
+    public const string SLUG = 'slug';
     public const string ISBN = 'isbn';
     public const string TITLE = 'title';
     public const string DESCRIPTION = 'description';
