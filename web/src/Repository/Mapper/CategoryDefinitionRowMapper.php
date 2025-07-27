@@ -14,10 +14,27 @@ use RuntimeException;
  */
 readonly class CategoryDefinitionRowMapper extends RowMapper
 {
+    public const string IS_PRIMARY = 'isPrimary';
+    public const string COMMENT = 'comment';
+    public const string FROM_DATE = 'fromDate';
+    public const string THRU_DATE = 'thruDate';
+    public const string CATEGORY = 'category.';
+    public const string BOOK = 'book.';
+
+    public CategoryRowMapper $categoryRowMapper;
+    public BookRowMapper $bookRowMapper;
+
+    public function __construct(string $prefix = '')
+    {
+        parent::__construct($prefix);
+        $this->categoryRowMapper = new CategoryRowMapper($prefix . self::CATEGORY);
+        $this->bookRowMapper = new BookRowMapper($prefix . self::BOOK);
+    }
+
     /**
      * @inheritDoc
      */
-    public function map(PDOStatement $stmt, string $prefix = ''): array
+    public function map(PDOStatement $stmt): array
     {
         // TODO: Implement map() method.
         throw new RuntimeException('Not Implemented');
@@ -26,20 +43,30 @@ readonly class CategoryDefinitionRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function mapRow(array $row, string $prefix = ''): CategoryDefinition
+    public function mapRow(array $row): CategoryDefinition
     {
-        $categoryRowMapper = new CategoryRowMapper();
-
         $categoryDefinition = new CategoryDefinition();
 
-        $categoryDefinition->category = $categoryRowMapper->mapRow($row, prefix: $prefix . 'category.');
-        $categoryDefinition->isPrimary = (bool)$row[$prefix . 'isPrimary'];
-        $categoryDefinition->comment = $row[$prefix . 'comment'];
-        $categoryDefinition->fromDate = DateTime::createFromFormat('Y-m-d H:i:s', $row[$prefix . 'fromDate']);
-        $categoryDefinition->thruDate = isset($row[$prefix . 'thruDate'])
-            ? DateTime::createFromFormat('Y-m-d H:i:s', $row[$prefix . 'thruDate'])
-            : null;
+        $this->bindProperties($categoryDefinition, $row);
 
         return $categoryDefinition;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function bindProperties(mixed $object, array $row): void
+    {
+        $this->categoryRowMapper->mapOneToOne($row, $object->category);
+        $this->bookRowMapper->mapOneToOne($row, $object->book);
+        $object->isPrimary = $this->getColumn($row, self::IS_PRIMARY);
+        $object->comment = $this->getColumn($row, self::COMMENT);
+        $object->fromDate = DateTime::createFromFormat(
+            'Y-m-d H:i:s',
+            $this->getColumn($row, self::FROM_DATE)
+        );
+        $object->thruDate = ($v = $this->getColumn($row, self::THRU_DATE))
+            ? DateTime::createFromFormat('Y-m-d H:i:s', $v)
+            : null;
     }
 }

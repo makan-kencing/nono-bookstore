@@ -5,27 +5,35 @@ declare(strict_types=1);
 namespace App\Repository\Mapper;
 
 use App\Entity\Rating\Reply;
-use PDOStatement;
 use DateTime;
+use OutOfBoundsException;
+use PDOStatement;
 use RuntimeException;
-use Throwable;
 
 /**
  * @extends RowMapper<Reply>
  */
 readonly class ReplyRowMapper extends RowMapper
 {
-    private UserRowMapper $userRowMapper;
+    public const string CONTENT = 'content';
+    public const string REPLIED_AT = 'repliedAt';
+    public const string USER = 'user.';
+    public const string RATING = 'rating.';
 
-    public function __construct()
+    public UserRowMapper $userRowMapper;
+    public RatingRowMapper $ratingRowMapper;
+
+    public function __construct(string $prefix)
     {
-        $this->userRowMapper = new UserRowMapper();
+        parent::__construct($prefix);
+        $this->userRowMapper = new UserRowMapper($prefix . self::USER);
+        $this->ratingRowMapper = new RatingRowMapper($prefix . self::RATING);
     }
 
     /**
      * @inheritDoc
      */
-    public function map(PDOStatement $stmt, string $prefix = ''): array
+    public function map(PDOStatement $stmt): array
     {
         // TODO: Implement map() method.
         throw new RuntimeException('Not Implemented');
@@ -34,25 +42,35 @@ readonly class ReplyRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function mapRow(array $row, string $prefix = ''): Reply
+    public function mapRow(array $row): Reply
     {
-        $id = $row[$prefix . 'id'];
-        $reply = new Reply();
-        $reply->id = $id;
-        try {
-            $reply->user = $this->userRowMapper->mapRow($row, prefix: $prefix . 'user.');
-            $reply->content = $row[$prefix . 'content'];
-            $reply->repliedAt = DateTime::createFromFormat('Y-m-d H:i:s', $row[$prefix . 'repliedAt']);
-        } catch (Throwable $e) {
-            if (!$this->isInvalidArrayAccess($e)) {
-                throw $e;
-            }
+        $id = $this->getColumn($row, self::ID);
+        assert(is_int($id));
 
+        try {
+            $reply = new Reply();
+            $reply->id = $id;
+            $this->bindProperties($reply, $row);
+        } catch (OutOfBoundsException) {
             $reply = new Reply();
             $reply->id = $id;
             $reply->isLazy = true;
         }
 
         return $reply;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function bindProperties(mixed $object, array $row): void
+    {
+        $this->userRowMapper->mapOneToOne($row, $object->user);
+        $this->ratingRowMapper->mapOneToOne($row, $object->rating);
+        $object->content = $this->getColumn($row, self::CONTENT);
+        $object->repliedAt = DateTime::createFromFormat(
+            'Y-m-d H:i:s',
+            $this->getColumn($row, self::REPLIED_AT)
+        );
     }
 }

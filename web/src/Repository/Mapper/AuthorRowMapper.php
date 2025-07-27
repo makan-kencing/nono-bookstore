@@ -7,17 +7,22 @@ namespace App\Repository\Mapper;
 use App\Entity\Book\Author\Author;
 use PDOStatement;
 use RuntimeException;
-use Throwable;
+use OutOfBoundsException;
 
 /**
  * @extends RowMapper<Author>
  */
 readonly class AuthorRowMapper extends RowMapper
 {
+    public const string SLUG = 'slug';
+    public const string NAME = 'name';
+    public const string DESCRIPTION = 'description';
+    public const string BOOKS = 'books.';
+
     /**
      * @inheritDoc
      */
-    public function map(PDOStatement $stmt, string $prefix = ''): array
+    public function map(PDOStatement $stmt): array
     {
         // TODO: Implement map() method.
         throw new RuntimeException('Not Implemented');
@@ -26,25 +31,31 @@ readonly class AuthorRowMapper extends RowMapper
     /**
      * @inheritDoc
      */
-    public function mapRow(array $row, string $prefix = ''): Author
+    public function mapRow(array $row): Author
     {
-        $id = $row[$prefix . 'id'];
-        $author = new Author();
-        $author->id = $id;
-        try {
-            $author->slug = $row[$prefix . 'slug'];
-            $author->name = $row[$prefix . 'name'];
-            $author->description = $row[$prefix . 'description'];
-        } catch (Throwable $e) {
-            if (!$this->isInvalidArrayAccess($e)) {
-                throw $e;
-            }
+        $id = $this->getColumn($row, self::ID);
+        assert(is_int($id));
 
+        try {
+            $author = new Author();
+            $author->id = $id;
+            $this->bindProperties($author, $row);
+        } catch (OutOfBoundsException) {
             $author = new Author();
             $author->id = $id;
             $author->isLazy = true;
         }
 
         return $author;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function bindProperties(mixed $object, array $row): void
+    {
+        $object->slug = $this->getColumn($row, self::SLUG);
+        $object->name = $this->getColumn($row, self::NAME);
+        $object->description = $this->getColumn($row, self::DESCRIPTION);
     }
 }

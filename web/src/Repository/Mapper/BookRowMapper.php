@@ -11,136 +11,149 @@ use App\Entity\Book\Category\CategoryDefinition;
 use App\Entity\Rating\Rating;
 use App\Entity\Rating\Reply;
 use DateTime;
+use OutOfBoundsException;
 use PDOStatement;
-use Throwable;
 
 /**
  * @extends RowMapper<Book>
  */
 readonly class BookRowMapper extends RowMapper
 {
+    public const string SLUG = 'slug.';
+    public const string ISBN = 'isbn';
+    public const string TITLE = 'title';
+    public const string DESCRIPTION = 'description';
+    public const string PUBLISHER = 'publisher';
+    public const string PUBLISHED_AT = 'publishedAt';
+    public const string NUMBER_OF_PAGES = 'numberOfPages';
+    public const string LANGUAGE = 'language';
+    public const string DIMENSION = 'dimensions';
     public const string IMAGES = 'images.';
     public const string AUTHORS = 'authors.';
     public const string CATEGORIES = 'categories.';
     public const string RATINGS = 'ratings.';
+    public const string SERIES = 'series.';
 
-    private AuthorDefinitionRowMapper $authorDefinitionRowMapper;
-    private BookImageRowMapper $bookImageRowMapper;
-    private CategoryDefinitionRowMapper $categoryDefinitionRowMapper;
-    private RatingRowMapper $ratingRowMapper;
-    private ReplyRowMapper $replyRowMapper;
-    private SeriesRowMapper $seriesRowMapper;
+    public AuthorDefinitionRowMapper $authorDefinitionRowMapper;
+    public BookImageRowMapper $bookImageRowMapper;
+    public CategoryDefinitionRowMapper $categoryDefinitionRowMapper;
+    public RatingRowMapper $ratingRowMapper;
+    public SeriesRowMapper $seriesRowMapper;
 
-    public function __construct()
+    public function __construct(string $prefix = '')
     {
-        $this->authorDefinitionRowMapper = new AuthorDefinitionRowMapper();
-        $this->bookImageRowMapper = new BookImageRowMapper();
-        $this->categoryDefinitionRowMapper = new CategoryDefinitionRowMapper();
-        $this->ratingRowMapper = new RatingRowMapper();
-        $this->replyRowMapper = new ReplyRowMapper();
-        $this->seriesRowMapper = new SeriesRowMapper();
+        parent::__construct($prefix);
+        $this->authorDefinitionRowMapper = new AuthorDefinitionRowMapper($prefix . self::AUTHORS);
+        $this->bookImageRowMapper = new BookImageRowMapper($prefix . self::IMAGES);
+        $this->categoryDefinitionRowMapper = new CategoryDefinitionRowMapper($prefix . self::CATEGORIES);
+        $this->ratingRowMapper = new RatingRowMapper($prefix . self::RATINGS);
+        $this->seriesRowMapper = new SeriesRowMapper($prefix . self::SERIES);
     }
 
     /**
      * @inheritDoc
      */
-    public function map(PDOStatement $stmt, string $prefix = ''): array
+    public function map(PDOStatement $stmt): array
     {
-        /** @var array<int, Book> $bookMap */
-        $bookMap = [];
+        /** @var array<int, Book> $map */
+        $map = [];
         foreach ($stmt as $row) {
-            $id = $row[$prefix . self::ID];
-            $book = $bookMap[$id] ?? null;
-
-            if ($book == null) {
-                $book = $this->mapRow($row, prefix: $prefix);
-
-                $bookMap[$id] = $book;
-            }
-
-            self::mapOneToMany(
+            $this->mapOneToMany(
                 $row,
-                $book->images,
-                $this->bookImageRowMapper,
-                prefix: $prefix . self::IMAGES,
-                backreference: function (BookImage $image) use ($book) {
-                    $image->book = $book;
-                }
-            );
-
-            self::mapOneToMany(
-                $row,
-                $book->authors,
-                $this->authorDefinitionRowMapper,
-                prefix: $prefix . self::AUTHORS,
-                backreference: function (AuthorDefinition $author) use ($book) {
-                    $author->book = $book;
-                }
-            );
-
-            self::mapOneToMany(
-                $row,
-                $book->categories,
-                $this->categoryDefinitionRowMapper,
-                prefix: $prefix . self::CATEGORIES,
-                backreference: function (CategoryDefinition $category) use ($book) {
-                    $category->book = $book;
-                }
-            );
-
-            self::mapOneToMany(
-                $row,
-                $book->ratings,
-                $this->ratingRowMapper,
-                prefix: $prefix . self::RATINGS,
-                backreference: function (Rating $rating) use ($row, $book, $prefix) {
-                    $rating->book = $book;
-
-                    $this->ratingRowMapper::mapOneToMany(
-                        $row,
-                        $rating->replies,
-                        $this->replyRowMapper,
-                        prefix: $prefix . self::RATINGS . RatingRowMapper::REPLIES,
-                        backreference: function (Reply $reply) use ($rating) {
-                            $reply->rating = $rating;
-                        }
-                    );
-                }
+                $map,
+                nested: [  // maps the one-to-many
+                    function (Book $book) use ($row) {
+                        $this->bookImageRowMapper->mapOneToMany(
+                            $row,
+                            $book->images,
+                            backreference: function (BookImage $image) use ($book) {
+                                $image->book = $book;
+                            }
+                        );
+                    },
+                    function (Book $book) use ($row) {
+                        $this->authorDefinitionRowMapper->mapOneToMany(
+                            $row,
+                            $book->authors,
+                            backreference: function (AuthorDefinition $author) use ($book) {
+                                $author->book = $book;
+                            }
+                        );
+                    },
+                    function (Book $book) use ($row) {
+                        $this->categoryDefinitionRowMapper->mapOneToMany(
+                            $row,
+                            $book->categories,
+                            backreference: function (CategoryDefinition $category) use ($book) {
+                                $category->book = $book;
+                            }
+                        );
+                    },
+                    function (Book $book) use ($row) {
+                        $this->ratingRowMapper->mapOneToMany(
+                            $row,
+                            $book->ratings,
+                            backreference: function (Rating $rating) use ($book) {
+                                $rating->book = $book;
+                            },
+                            nested: [
+                                function (Rating $rating) use ($row) {
+                                    $this->ratingRowMapper->replyRowMapper->mapOneToMany(
+                                        $row,
+                                        $rating->replies,
+                                        backreference: function (Reply $reply) use ($rating) {
+                                            $reply->rating = $rating;
+                                        }
+                                    );
+                                }
+                            ]
+                        );
+                    }
+                ]
             );
         }
 
-        return array_values($bookMap);
+        return array_values($map);
     }
 
     /**
      * @inheritDoc
      */
-    public function mapRow(array $row, string $prefix = ''): Book
+    public function mapRow(array $row): Book
     {
-        $id = $row[$prefix . 'id'];
-        $book = new Book();
-        $book->id = $id;
-        try {
-            $book->slug = $row[$prefix . 'slug'];
-            $book->isbn = $row[$prefix . 'isbn'];
-            $book->title = $row[$prefix . 'title'];
-            $book->description = $row[$prefix . 'description'];
-            $book->publisher = $row[$prefix . 'publisher'];
-            $book->publishedAt = DateTime::createFromFormat('Y-m-d', $row[$prefix . 'publishedDate']);
-            $book->numberOfPages = $row[$prefix . 'numberOfPages'];
-            $book->language = $row[$prefix . 'language'];
-            $book->dimensions = $row[$prefix . 'dimensions'];
-            $book->series = $this->seriesRowMapper->mapRow($row, prefix: $prefix . 'series.');
-        } catch (Throwable $e) {
-            if (!$this->isInvalidArrayAccess($e)) {
-                throw $e;
-            }
+        $id = $row[$this->prefix . self::ID];
+        assert(is_int($id));
 
+        try {
+            $book = new Book();
+            $book->id = $id;
+            $this->bindProperties($book, $row);
+        } catch (OutOfBoundsException) {
             $book = new Book();
             $book->id = $id;
             $book->isLazy = true;
         }
 
         return $book;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function bindProperties(mixed $object, array $row): void
+    {
+        $object->slug = $this->getColumn($row, self::SLUG);
+        $object->isbn = $this->getColumn($row, self::ISBN);
+        $object->title = $this->getColumn($row, self::TITLE);
+        $object->description = $this->getColumn($row, self::DESCRIPTION);
+        $object->publisher = $this->getColumn($row, self::PUBLISHER);
+        $object->publishedAt = DateTime::createFromFormat(
+            'Y-m-d',
+            $this->getColumn($row, self::PUBLISHED_AT)
+        );
+        $object->numberOfPages = $this->getColumn($row, self::NUMBER_OF_PAGES);
+        $object->language = $this->getColumn($row, self::LANGUAGE);
+        $object->dimensions = $this->getColumn($row, self::DIMENSION);
+        $this->seriesRowMapper->mapOneToOne($row, $object->series);
     }
 }
