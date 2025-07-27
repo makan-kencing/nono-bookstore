@@ -12,7 +12,7 @@ use OutOfBoundsException;
 /**
  * @extends RowMapper<Author>
  */
-readonly class AuthorRowMapper extends RowMapper
+class AuthorRowMapper extends RowMapper
 {
     public const string SLUG = 'slug';
     public const string NAME = 'name';

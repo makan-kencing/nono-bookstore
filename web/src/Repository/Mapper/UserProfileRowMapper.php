@@ -13,7 +13,7 @@ use RuntimeException;
 /**
  * @extends RowMapper<UserProfile>
  */
-readonly class UserProfileRowMapper extends RowMapper
+class UserProfileRowMapper extends RowMapper
 {
     public const string CONTACT_NO = 'contactNo';
     public const string DOB = 'dob';

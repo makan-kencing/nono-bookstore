@@ -11,11 +11,11 @@ use PDOStatement;
 /**
  * @template T of Entity
  */
-abstract readonly class RowMapper
+abstract class RowMapper
 {
     public const string ID = 'id';
 
-    public string $prefix;
+    public readonly string $prefix;
 
     public function __construct(string $prefix = '')
     {

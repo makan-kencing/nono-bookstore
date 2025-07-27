@@ -12,7 +12,7 @@ use RuntimeException;
 /**
  * @extends RowMapper<AuthorDefinition>
  */
-readonly class AuthorDefinitionRowMapper extends RowMapper
+class AuthorDefinitionRowMapper extends RowMapper
 {
     public const string TYPE = 'type';
     public const string COMMENT = 'comment';

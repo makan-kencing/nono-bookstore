@@ -12,7 +12,7 @@ use RuntimeException;
 /**
  * @extends RowMapper<Series>
  */
-readonly class SeriesRowMapper extends RowMapper
+class SeriesRowMapper extends RowMapper
 {
     public const string SLUG = 'slug';
     public const string NAME = 'name';

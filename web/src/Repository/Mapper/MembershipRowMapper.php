@@ -13,7 +13,7 @@ use RuntimeException;
 /**
  * @extends RowMapper<Membership>
  */
-readonly class MembershipRowMapper extends RowMapper
+class MembershipRowMapper extends RowMapper
 {
     public const string FROM_DATE = 'fromDate';
     public const string THRU_DATE = 'thruDate';

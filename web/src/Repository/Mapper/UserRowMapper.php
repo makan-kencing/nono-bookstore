@@ -12,7 +12,7 @@ use PDOStatement;
 /**
  * @extends RowMapper<User>
  */
-readonly class UserRowMapper extends RowMapper
+class UserRowMapper extends RowMapper
 {
     public const string USERNAME = 'username.';
     public const string EMAIL = 'email.';

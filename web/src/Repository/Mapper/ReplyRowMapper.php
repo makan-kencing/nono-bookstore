@@ -13,7 +13,7 @@ use RuntimeException;
 /**
  * @extends RowMapper<Reply>
  */
-readonly class ReplyRowMapper extends RowMapper
+class ReplyRowMapper extends RowMapper
 {
     public const string CONTENT = 'content';
     public const string REPLIED_AT = 'repliedAt';

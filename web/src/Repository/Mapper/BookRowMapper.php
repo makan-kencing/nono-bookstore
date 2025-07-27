@@ -17,7 +17,7 @@ use PDOStatement;
 /**
  * @extends RowMapper<Book>
  */
-readonly class BookRowMapper extends RowMapper
+class BookRowMapper extends RowMapper
 {
     public const string SLUG = 'slug.';
     public const string ISBN = 'isbn';

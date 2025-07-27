@@ -13,7 +13,7 @@ use RuntimeException;
 /**
  * @extends RowMapper<Rating>
  */
-readonly class RatingRowMapper extends RowMapper
+class RatingRowMapper extends RowMapper
 {
     public const string RATING = 'rating';
     public const string TITLE = 'title';

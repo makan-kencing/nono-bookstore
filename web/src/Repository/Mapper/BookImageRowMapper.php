@@ -12,7 +12,7 @@ use RuntimeException;
 /**
  * @extends RowMapper<BookImage>
  */
-readonly class BookImageRowMapper extends RowMapper
+class BookImageRowMapper extends RowMapper
 {
     public const string IMAGE_URL = 'imageUrl';
     public const string BOOK = 'book.';
