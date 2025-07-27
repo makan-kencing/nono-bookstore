@@ -141,7 +141,7 @@ class BookRowMapper extends RowMapper
      */
     public function mapRow(array $row): Book
     {
-        $id = $row[$this->prefix . self::ID];
+        $id = $this->getColumn($row, self::ID);
         assert(is_int($id));
 
         try {
