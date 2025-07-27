@@ -58,7 +58,7 @@ abstract class RowMapper
         // initialize array if not already
         $attribute ??= [];
 
-        $id = $row[$this->prefix . self::ID] ?? null;
+        $id = $row[$this->prefix . static::ID] ?? null;
         if ($id) {
             // check if already defined
             $child = $attribute[$id] ?? null;
@@ -94,7 +94,7 @@ abstract class RowMapper
         ?callable $backreference = null,
         array $nested = []
     ): void {
-        $id = $row[$this->prefix . self::ID] ?? null;
+        $id = $row[$this->prefix . static::ID] ?? null;
         if ($id) {
             $child = $this->mapRow($row);
             if ($backreference) {
