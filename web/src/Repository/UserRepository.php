@@ -24,8 +24,8 @@ readonly class UserRepository extends Repository
         $stmt = $query->createQuery($this->conn);
         $stmt->execute();
 
-        $rowMapper = new UserRowMapper();
-        return $rowMapper->map($stmt, prefix: 'user.');
+        $rowMapper = new UserRowMapper('user.');
+        return $rowMapper->map($stmt);
     }
 
     /**
