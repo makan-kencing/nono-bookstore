@@ -14,11 +14,11 @@ use PDOStatement;
  */
 class UserRowMapper extends RowMapper
 {
-    public const string USERNAME = 'username.';
-    public const string EMAIL = 'email.';
-    public const string HASHED_PASSWORD = 'hashedPassword.';
-    public const string ROLE = 'role.';
-    public const string IS_VERIFIED = 'isVerified.';
+    public const string USERNAME = 'username';
+    public const string EMAIL = 'email';
+    public const string HASHED_PASSWORD = 'hashedPassword';
+    public const string ROLE = 'role';
+    public const string IS_VERIFIED = 'isVerified';
     public const string PROFILE = 'profile.';
     public const string MEMBERSHIP = 'membership.';
     public const string DEFAULT_ADDRESS = 'defaultAddress.';
@@ -87,10 +87,10 @@ class UserRowMapper extends RowMapper
     public function bindProperties(mixed $object, array $row): void
     {
         $object->username = $this->getColumn($row, self::USERNAME);
-        $object->email = $this->getColumn($row, self::USERNAME);
-        $object->hashedPassword = $this->getColumn($row, self::USERNAME);
-        $object->role = UserRole::{$this->getColumn($row, self::USERNAME)};
-        $object->isVerified = (bool)$this->getColumn($row, self::USERNAME);
+        $object->email = $this->getColumn($row, self::EMAIL);
+        $object->hashedPassword = $this->getColumn($row, self::HASHED_PASSWORD);
+        $object->role = UserRole::{$this->getColumn($row, self::ROLE)};
+        $object->isVerified = (bool)$this->getColumn($row, self::IS_VERIFIED);
         $object->profile = $this->getUserProfileRowMapper()->mapRowOrNull($row);
         $object->membership = $this->getMembershipRowMapper()->mapRowOrNull($row);
     }
