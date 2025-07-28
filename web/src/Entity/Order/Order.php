@@ -11,14 +11,10 @@ class Order extends Cart
 {
     public string $refNo;
     public DateTime $orderedAt;
-    /**
-     * @var OrderItem[]
-     */
-    public ?array $items;
-    /**
-     * @var OrderAdjustment[]
-     */
-    public ?array $adjustments;
     public ?Invoice $invoice;
     public ?Shipment $shipment;
+    /** @var OrderItem[] */
+    public array $items;
+    /** @var OrderAdjustment[] */
+    public ?array $adjustments;
 }

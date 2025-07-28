@@ -17,9 +17,7 @@ class Rating extends Entity
     public int $rating;
     public string $title;
     public string $content;
-    /**
-     * @var Reply[]
-     */
-    public ?array $replies;
     public DateTime $ratedAt;
+    /** @var Reply[] */
+    public array $replies;
 }

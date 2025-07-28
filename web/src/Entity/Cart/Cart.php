@@ -11,8 +11,6 @@ class Cart extends Entity
 {
     public ?int $id;
     public ?User $user;
-    /**
-     * @var CartItem[]
-     */
-    public ?array $items;
+    /** @var CartItem[] */
+    public array $items;
 }

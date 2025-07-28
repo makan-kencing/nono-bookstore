@@ -17,9 +17,7 @@ class PriceDefinition extends Entity
 
     public ?int $id;
     public PriceType $type;
-    /**
-     * @var Constraint[]
-     */
-    public ?array $constraints;
+    /** @var Constraint[] */
+    public array $constraints;
     public Value $value;
 }

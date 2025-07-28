@@ -23,11 +23,11 @@ class Book extends Entity
     /** @var string[] */
     public array $imageUrls;
     /** @var AuthorDefinition[] */
-    public ?array $authors;
+    public array $authors;
     /** @var CategoryDefinition[] */
-    public ?array $categories;
+    public array $categories;
     /** @var Rating[] */
-    public ?array $ratings;
+    public array $ratings;
     public string $publisher;
     public DateTime $publishedDate;
     public int $numberOfPages;

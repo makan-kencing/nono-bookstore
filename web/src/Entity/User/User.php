@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Entity\User;
 
 use App\Entity\ABC\Entity;
+use App\Entity\Book\Book;
 use App\Entity\Cart\Cart;
-use App\Entity\Cart\Wishlist;
 use App\Entity\Order\Order;
 
 class User extends Entity
@@ -19,11 +19,13 @@ class User extends Entity
     public bool $isVerified = false;
     public ?Address $defaultAddress;
     public ?UserProfile $profile;
-    /** @var Address[] */
-    public ?array $addresses;
     public ?Membership $membership;
-    public ?Wishlist $wishlist;
+
     public ?Cart $cart;
+    /** @var Address[] */
+    public array $addresses;
+    /** @var Book[] */
+    public array $wishlist;
     /** @var Order[] */
-    public ?array $orders;
+    public array $orders;
 }

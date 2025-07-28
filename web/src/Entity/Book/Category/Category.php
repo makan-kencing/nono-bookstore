@@ -15,8 +15,6 @@ class Category extends Entity
     public string $name;
     public ?string $description;
     public ?Category $parent;
-    /**
-     * @var Category[]
-     */
-    public ?array $subcategories;
+    /** @var Category[] */
+    public array $subcategories;
 }

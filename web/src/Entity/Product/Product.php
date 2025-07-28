@@ -16,11 +16,9 @@ abstract class Product extends Entity
     public ?int $id;
     public Book $book;
     public CoverType $coverType;
-    /**
-     * @var PriceDefinition[]
-     */
-    public ?array $priceDefinitions;
     public Cost $cost;
+    /** @var PriceDefinition[] */
+    public array $priceDefinitions;
     /** @var Inventory[] */
-    public ?array $inventories;
+    public array $inventories;
 }

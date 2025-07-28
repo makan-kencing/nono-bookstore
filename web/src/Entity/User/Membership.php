@@ -11,6 +11,6 @@ class Membership extends Entity
 {
     use TimeLimited;
 
-    public ?int $id;
+    public User $user;
     public string $cardNo;
 }

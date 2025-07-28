@@ -14,7 +14,7 @@ class Series extends Entity
     public string $name;
     public ?string $description;
     /** @var Book[] */
-    public ?array $books;
+    public array $books;
     /** @var SeriesAuthorDefinition[] */
-    public ?array $authors;
+    public array $authors;
 }
