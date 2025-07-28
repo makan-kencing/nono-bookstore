@@ -37,5 +37,6 @@ const ROUTES = [
     ['DELETE', '/api/reply', ['App\Controller\ReplyController', 'deleteReply']],
 
     // admin api endpoints
-    ['POST', '/api/user', ['App\Controller\AdminUserController', 'addUser']]
+    ['POST', '/api/user', ['App\Controller\AdminUserController', 'addUser']],
+    ['PUT', '/api/user', ['App\Controller\AdminUserController', 'editUser']]
 ];

@@ -52,9 +52,6 @@ readonly class AdminUserController extends Controller
 
     public function addUser(): void
     {
-
-
-
         $_POST = json_decode(stream_get_contents(fopen('php://input', 'r')), true);
 
         $query = new QueryUserCount();
@@ -65,6 +62,7 @@ readonly class AdminUserController extends Controller
         }
 
         $user = new User();
+
         $user->username = $_POST['username'];
         $user->email = $_POST['email'];
         $user->hashedPassword = $_POST['hashed_password'];
@@ -75,15 +73,27 @@ readonly class AdminUserController extends Controller
 
     }
 
+    public function editUser(): void
+    {
+        $_PUT = json_decode(stream_get_contents(fopen('php://input', 'r')), true);
+
+        $user = new User();
+
+        $user->username=$_PUT['username'];
+        $user->email = $_PUT['email'];
+        $user->hashedPassword = $_PUT['hashed_password'];
+        $user->role = UserRole::{$_PUT['role']};
+        $user->isVerified = $_PUT['is_verified'];
+
+        $this->userRepository->update($user);
+    }
+
     public function delUser($vars): void
     {
 
     }
 
-    public function editUser($vars): void
-    {
 
-    }
 
     public function addMember($vars): void
     {

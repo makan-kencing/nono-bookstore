@@ -60,15 +60,12 @@ readonly class UserRepository extends Repository
         $stmt = $this->conn->prepare('
         UPDATE user
         SET
-            username = :username,
             email = :email,
             hashed_password = :hashed_password,
             role = :role,
             is_verified = :is_verified
-        WHERE id = :id;
-    ');
-
-        $stmt->bindValue(':id', $user->id);
+        WHERE username = :username;
+        ');
         $stmt->bindValue(':username', $user->username);
         $stmt->bindValue(':email', $user->email);
         $stmt->bindValue(':hashed_password', $user->hashedPassword);
