@@ -34,7 +34,8 @@ const ROUTES = [
     ['DELETE', '/api/rating', ['App\Controller\RatingController', 'deleteRating']],
     ['POST', '/api/reply', ['App\Controller\ReplyController', 'submitReply']],
     ['PUT', '/api/reply', ['App\Controller\ReplyController', 'editReply']],
-    ['DELETE', '/api/reply', ['App\Controller\ReplyController', 'deleteReply']]
+    ['DELETE', '/api/reply', ['App\Controller\ReplyController', 'deleteReply']],
 
     // admin api endpoints
+    ['POST', '/api/user', ['App\Controller\AdminUserController', 'addUser']]
 ];

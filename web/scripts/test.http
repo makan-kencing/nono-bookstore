@@ -2,4 +2,22 @@
 GET https://localhost
 
 ###
-POST https://localhost
+POST https://localhost/api/user
+Content-Type: application/json
+
+{
+    "username": "asdasd",
+    "email": "asdasd@asdasd.com",
+    "hashed_password": "wasda",
+    "role": "USER",
+    "is_verified": false
+}
+
+###
+# note
+POST https://localhost/address/new
+Content-Type: application/x-www-form-urlencoded
+
+?address1=asdasdasd
+&address2=asdasd
+&postcode=10000

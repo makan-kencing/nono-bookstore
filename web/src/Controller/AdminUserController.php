@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Core\View;
+use App\Entity\User\User;
+use App\Entity\User\UserRole;
+use App\Exception\ConflictException;
+use App\Exception\Wrapper\ApiExceptionWrapper;
 use App\Repository\Query\QueryUserCount;
 use App\Repository\Query\QueryUserListing;
 use App\Repository\UserRepository;
@@ -46,12 +50,32 @@ readonly class AdminUserController extends Controller
         echo json_encode(['exists' => $count != 0]);
     }
 
-    public function addStaff($vars): void
+    public function addUser(): void
     {
+
+
+
+        $_POST = json_decode(stream_get_contents(fopen('php://input', 'r')), true);
+
+        $query = new QueryUserCount();
+        $query->username = $_POST['username'];
+
+        if ($this->userRepository->count($query) > 0) {
+            throw new ApiExceptionWrapper(new ConflictException([['field' => 'username']]));
+        }
+
+        $user = new User();
+        $user->username = $_POST['username'];
+        $user->email = $_POST['email'];
+        $user->hashedPassword = $_POST['hashed_password'];
+        $user->role = UserRole::{$_POST['role']};
+        $user->isVerified = $_POST['is_verified'];
+
+        $this->userRepository->insert($user);
 
     }
 
-    public function delStaff($vars): void
+    public function delUser($vars): void
     {
 
     }
