@@ -13,20 +13,26 @@ use App\Repository\Repository;
 readonly class UserProfileRepository extends Repository
 {
     public function addUserProfile(UserProfile $userProfile): void{
+
+
         $stmt = $this->conn->prepare('
-        Insert into user_profile (contact_no,dob)VALUES(:contact_no,:dob);
+        Insert into user_profile (user_id,contact_no,dob)VALUES(:user_id,:contact_no,:dob);
         ');
+        $stmt->bindValue(':user_id', $userProfile->id);
         $stmt->bindValue(':contact_no', $userProfile->contactNo);
         $stmt->bindValue(':dob', $userProfile->dob);
     }
 
-    /*public function updateUserProfile(UserProfile $userProfile): void{
+    public function updateUserProfile(UserProfile $userProfile): void{
         $stmt = $this->conn->prepare('
         Update user_profile
         SET contact_no=:contact_no,dob=:dob
-        WHERE id=:id;
+        WHERE user_id=:user_id;
         ');
-    }*/
+        $stmt->bindValue(':user_id', $userProfile->id);
+        $stmt->bindValue(':contact_no', $userProfile->contactNo);
+        $stmt->bindValue(':dob', $userProfile->dob);
+    }
 
 
 }
