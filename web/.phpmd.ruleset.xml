@@ -17,6 +17,8 @@
         <exclude name="LongVariable" />
     </rule>
     <rule ref="rulesets/design.xml" />
-    <rule ref="rulesets/controversial.xml" />
+    <rule ref="rulesets/controversial.xml">
+        <exclude name="Superglobals" />
+    </rule>
     <rule ref="rulesets/cleancode.xml" />
 </ruleset>
