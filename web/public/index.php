@@ -7,11 +7,9 @@ require_once __DIR__ . '/../config/routes.php';
 require_once __DIR__ . '/../config/error_handler.php';
 
 use App\Core\View;
-use App\Exception\MethodNotAllowedException;
 use App\Exception\NotFoundException;
-use App\Exception\Wrapper\ApiExceptionWrapper;
 use App\Exception\Wrapper\WebExceptionWrapper;
-use FastRoute\RouteCollector;
+use App\Router\Router;
 
 $view = new View();
 $view::$viewPath = __DIR__ . "/../views";
@@ -25,14 +23,32 @@ $pdo = new PDO(
     ]
 );
 
-$dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
-    foreach (ROUTES as $route) {
-        $r->addRoute($route[0], $route[1], $route[2]);
-    }
-});
+$controllers = [
+    'App\Controller\AdminUserController',
+    'App\Controller\AuthorController',
+    'App\Controller\BookController',
+    'App\Controller\CartController',
+    'App\Controller\CheckoutController',
+    'App\Controller\HomeController',
+    'App\Controller\OrderController',
+    'App\Controller\PaymentController',
+    'App\Controller\RatingController',
+    'App\Controller\ReplyController',
+    'App\Controller\SecurityController',
+    'App\Controller\SeriesController',
+    'App\Controller\UserProfileController',
+    'App\Controller\WishlistController',
+];
+$router = new Router();
+foreach ($controllers as $controller) {
+    $router->registerController($controller);
+}
 
 $httpMethod = $_SERVER['REQUEST_METHOD'];
 $uri = $_SERVER['REQUEST_URI'];
+
+assert(is_string($httpMethod));
+assert(is_string($uri));
 
 // Strip query string (?foo=bar) and decode URI
 if (false !== $pos = strpos($uri, '?')) {
@@ -40,23 +56,9 @@ if (false !== $pos = strpos($uri, '?')) {
 }
 $uri = rawurldecode($uri);
 
-$routeInfo = $dispatcher->dispatch($httpMethod, $uri);
-switch ($routeInfo[0]) {
-    case FastRoute\Dispatcher::NOT_FOUND:
-        throw new WebExceptionWrapper(new NotFoundException());
-    case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
-        $allowedMethods = $routeInfo[1];
-
-        throw new ApiExceptionWrapper(new MethodNotAllowedException($allowedMethods));
-    case FastRoute\Dispatcher::FOUND:
-        /** @var class-string<Controller> $className */
-        $className = $routeInfo[1][0];
-        /** @var callable-string<Controller> $method */
-        $method = $routeInfo[1][1];
-        /** @var array<string, mixed> $vars */
-        $vars = $routeInfo[2];
-
-        $class = new $className($pdo, $view);
-        $class->$method($vars);
-        break;
+try {
+    $route = $router->dispatch($httpMethod, $uri);
+} catch (NotFoundException $e) {
+    throw new WebExceptionWrapper($e);
 }
+$route->handle($uri, $pdo, $view);
