@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Exception;
 
-use Exception;
 use Throwable;
 
-class TooManyRequestsException extends Exception
+class TooManyRequestsException extends WebException
 {
     /** The number of seconds to retry after. */
     public readonly int $retryAfter;

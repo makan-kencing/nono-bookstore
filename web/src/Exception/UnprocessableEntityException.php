@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Exception;
 
-use Exception;
 use Throwable;
 
-class UnprocessableEntityException extends Exception
+class UnprocessableEntityException extends WebException
 {
     /** @var list<array{field: string, type: string, reason: string}> */
     public readonly array $details;
