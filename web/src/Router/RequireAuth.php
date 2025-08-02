@@ -17,8 +17,8 @@ readonly class RequireAuth
      * @param bool $redirect
      */
     public function __construct(
-        public array $allowedRoles,
-        public array $disallowedRoles,
+        public array $allowedRoles = [],
+        public array $disallowedRoles = [],
         public AuthRule $rule = AuthRule::HIGHER,
         public bool $redirect = true
     ) {
