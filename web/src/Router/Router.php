@@ -130,7 +130,7 @@ class Router
                 $controller = new $handler[0]($this->pdo, $this->view);
 
                 try {
-                    $controller->{$handler[1]}($params);
+                    $controller->{$handler[1]}(...$params);
                     return;
                 } catch (WebException $e) {
                     if (str_starts_with($uri, '/api')) {
