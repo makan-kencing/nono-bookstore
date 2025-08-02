@@ -11,6 +11,7 @@ use App\Repository\Mapper\BookImageRowMapper;
 use App\Repository\Mapper\BookRowMapper;
 use App\Repository\Mapper\CategoryDefinitionRowMapper;
 use App\Repository\Mapper\CategoryRowMapper;
+use App\Repository\Mapper\FileRowMapper;
 use App\Repository\Mapper\RatingRowMapper;
 use App\Repository\Mapper\ReplyRowMapper;
 use App\Repository\Mapper\SeriesRowMapper;
@@ -43,8 +44,14 @@ class QueryBookWithFullDetail extends Query
                    b.number_of_pages   `$prefix{$c(BookRowMapper::NUMBER_OF_PAGES)}`,
                    b.language          `$prefix{$c(BookRowMapper::LANGUAGE)}`,
                    b.dimensions        `$prefix{$c(BookRowMapper::DIMENSION)}`,
-                   bi.id               `$prefix{$c(BookRowMapper::IMAGES)}{$c(BookImageRowMapper::ID)}`,
-                   bi.image_url        `$prefix{$c(BookRowMapper::IMAGES)}{$c(BookImageRowMapper::IMAGE_URL)}`,
+                   bi.image_order      `$prefix{$c(BookRowMapper::IMAGES)}{$c(BookImageRowMapper::IMAGE_ORDER)}`,
+                   f.id                `$prefix{$c(BookRowMapper::IMAGES)}{$c(BookImageRowMapper::FILE)}{$c(FileRowMapper::ID)}`,
+                   f.filename          `$prefix{$c(BookRowMapper::IMAGES)}{$c(BookImageRowMapper::FILE)}{$c(FileRowMapper::FILENAME)}`,
+                   f.mimetype          `$prefix{$c(BookRowMapper::IMAGES)}{$c(BookImageRowMapper::FILE)}{$c(FileRowMapper::MIMETYPE)}`,
+                   f.alt               `$prefix{$c(BookRowMapper::IMAGES)}{$c(BookImageRowMapper::FILE)}{$c(FileRowMapper::ALT)}`,
+                   f.filepath          `$prefix{$c(BookRowMapper::IMAGES)}{$c(BookImageRowMapper::FILE)}{$c(FileRowMapper::FILEPATH)}`,
+                   f.created_at        `$prefix{$c(BookRowMapper::IMAGES)}{$c(BookImageRowMapper::FILE)}{$c(FileRowMapper::CREATED_AT)}`,
+                   f.created_by        `$prefix{$c(BookRowMapper::IMAGES)}{$c(BookImageRowMapper::FILE)}{$c(FileRowMapper::CREATED_BY)}{$c(UserRowMapper::ID)}`,
                    a.id                `$prefix{$c(BookRowMapper::AUTHORS)}{$c(AuthorDefinitionRowMapper::AUTHOR)}{$c(AuthorRowMapper::ID)}`,
                    a.slug              `$prefix{$c(BookRowMapper::AUTHORS)}{$c(AuthorDefinitionRowMapper::AUTHOR)}{$c(AuthorRowMapper::SLUG)}`,
                    a.name              `$prefix{$c(BookRowMapper::AUTHORS)}{$c(AuthorDefinitionRowMapper::AUTHOR)}{$c(AuthorRowMapper::NAME)}`,
@@ -86,6 +93,7 @@ class QueryBookWithFullDetail extends Query
                    rru.is_verified     `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::REPLIES)}{$c(ReplyRowMapper::USER)}{$c(UserRowMapper::IS_VERIFIED)}`
             FROM book b
                      LEFT JOIN book_image bi on b.id = bi.book_id
+                     LEFT JOIN file f on bi.file_id = f.id
                      LEFT JOIN author_definition ad on b.id = ad.book_id
                      LEFT JOIN author a on ad.author_id = a.id
                      LEFT JOIN category_definition cd on b.id = cd.book_id
