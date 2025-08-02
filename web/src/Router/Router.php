@@ -61,7 +61,7 @@ class Router
     public function dispatch(string $method, string $uri): void
     {
         // validate method is correct
-        $_ = HttpMethod::from($method);
+        $_ = HttpMethod::{$method};
 
         $mapping = $this->routes->getMethodMapping($uri);
         if (!$mapping) {
