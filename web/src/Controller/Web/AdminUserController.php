@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Web;
 
 use App\Core\View;
 use App\Repository\Query\QueryUserListing;
@@ -12,7 +12,7 @@ use App\Router\Path;
 use PDO;
 
 #[Path('/admin/user')]
-readonly class AdminUserController extends Controller
+readonly class AdminUserController extends WebController
 {
     private UserRepository $userRepository;
 

@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Router;
 
+use App\Controller\Api\ApiController;
 use App\Controller\Controller;
 use App\Core\View;
 use App\Exception\MethodNotAllowedException;
 use App\Exception\NotFoundException;
 use App\Exception\WebException;
 use App\Exception\Wrapper\ApiExceptionWrapper;
+use App\Exception\Wrapper\ExceptionWrapper;
 use App\Exception\Wrapper\WebExceptionWrapper;
 use App\Router\Method\HttpMethod;
 use App\Router\Method\Method;
@@ -110,7 +112,7 @@ class Router
     }
 
     /**
-     * @throws NotFoundException | MethodNotAllowedException
+     * @throws NotFoundException | MethodNotAllowedException | ExceptionWrapper
      */
     public function dispatch(string $method, string $uri): void
     {
@@ -134,7 +136,7 @@ class Router
                     $controller->{$handler[1]}(...$params);
                     return;
                 } catch (WebException $e) {
-                    if (str_starts_with($uri, '/api')) {
+                    if (is_subclass_of($controller, ApiController::class)) {
                         throw new ApiExceptionWrapper($e);
                     }
                     throw new WebExceptionWrapper($e);

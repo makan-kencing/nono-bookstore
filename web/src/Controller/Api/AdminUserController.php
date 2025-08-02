@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Api;
 
-use App\Controller\ProtectedController;
 use App\Core\View;
 use App\Entity\User\User;
 use App\Entity\User\UserRole;
@@ -18,7 +17,7 @@ use App\Router\Path;
 use PDO;
 
 #[Path('/api/user')]
-readonly class AdminUserController extends ProtectedController
+readonly class AdminUserController extends ApiController
 {
     private UserRepository $userRepository;
 

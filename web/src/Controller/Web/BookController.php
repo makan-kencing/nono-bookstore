@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Web;
 
 use App\Core\View;
 use App\Exception\NotFoundException;
@@ -14,7 +14,7 @@ use App\Router\Path;
 use PDO;
 
 #[Path('/book')]
-readonly class BookController extends Controller
+readonly class BookController extends WebController
 {
     private BookRepository $bookRepository;
 

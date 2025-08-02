@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Web;
 
 use App\Router\Method\GET;
 use App\Router\Path;
 
 #[Path('/order')]
-readonly class OrderController extends ProtectedController
+readonly class OrderController extends WebController
 {
     #[GET]
     public function viewOrders(): void

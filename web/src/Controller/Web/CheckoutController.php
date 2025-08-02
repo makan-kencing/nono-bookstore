@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Web;
 
 use App\Router\Method\GET;
 use App\Router\Path;
 
 #[Path('/checkout')]
-readonly class CheckoutController extends ProtectedController
+readonly class CheckoutController extends WebController
 {
     #[GET]
     public function viewCheckout(): void

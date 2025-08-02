@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Api;
 
-use App\Controller\Controller;
 use App\Core\View;
 use App\Repository\Query\QueryUserCount;
 use App\Repository\UserRepository;
@@ -13,7 +12,7 @@ use App\Router\Path;
 use PDO;
 
 #[Path('/api/user')]
-readonly class UserController extends Controller
+readonly class UserController extends ApiController
 {
     private UserRepository $userRepository;
 

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Web;
 
 use App\Router\Method\GET;
 use App\Router\Path;
 
 #[Path('/series')]
-readonly class SeriesController extends Controller
+readonly class SeriesController extends WebController
 {
     /**
      * @param string $slug
