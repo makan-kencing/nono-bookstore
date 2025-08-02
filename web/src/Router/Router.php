@@ -89,17 +89,18 @@ class Router
             }
 
             foreach ($methodsReflection as $methodReflection) {
-                $path = self::getPath($reflectionMethod);
+                $path = $pathPrefix . self::getPath($reflectionMethod);
                 $httpMethod = $methodReflection->newInstance()::METHOD;
-                $regex = self::compile($pathPrefix . $path);
+                $regex = self::compile($path);
 
                 $this->routes[$regex] ??= [];
                 if (isset($this->routes[$regex][$httpMethod->value])) {
+                    $inUse = $this->routes[$regex][$httpMethod->value];
                     throw new RouteInUseException(
                         $httpMethod,
                         $path,
-                        $this->routes[$regex][$httpMethod->value],
-                        $methodReflection->getName()
+                        $inUse[0] . '::' . $inUse[1],
+                        $reflectionClass->getName() . '::' . $reflectionMethod->getName()
                     );
                 }
 
