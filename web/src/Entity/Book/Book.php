@@ -20,8 +20,8 @@ class Book extends Entity
     public string $isbn;
     public string $title;
     public ?string $description;
-    /** @var string[] */
-    public array $imageUrls;
+    /** @var BookImage[] */
+    public array $images;
     /** @var AuthorDefinition[] */
     public array $authors;
     /** @var CategoryDefinition[] */
