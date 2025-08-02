@@ -9,10 +9,8 @@ use Attribute;
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Path
 {
-    public string $path;
-
-    public function __construct(string $route)
-    {
-        $this->path = $route;
+    public function __construct(
+        public readonly string $route
+    ) {
     }
 }
