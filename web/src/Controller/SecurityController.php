@@ -4,11 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Core\View;
-use App\Service\SecurityService;
+use App\Router\Method\GET;
+use App\Router\Path;
 
+#[Path('/auth')]
 readonly class SecurityController extends Controller
 {
+    #[GET]
+    #[Path('/login')]
+    public function login(): void
+    {
+    }
+
+    #[GET]
+    #[Path('/register')]
     public function register(): void
     {
         echo $this->render('register.php');

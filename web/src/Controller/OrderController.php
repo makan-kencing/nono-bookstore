@@ -4,21 +4,26 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Router\Method\GET;
+use App\Router\Path;
+
+#[Path('/order')]
 readonly class OrderController extends ProtectedController
 {
+    #[GET]
     public function viewOrders(): void
     {
         echo $this->render('orders.php');
     }
 
     /**
-     * @param array<string, string> $pathVars
+     * @param string $id
      * @return void
      */
-    public function viewOrderDetails(array $pathVars): void
+    #[GET]
+    #[Path('/{id}')]
+    public function viewOrderDetails(string $id): void
     {
-        $id = (int)$pathVars['id'];
-
         echo $this->render('order.php');
     }
 }

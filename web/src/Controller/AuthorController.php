@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Router\Method\GET;
+use App\Router\Path;
+
+#[Path('/author')]
 readonly class AuthorController extends Controller
 {
     /**
-     * @param array<string, string> $pathVars
+     * @param string $slug
      * @return void
      */
-    public function viewAuthor(array $pathVars): void
+    #[GET]
+    #[Path('/{slug}')]
+    public function viewAuthor(string $slug): void
     {
-        $slug = $pathVars['slug'];
-
         echo $this->render('author.php');
     }
 }

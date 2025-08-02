@@ -9,8 +9,11 @@ use App\Exception\NotFoundException;
 use App\Exception\Wrapper\WebExceptionWrapper;
 use App\Repository\BookRepository;
 use App\Repository\Query\QueryBookWithFullDetail;
+use App\Router\Method\GET;
+use App\Router\Path;
 use PDO;
 
+#[Path('/book')]
 readonly class BookController extends Controller
 {
     private BookRepository $bookRepository;
@@ -22,15 +25,15 @@ readonly class BookController extends Controller
     }
 
     /**
-     * @param array<string, string> $pathVars
+     * @param string $isbn
+     * @param string $slug
      * @return void
      * @throws WebExceptionWrapper
      */
-    public function viewBook(array $pathVars): void
+    #[Path('/{isbn}/{slug}')]
+    #[GET]
+    public function viewBook(string $isbn, string $slug): void
     {
-        $isbn = $pathVars['isbn'];
-        $slug = $pathVars['slug'] ?? '';
-
         $query = new QueryBookWithFullDetail();
         $query->isbn = $isbn;
 
@@ -48,9 +51,5 @@ readonly class BookController extends Controller
         echo $this->render('book.php', [
             'book' => $book
         ]);
-    }
-
-    public function searchBook(): void
-    {
     }
 }

@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Router\Method\GET;
+use App\Router\Path;
+
+#[Path('/series')]
 readonly class SeriesController extends Controller
 {
     /**
-     * @param array<string, string> $pathVars
+     * @param string $slug
      * @return void
      */
-    public function viewSeries(array $pathVars): void
+    #[GET]
+    #[Path('/{slug}')]
+    public function viewSeries(string $slug): void
     {
-        $slug = $pathVars['slug'];
-
         echo $this->render('series.php');
     }
 }

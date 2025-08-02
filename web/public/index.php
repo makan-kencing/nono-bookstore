@@ -6,7 +6,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../config/error_handler.php';
 
 use App\Core\View;
-use App\Exception\NotFoundException;
+use App\Exception\WebException;
 use App\Exception\Wrapper\WebExceptionWrapper;
 use App\Router\Router;
 
@@ -23,6 +23,14 @@ $pdo = new PDO(
 );
 
 $controllers = [
+    'App\Controller\Api\AdminUserController',
+    'App\Controller\Api\CartController',
+    'App\Controller\Api\CheckoutController',
+    'App\Controller\Api\PaymentController',
+    'App\Controller\Api\RatingController',
+    'App\Controller\Api\ReplyController',
+    'App\Controller\Api\UserController',
+    'App\Controller\Api\WishlistController',
     'App\Controller\AdminUserController',
     'App\Controller\AuthorController',
     'App\Controller\BookController',
@@ -31,16 +39,13 @@ $controllers = [
     'App\Controller\HomeController',
     'App\Controller\OrderController',
     'App\Controller\PaymentController',
-    'App\Controller\RatingController',
-    'App\Controller\ReplyController',
     'App\Controller\SecurityController',
     'App\Controller\SeriesController',
-    'App\Controller\UserProfileController',
     'App\Controller\WishlistController',
 ];
-$router = new Router();
+$router = new Router($pdo, $view);
 foreach ($controllers as $controller) {
-    $router->registerController($controller);
+    $router->register($controller);
 }
 
 $httpMethod = $_SERVER['REQUEST_METHOD'];
@@ -56,8 +61,7 @@ if (false !== $pos = strpos($uri, '?')) {
 $uri = rawurldecode($uri);
 
 try {
-    $route = $router->dispatch($httpMethod, $uri);
-} catch (NotFoundException $e) {
+    $router->dispatch($httpMethod, $uri);
+} catch (WebException $e) {
     throw new WebExceptionWrapper($e);
 }
-$route->handle($uri, $pdo, $view);
