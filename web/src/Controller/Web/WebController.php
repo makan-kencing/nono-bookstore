@@ -6,6 +6,6 @@ namespace App\Controller\Web;
 
 use App\Controller\Controller;
 
-readonly class WebController extends Controller
+abstract readonly class WebController extends Controller
 {
 }

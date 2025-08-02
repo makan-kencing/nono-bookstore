@@ -6,6 +6,6 @@ namespace App\Controller\Api;
 
 use App\Controller\Controller;
 
-readonly class ApiController extends Controller
+abstract readonly class ApiController extends Controller
 {
 }
