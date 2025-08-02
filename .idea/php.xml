@@ -131,6 +131,7 @@
       <path value="$PROJECT_DIR$/web/vendor/justinrainbow/json-schema" />
       <path value="$PROJECT_DIR$/web/vendor/claviska/simpleimage" />
       <path value="$PROJECT_DIR$/web/vendor/league/color-extractor" />
+      <path value="$PROJECT_DIR$/web/vendor/jetbrains/phpstorm-attributes" />
     </include_path>
   </component>
   <component name="PhpProjectServersManager">
