@@ -38,7 +38,6 @@
   <component name="PhpCodeSniffer">
     <phpcs_settings>
       <PhpCSConfiguration beautifier_path="$PROJECT_DIR$/web/vendor/bin/phpcbf" tool_path="$PROJECT_DIR$/web/vendor/bin/phpcs" />
-      <PhpCSConfiguration asDefaultInterpreter="true" beautifier_path="$PROJECT_DIR$/web/vendor/bin/phpcbf" tool_path="$PROJECT_DIR$/web/vendor/bin/phpcs" />
     </phpcs_settings>
   </component>
   <component name="PhpIncludePathManager">
@@ -130,6 +129,8 @@
       <path value="$PROJECT_DIR$/web/vendor/ergebnis/composer-normalize" />
       <path value="$PROJECT_DIR$/web/vendor/marc-mabe/php-enum" />
       <path value="$PROJECT_DIR$/web/vendor/justinrainbow/json-schema" />
+      <path value="$PROJECT_DIR$/web/vendor/claviska/simpleimage" />
+      <path value="$PROJECT_DIR$/web/vendor/league/color-extractor" />
     </include_path>
   </component>
   <component name="PhpProjectServersManager">
@@ -145,7 +146,6 @@
   <component name="PhpStan">
     <PhpStan_settings>
       <PhpStanConfiguration tool_path="$PROJECT_DIR$/web/vendor/bin/phpstan" />
-      <PhpStanConfiguration asDefaultInterpreter="true" tool_path="$PROJECT_DIR$/web/vendor/bin/phpstan" />
     </PhpStan_settings>
   </component>
   <component name="PhpStanOptionsConfiguration">
