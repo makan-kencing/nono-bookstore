@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller\Api;
 
+use App\Entity\User\UserRole;
+use App\Router\AuthRule;
 use App\Router\Method\POST;
 use App\Router\Path;
+use App\Router\RequireAuth;
 
 #[Path('/api/checkout')]
+#[RequireAuth([UserRole::USER], rule: AuthRule::HIGHER)]
 readonly class CheckoutController extends ApiController
 {
     #[POST]

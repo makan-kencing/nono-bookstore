@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace App\Controller\Web;
 
 use App\Core\View;
+use App\Entity\User\UserRole;
 use App\Repository\Query\QueryUserListing;
 use App\Repository\UserRepository;
+use App\Router\AuthRule;
 use App\Router\Method\GET;
 use App\Router\Path;
+use App\Router\RequireAuth;
 use PDO;
 
 #[Path('/admin/user')]
+#[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER, redirect: false)]
 readonly class AdminUserController extends WebController
 {
     private UserRepository $userRepository;

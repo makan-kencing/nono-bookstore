@@ -10,13 +10,16 @@ use App\Entity\User\UserRole;
 use App\Exception\ConflictException;
 use App\Repository\Query\QueryUserCount;
 use App\Repository\UserRepository;
+use App\Router\AuthRule;
 use App\Router\Method\DELETE;
 use App\Router\Method\POST;
 use App\Router\Method\PUT;
 use App\Router\Path;
+use App\Router\RequireAuth;
 use PDO;
 
 #[Path('/api/user')]
+#[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER)]
 readonly class AdminUserController extends ApiController
 {
     private UserRepository $userRepository;
