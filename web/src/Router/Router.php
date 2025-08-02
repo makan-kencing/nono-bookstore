@@ -14,39 +14,26 @@ use App\Exception\Wrapper\ApiExceptionWrapper;
 use App\Exception\Wrapper\ExceptionWrapper;
 use App\Exception\Wrapper\WebExceptionWrapper;
 use App\Router\Method\HttpMethod;
-use App\Router\Method\Method;
 use JetBrains\PhpStorm\Language;
 use PDO;
-use ReflectionAttribute;
-use ReflectionClass;
 use ReflectionException;
-use ReflectionMethod;
+use RuntimeException;
 
-/**
- * @phpstan-type Handler callable<Controller>
- * @phpstan-type HttpMethodMapping array<string, Handler>
- * @phpstan-type Routes array<string, HttpMethodMapping>
- */
 class Router
 {
-    /** @var Routes */
-    private array $routes = [];
+    private RouteMapping $routes;
 
     public function __construct(
         public readonly PDO $pdo,
         public readonly View $view
     ) {
-    }
-
-    private static function compile(string $path): string
-    {
-        return '{^' . preg_replace('/{([a-zA-Z_][a-zA-Z0-9_]*)}/', '(?<\1>[^/]+)', $path) . '$}';
+        $this->routes = new RouteMapping();
     }
 
     /**
      * @return array<string, string>
      */
-    public static function extractPathParams(#[Language('RegExp')] string $regex, string $uri): array
+    private static function extractPathParams(#[Language('RegExp')] string $regex, string $uri): array
     {
         if (preg_match($regex, $uri, $matches)) {
             return array_filter($matches, fn ($key) => is_string($key), ARRAY_FILTER_USE_KEY);
@@ -54,60 +41,17 @@ class Router
         return [];
     }
 
-    public static function matchesUri(#[Language('RegExp')] string $regex, string $uri): bool
-    {
-        return (bool)preg_match($regex, $uri);
-    }
-
-    public static function getPath(ReflectionClass|ReflectionMethod $reflection): string
-    {
-        $pathReflection = $reflection->getAttributes(Path::class)[0] ?? null;
-
-        if ($pathReflection) {
-            $path = $pathReflection->getArguments()[0];
-            assert(is_string($path));
-
-            return $path;
-        }
-
-        return '';
-    }
-
     /**
      * @param class-string<Controller> $controller
      * @return void
-     * @throws ReflectionException | RouteInUseException
+     * @throws RouteInUseException
      */
     public function register(string $controller): void
     {
-        $reflectionClass = new ReflectionClass($controller);
-
-        $pathPrefix = self::getPath($reflectionClass);
-
-        foreach ($reflectionClass->getMethods() as $reflectionMethod) {
-            $methodsReflection = $reflectionMethod->getAttributes(Method::class, ReflectionAttribute::IS_INSTANCEOF);
-            if (!$methodsReflection) {
-                continue;
-            }
-
-            foreach ($methodsReflection as $methodReflection) {
-                $path = $pathPrefix . self::getPath($reflectionMethod);
-                $httpMethod = $methodReflection->newInstance()::METHOD;
-                $regex = self::compile($path);
-
-                $this->routes[$regex] ??= [];
-                if (isset($this->routes[$regex][$httpMethod->value])) {
-                    $inUse = $this->routes[$regex][$httpMethod->value];
-                    throw new RouteInUseException(
-                        $httpMethod,
-                        $path,
-                        $inUse[0] . '::' . $inUse[1],
-                        $reflectionClass->getName() . '::' . $reflectionMethod->getName()
-                    );
-                }
-
-                $this->routes[$regex][$httpMethod->value] = [$reflectionClass->getName(), $reflectionMethod->getName()];
-            }
+        try {
+            $this->routes->register($controller);
+        } catch (ReflectionException $e) {
+            throw new RuntimeException();
         }
     }
 
@@ -119,31 +63,29 @@ class Router
         // validate method is correct
         $_ = HttpMethod::from($method);
 
-        foreach (array_keys($this->routes) as $regex) {
-            if (self::matchesUri($regex, $uri)) {
-                $httpMethodMap = $this->routes[$regex];
-
-                if (!array_key_exists($method, $httpMethodMap)) {
-                    throw new MethodNotAllowedException(array_keys($httpMethodMap));
-                }
-
-                $params = self::extractPathParams($regex, $uri);
-
-                $handler = $httpMethodMap[$method];
-                $controller = new $handler[0]($this->pdo, $this->view);
-
-                try {
-                    $controller->{$handler[1]}(...$params);
-                    return;
-                } catch (WebException $e) {
-                    if (is_subclass_of($controller, ApiController::class)) {
-                        throw new ApiExceptionWrapper($e);
-                    }
-                    throw new WebExceptionWrapper($e);
-                }
-            }
+        $mapping = $this->routes->getMethodMapping($uri);
+        if (!$mapping) {
+            throw new NotFoundException();
         }
 
-        throw new NotFoundException();
+        $regex = $mapping[0];
+        $httpMethodMap = $mapping[1];
+        if (!array_key_exists($method, $httpMethodMap)) {
+            throw new MethodNotAllowedException(array_keys($httpMethodMap));
+        }
+
+        $handler = $httpMethodMap[$method];
+
+        $params = self::extractPathParams($regex, $uri);
+        $controller = new $handler[0]($this->pdo, $this->view);
+        try {
+            $controller->{$handler[1]}(...$params);
+            return;
+        } catch (WebException $e) {
+            if (is_subclass_of($controller, ApiController::class)) {
+                throw new ApiExceptionWrapper($e);
+            }
+            throw new WebExceptionWrapper($e);
+        }
     }
 }
