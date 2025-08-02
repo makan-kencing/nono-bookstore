@@ -7,8 +7,6 @@ namespace App\Repository\Mapper;
 use App\Entity\Rating\Reply;
 use DateTime;
 use OutOfBoundsException;
-use PDOStatement;
-use RuntimeException;
 
 /**
  * @extends RowMapper<Reply>
@@ -19,30 +17,6 @@ class ReplyRowMapper extends RowMapper
     public const string REPLIED_AT = 'repliedAt';
     public const string USER = 'user.';
     public const string RATING = 'rating.';
-
-    private UserRowMapper $userRowMapper;
-    private RatingRowMapper $ratingRowMapper;
-
-    public function getUserRowMapper(): UserRowMapper
-    {
-        $this->userRowMapper ??= new UserRowMapper($this->prefix . self::USER);
-        return $this->userRowMapper;
-    }
-
-    public function getRatingRowMapper(): RatingRowMapper
-    {
-        $this->ratingRowMapper ??= new RatingRowMapper($this->prefix . self::RATING);
-        return $this->ratingRowMapper;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function map(PDOStatement $stmt): array
-    {
-        // TODO: Implement map() method.
-        throw new RuntimeException('Not Implemented');
-    }
 
     /**
      * @inheritDoc
@@ -77,10 +51,10 @@ class ReplyRowMapper extends RowMapper
             'Y-m-d H:i:s',
             $this->getColumn($row, self::REPLIED_AT)
         );
-        if ($v = $this->getUserRowMapper()->mapRowOrNull($row)) {
+        if ($v = $this->useMapper(UserRowMapper::class, self::USER)->mapRowOrNull($row)) {
             $object->user = $v;
         }
-        if ($v = $this->getRatingRowMapper()->mapRowOrNull($row)) {
+        if ($v = $this->useMapper(RatingRowMapper::class, self::RATING)->mapRowOrNull($row)) {
             $object->rating = $v;
         }
     }

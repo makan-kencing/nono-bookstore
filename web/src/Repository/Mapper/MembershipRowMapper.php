@@ -7,27 +7,17 @@ namespace App\Repository\Mapper;
 use App\Entity\User\Membership;
 use DateTime;
 use OutOfBoundsException;
-use PDOStatement;
-use RuntimeException;
 
 /**
  * @extends RowMapper<Membership>
  */
 class MembershipRowMapper extends RowMapper
 {
+    public const string ID = self::USER . UserRowMapper::ID;
     public const string FROM_DATE = 'fromDate';
     public const string THRU_DATE = 'thruDate';
     public const string CARD_NO = 'cardNo';
     public const string USER = 'user.';
-
-    /**
-     * @inheritDoc
-     */
-    public function map(PDOStatement $stmt): array
-    {
-        // TODO: Implement map() method.
-        throw new RuntimeException('Not Implemented');
-    }
 
     /**
      * @inheritDoc
@@ -41,11 +31,9 @@ class MembershipRowMapper extends RowMapper
 
         try {
             $membership = new Membership();
-            $membership->id = $id;
             $this->bindProperties($membership, $row);
         } catch (OutOfBoundsException) {
             $membership = new Membership();
-            $membership->id = $id;
             $membership->isLazy = true;
         }
 
@@ -65,5 +53,6 @@ class MembershipRowMapper extends RowMapper
         $object->thruDate = ($v = $this->getColumn($row, self::THRU_DATE))
             ? DateTime::createFromFormat('Y-m-d H:i:s', $v)
             : null;
+        $object->user = $this->useMapper(UserRowMapper::class, self::USER)->mapRow($row);
     }
 }

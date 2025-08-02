@@ -6,8 +6,6 @@ namespace App\Repository\Mapper;
 
 use App\Entity\Book\Category\Category;
 use OutOfBoundsException;
-use PDOStatement;
-use RuntimeException;
 
 /**
  * @extends RowMapper<Category>
@@ -19,33 +17,6 @@ class CategoryRowMapper extends RowMapper
     public const string DESCRIPTION = 'description';
     public const string PARENT = 'parent.';
     public const string SUBCATEGORIES = 'subcategories.';
-
-    private CategoryRowMapper $parentCategoryRowMapper;
-    private CategoryRowMapper $subcategoryRowMapper;
-
-    public function getParentCategoryRowMapper(): CategoryRowMapper
-    {
-        $this->parentCategoryRowMapper ??= new CategoryRowMapper($this->prefix . self::PARENT);
-        return $this->parentCategoryRowMapper;
-    }
-
-    /**
-     * @return CategoryRowMapper
-     */
-    public function getSubcategoryRowMapper(): CategoryRowMapper
-    {
-        $this->subcategoryRowMapper ??= new CategoryRowMapper($this->prefix . self::SUBCATEGORIES);
-        return $this->subcategoryRowMapper;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function map(PDOStatement $stmt): array
-    {
-        // TODO: Implement map() method.
-        throw new RuntimeException('Not Implemented');
-    }
 
     /**
      * @inheritDoc
@@ -78,6 +49,6 @@ class CategoryRowMapper extends RowMapper
         $object->slug = $this->getColumn($row, self::SLUG);
         $object->name = $this->getColumn($row, self::NAME);
         $object->description = $this->getColumn($row, self::DESCRIPTION);
-        $object->parent = $this->getParentCategoryRowMapper()->mapRowOrNull($row);
+        $object->parent = $this->useMapper(CategoryRowMapper::class, self::PARENT)->mapRowOrNull($row);
     }
 }

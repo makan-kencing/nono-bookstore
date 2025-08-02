@@ -7,25 +7,16 @@ namespace App\Repository\Mapper;
 use App\Entity\User\UserProfile;
 use DateTime;
 use OutOfBoundsException;
-use PDOStatement;
-use RuntimeException;
 
 /**
  * @extends RowMapper<UserProfile>
  */
 class UserProfileRowMapper extends RowMapper
 {
+    public const string ID = self::USER . UserRowMapper::ID;
     public const string CONTACT_NO = 'contactNo';
     public const string DOB = 'dob';
-
-    /**
-     * @inheritDoc
-     */
-    public function map(PDOStatement $stmt): array
-    {
-        // TODO: Implement map() method.
-        throw new RuntimeException('Not Implemented');
-    }
+    public const string USER = 'user.';
 
     /**
      * @inheritDoc
@@ -39,11 +30,9 @@ class UserProfileRowMapper extends RowMapper
 
         try {
             $userProfile = new UserProfile();
-            $userProfile->id = $id;
             $this->bindProperties($userProfile, $row);
         } catch (OutOfBoundsException) {
             $userProfile = new UserProfile();
-            $userProfile->id = $id;
             $userProfile->isLazy = true;
         }
 
@@ -59,5 +48,6 @@ class UserProfileRowMapper extends RowMapper
         $object->dob = ($v = $this->getColumn($row, self::DOB))
             ? DateTime::createFromFormat('Y-m-d', $v)
             : null;
+        $object->user = $this->useMapper(UserRowMapper::class, self::USER)->mapRow($row);
     }
 }

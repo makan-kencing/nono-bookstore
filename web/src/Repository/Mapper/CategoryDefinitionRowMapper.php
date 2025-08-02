@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Repository\Mapper;
 
 use App\Entity\Book\Category\CategoryDefinition;
-use PDOStatement;
 use DateTime;
-use RuntimeException;
 
 /**
  * @extends RowMapper<CategoryDefinition>
@@ -21,30 +19,6 @@ class CategoryDefinitionRowMapper extends RowMapper
     public const string THRU_DATE = 'thruDate';
     public const string CATEGORY = 'category.';
     public const string BOOK = 'book.';
-
-    private CategoryRowMapper $categoryRowMapper;
-    private BookRowMapper $bookRowMapper;
-
-    public function getCategoryRowMapper(): CategoryRowMapper
-    {
-        $this->categoryRowMapper ??= new CategoryRowMapper($this->prefix . self::CATEGORY);
-        return $this->categoryRowMapper;
-    }
-
-    public function getBookRowMapper(): BookRowMapper
-    {
-        $this->bookRowMapper ??= new BookRowMapper($this->prefix . self::BOOK);
-        return $this->bookRowMapper;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function map(PDOStatement $stmt): array
-    {
-        // TODO: Implement map() method.
-        throw new RuntimeException('Not Implemented');
-    }
 
     /**
      * @inheritDoc
@@ -72,10 +46,10 @@ class CategoryDefinitionRowMapper extends RowMapper
         $object->thruDate = ($v = $this->getColumn($row, self::THRU_DATE))
             ? DateTime::createFromFormat('Y-m-d H:i:s', $v)
             : null;
-        if ($v = $this->getCategoryRowMapper()->mapRowOrNull($row)) {
+        if ($v = $this->useMapper(CategoryRowMapper::class, self::CATEGORY)->mapRowOrNull($row)) {
             $object->category = $v;
         }
-        if ($v = $this->getBookRowMapper()->mapRowOrNull($row)) {
+        if ($v = $this->useMapper(BookRowMapper::class, self::BOOK)->mapRowOrNull($row)) {
             $object->book = $v;
         }
     }

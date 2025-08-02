@@ -7,7 +7,6 @@ namespace App\Repository\Mapper;
 use App\Entity\User\User;
 use App\Entity\User\UserRole;
 use OutOfBoundsException;
-use PDOStatement;
 
 /**
  * @extends RowMapper<User>
@@ -26,38 +25,6 @@ class UserRowMapper extends RowMapper
     public const string WISHLIST = 'wishlist.';
     public const string CART = 'cart.';
     public const string ORDERS = 'orders.';
-
-    private UserProfileRowMapper $userProfileRowMapper;
-    private MembershipRowMapper $membershipRowMapper;
-
-    public function getUserProfileRowMapper(): UserProfileRowMapper
-    {
-        $this->userProfileRowMapper ??= new UserProfileRowMapper($this->prefix . self::PROFILE);
-        return $this->userProfileRowMapper;
-    }
-
-    public function getMembershipRowMapper(): MembershipRowMapper
-    {
-        $this->membershipRowMapper ??= new MembershipRowMapper($this->prefix . self::MEMBERSHIP);
-        return $this->membershipRowMapper;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function map(PDOStatement $stmt): array
-    {
-        /** @var array<int, User> $map */
-        $map = [];
-        foreach ($stmt as $row) {
-            $this->mapOneToMany(
-                $row,
-                $map,
-            );
-        }
-
-        return array_values($map);
-    }
 
     /**
      * @inheritDoc
@@ -91,7 +58,7 @@ class UserRowMapper extends RowMapper
         $object->hashedPassword = $this->getColumn($row, self::HASHED_PASSWORD);
         $object->role = UserRole::{$this->getColumn($row, self::ROLE)};
         $object->isVerified = (bool)$this->getColumn($row, self::IS_VERIFIED);
-        $object->profile = $this->getUserProfileRowMapper()->mapRowOrNull($row);
-        $object->membership = $this->getMembershipRowMapper()->mapRowOrNull($row);
+        $object->profile = $this->useMapper(UserProfileRowMapper::class, self::PROFILE)->mapRowOrNull($row);
+        $object->membership = $this->useMapper(MembershipRowMapper::class, self::MEMBERSHIP)->mapRowOrNull($row);
     }
 }

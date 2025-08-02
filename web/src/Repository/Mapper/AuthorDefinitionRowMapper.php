@@ -6,8 +6,6 @@ namespace App\Repository\Mapper;
 
 use App\Entity\Book\Author\AuthorDefinition;
 use App\Entity\Book\Author\AuthorDefinitionType;
-use PDOStatement;
-use RuntimeException;
 
 /**
  * @extends RowMapper<AuthorDefinition>
@@ -19,30 +17,6 @@ class AuthorDefinitionRowMapper extends RowMapper
     public const string COMMENT = 'comment';
     public const string AUTHOR = 'author.';
     public const string BOOK = 'book.';
-
-    private AuthorRowMapper $authorRowMapper;
-    private BookRowMapper $bookRowMapper;
-
-    public function getAuthorRowMapper(): AuthorRowMapper
-    {
-        $this->authorRowMapper ??= new AuthorRowMapper($this->prefix . self::AUTHOR);
-        return $this->authorRowMapper;
-    }
-
-    public function getBookRowMapper(): BookRowMapper
-    {
-        $this->bookRowMapper ??= new BookRowMapper($this->prefix . self::BOOK);
-        return $this->bookRowMapper;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function map(PDOStatement $stmt): array
-    {
-        // TODO: Implement map() method.
-        throw new RuntimeException('Not Implemented');
-    }
 
     /**
      * @inheritDoc
@@ -63,10 +37,10 @@ class AuthorDefinitionRowMapper extends RowMapper
     {
         $object->type = AuthorDefinitionType::{$this->getColumn($row, self::TYPE)};
         $object->comment = $this->getColumn($row, self::COMMENT);
-        if ($v = $this->getBookRowMapper()->mapRowOrNull($row)) {
+        if ($v = $this->useMapper(BookRowMapper::class, self::BOOK)->mapRowOrNull($row)) {
             $object->book = $v;
         }
-        if ($v = $this->getAuthorRowMapper()->mapRowOrNull($row)) {
+        if ($v = $this->useMapper(AuthorRowMapper::class, self::AUTHOR)->mapRowOrNull($row)) {
             $object->author = $v;
         }
     }

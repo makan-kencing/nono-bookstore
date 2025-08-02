@@ -10,30 +10,40 @@ use PDOStatement;
 
 /**
  * @template T of Entity
+ * @phpstan-type Row array<string, mixed>
  */
 abstract class RowMapper
 {
+    use UsesMapper;
+
     public const string ID = 'id';
 
-    public readonly string $prefix;
-
-    public function __construct(string $prefix = '')
-    {
-        $this->prefix = $prefix;
+    public function __construct(
+        public readonly string $prefix = ''
+    ) {
     }
 
     /**
-     * Consume a result set to return a list of T
+     * A utility function to get the column by name prefixed by prefix.
      *
-     * @param PDOStatement $stmt
-     * @return T[]
+     * @template R of Row
+     * @param R $row
+     * @param key-of<R> $key
+     * @return ?value-of<R>
+     * @throws OutOfBoundsException
      */
-    abstract public function map(PDOStatement $stmt): array;
+    public function getColumn(array $row, mixed $key): mixed
+    {
+        if (!array_key_exists($this->prefix . $key, $row)) {
+            throw new OutOfBoundsException("`$this->prefix$key` is not found.");
+        }
+        return $row[$this->prefix . $key];
+    }
 
     /**
      * Map a row from PDOStatement into an instance of T.
      *
-     * @param array<int|string, mixed> $row
+     * @param Row $row
      * @return T
      * @throws OutOfBoundsException
      */
@@ -42,7 +52,7 @@ abstract class RowMapper
     /**
      * Map a row from PDOStatement into an instance of T.
      *
-     * @param array<int|string, mixed> $row
+     * @param Row $row
      * @return ?T
      */
     public function mapRowOrNull(array $row): mixed
@@ -57,22 +67,18 @@ abstract class RowMapper
     /**
      * Utility function for easily mapping one-to-many entities
      *
-     * @param array<int|string, mixed> $row
-     * @param ?array<T> &$attribute
+     * @param Row $row
+     * @param array<T> &$attribute
      * @param ?callable(T): void $backreference The function to be called when mapped the first time.
-     * @param (callable(T): void)[] $nested The functions to be called regardless of first-time mapping.
+     * @param-immediately-invoked-callable $backreference
      * @param-out array<T> $attribute
      * @return void
      */
     public function mapOneToMany(
         array $row,
-        ?array &$attribute,
-        ?callable $backreference = null,
-        array $nested = []
+        array &$attribute,
+        ?callable $backreference = null
     ): void {
-        // initialize array if not already
-        $attribute ??= [];
-
         $id = $row[$this->prefix . static::ID] ?? null;
         if ($id) {
             // check if already defined
@@ -88,35 +94,44 @@ abstract class RowMapper
                 $attribute[$id] = $child;
             }
 
-            foreach ($nested as $f) {
-                $f($child);
-            }
+            $this->bindOneToManyProperties($child, $row);
         }
     }
 
     /**
      * @param T $object
-     * @param array<int|string, mixed> $row
+     * @param Row $row
      * @return void
      * @throws OutOfBoundsException
      */
     abstract public function bindProperties(mixed $object, array $row): void;
 
     /**
-     * A utility function to get the column by name prefixed by prefix.
-     *
-     * @template TKey
-     * @template TValue
-     * @param array<TKey, TValue> $row
-     * @param TValue $key
-     * @return ?TValue
-     * @throws OutOfBoundsException
+     * @param T $object
+     * @param Row $row
+     * @return void
      */
-    public function getColumn(array $row, mixed $key): mixed
+    public function bindOneToManyProperties(mixed $object, array $row): void
     {
-        if (!array_key_exists($this->prefix . $key, $row)) {
-            throw new OutOfBoundsException("`$this->prefix$key` is not found.");
+    }
+
+    /**
+     * Consume a result set to return a list of T
+     *
+     * @param PDOStatement $stmt
+     * @return T[]
+     */
+    public function extract(PDOStatement $stmt): array
+    {
+        /** @var array<int, T> $map */
+        $map = [];
+        foreach ($stmt as $row) {
+            $this->mapOneToMany(
+                $row,
+                $map
+            );
         }
-        return $row[$this->prefix . $key];
+
+        return array_values($map);
     }
 }

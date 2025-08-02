@@ -25,7 +25,7 @@ readonly class UserRepository extends Repository
         $stmt->execute();
 
         $rowMapper = new UserRowMapper('user.');
-        return $rowMapper->map($stmt);
+        return $rowMapper->extract($stmt);
     }
 
     /**

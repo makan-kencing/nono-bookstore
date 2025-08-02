@@ -6,8 +6,6 @@ namespace App\Repository\Mapper;
 
 use App\Entity\Book\Series\Series;
 use OutOfBoundsException;
-use PDOStatement;
-use RuntimeException;
 
 /**
  * @extends RowMapper<Series>
@@ -19,15 +17,6 @@ class SeriesRowMapper extends RowMapper
     public const string DESCRIPTION = 'description';
     public const string BOOKS = 'books.';
     public const string AUTHORS = 'authors.';
-
-    /**
-     * @inheritDoc
-     */
-    public function map(PDOStatement $stmt): array
-    {
-        // TODO: Implement map() method.
-        throw new RuntimeException('Not Implemented');
-    }
 
     /**
      * @inheritDoc

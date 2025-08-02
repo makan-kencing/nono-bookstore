@@ -9,10 +9,8 @@ use App\Entity\Book\Book;
 use App\Entity\Book\BookImage;
 use App\Entity\Book\Category\CategoryDefinition;
 use App\Entity\Rating\Rating;
-use App\Entity\Rating\Reply;
 use DateTime;
 use OutOfBoundsException;
-use PDOStatement;
 
 /**
  * @extends RowMapper<Book>
@@ -33,108 +31,6 @@ class BookRowMapper extends RowMapper
     public const string CATEGORIES = 'categories.';
     public const string RATINGS = 'ratings.';
     public const string SERIES = 'series.';
-
-    private AuthorDefinitionRowMapper $authorDefinitionRowMapper;
-    private BookImageRowMapper $bookImageRowMapper;
-    private CategoryDefinitionRowMapper $categoryDefinitionRowMapper;
-    private RatingRowMapper $ratingRowMapper;
-    private SeriesRowMapper $seriesRowMapper;
-
-    public function getAuthorDefinitionRowMapper(): AuthorDefinitionRowMapper
-    {
-        $this->authorDefinitionRowMapper ??= new AuthorDefinitionRowMapper($this->prefix . self::AUTHORS);
-        return $this->authorDefinitionRowMapper;
-    }
-
-    public function getBookImageRowMapper(): BookImageRowMapper
-    {
-        $this->bookImageRowMapper ??= new BookImageRowMapper($this->prefix . self::IMAGES);
-        return $this->bookImageRowMapper;
-    }
-
-    public function getCategoryDefinitionRowMapper(): CategoryDefinitionRowMapper
-    {
-        $this->categoryDefinitionRowMapper ??= new CategoryDefinitionRowMapper($this->prefix . self::CATEGORIES);
-        return $this->categoryDefinitionRowMapper;
-    }
-
-    public function getRatingRowMapper(): RatingRowMapper
-    {
-        $this->ratingRowMapper ??= new RatingRowMapper($this->prefix . self::RATINGS);
-        return $this->ratingRowMapper;
-    }
-
-    public function getSeriesRowMapper(): SeriesRowMapper
-    {
-        $this->seriesRowMapper ??= new SeriesRowMapper($this->prefix . self::SERIES);
-        return $this->seriesRowMapper;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function map(PDOStatement $stmt): array
-    {
-        /** @var array<int, Book> $map */
-        $map = [];
-        foreach ($stmt as $row) {
-            $this->mapOneToMany(
-                $row,
-                $map,
-                nested: [  // maps the one-to-many
-                    function (Book $book) use ($row) {
-                        $this->getBookImageRowMapper()->mapOneToMany(
-                            $row,
-                            $book->images,
-                            backreference: function (BookImage $image) use ($book) {
-                                $image->book = $book;
-                            }
-                        );
-                    },
-                    function (Book $book) use ($row) {
-                        $this->getAuthorDefinitionRowMapper()->mapOneToMany(
-                            $row,
-                            $book->authors,
-                            backreference: function (AuthorDefinition $author) use ($book) {
-                                $author->book = $book;
-                            }
-                        );
-                    },
-                    function (Book $book) use ($row) {
-                        $this->getCategoryDefinitionRowMapper()->mapOneToMany(
-                            $row,
-                            $book->categories,
-                            backreference: function (CategoryDefinition $category) use ($book) {
-                                $category->book = $book;
-                            }
-                        );
-                    },
-                    function (Book $book) use ($row) {
-                        $this->getRatingRowMapper()->mapOneToMany(
-                            $row,
-                            $book->ratings,
-                            backreference: function (Rating $rating) use ($book) {
-                                $rating->book = $book;
-                            },
-                            nested: [
-                                function (Rating $rating) use ($row) {
-                                    $this->getRatingRowMapper()->getReplyRowMapper()->mapOneToMany(
-                                        $row,
-                                        $rating->replies,
-                                        backreference: function (Reply $reply) use ($rating) {
-                                            $reply->rating = $rating;
-                                        }
-                                    );
-                                }
-                            ]
-                        );
-                    }
-                ]
-            );
-        }
-
-        return array_values($map);
-    }
 
     /**
      * @inheritDoc
@@ -176,6 +72,45 @@ class BookRowMapper extends RowMapper
         $object->numberOfPages = $this->getColumn($row, self::NUMBER_OF_PAGES);
         $object->language = $this->getColumn($row, self::LANGUAGE);
         $object->dimensions = $this->getColumn($row, self::DIMENSION);
-        $object->series = $this->getSeriesRowMapper()->mapRowOrNull($row);
+        $object->series = $this->useMapper(SeriesRowMapper::class, self::SERIES)->mapRowOrNull($row);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function bindOneToManyProperties(mixed $object, array $row): void
+    {
+        $object->images ??= [];
+        $this->useMapper(BookImageRowMapper::class, self::IMAGES)->mapOneToMany(
+            $row,
+            $object->images,
+            backreference: function (BookImage $image) use ($object) {
+                $image->book = $object;
+            }
+        );
+        $object->authors ??= [];
+        $this->useMapper(AuthorDefinitionRowMapper::class, self::AUTHORS)->mapOneToMany(
+            $row,
+            $object->authors,
+            backreference: function (AuthorDefinition $author) use ($object) {
+                $author->book = $object;
+            }
+        );
+        $object->categories ??= [];
+        $this->useMapper(CategoryDefinitionRowMapper::class, self::CATEGORIES)->mapOneToMany(
+            $row,
+            $object->categories,
+            backreference: function (CategoryDefinition $category) use ($object) {
+                $category->book = $object;
+            }
+        );
+        $object->ratings ??= [];
+        $this->useMapper(RatingRowMapper::class, self::RATINGS)->mapOneToMany(
+            $row,
+            $object->ratings,
+            backreference: function (Rating $rating) use ($object) {
+                $rating->book = $object;
+            }
+        );
     }
 }
