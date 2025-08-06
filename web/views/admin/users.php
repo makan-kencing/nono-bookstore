@@ -14,4 +14,4 @@ ob_start();
 <?php
 $content = ob_get_clean();
 
-include __DIR__ . "/../_base.php";
+include __DIR__ . "/_base.php";
