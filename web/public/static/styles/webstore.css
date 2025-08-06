@@ -1,14 +1,91 @@
+header {
+    display: flex;
+    align-items: center;
+    flex-flow: column;
+
+    border-bottom: 1px solid;
+
+    > * {
+        max-width: 1280px;
+        width: 100%;
+    }
+
+    a {
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: revert;
+        }
+    }
+
+    > div {
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        gap: 2rem;
+
+        flex-basis: auto;
+    }
+
+    #store-information {
+
+    }
+
+    #store-account {
+        margin-left: auto;
+    }
+
+    #store-logo {
+        white-space: nowrap;
+    }
+
+    search {
+        width: 100%;
+
+        form {
+            height: 100%;
+            display: flex;
+            flex-flow: row;
+
+            input[type='search'] {
+                padding: 0.5rem;
+                flex-grow: 1;
+            }
+        }
+
+    }
+
+    #store-cart {
+        padding: 0 1rem;
+        margin-top: 0.5rem;
+
+        i {
+            font-size: 1.5rem;
+        }
+    }
+
+    #store-categories {
+        font-weight: bold;
+        font-size: 1.2rem;
+        width: 100%;
+    }
+}
 
 main {
     display: flex;
     align-items: center;
     flex-flow: column;
-
     gap: 2rem;
+
+    padding: 2rem;
 
     > * {
         max-width: 1280px;
     }
+}
+
+footer {
+
 }
 
 section#book-listing {

@@ -73,6 +73,24 @@ ul.comma-list {
     }
 }
 
+ul.bar-list {
+    display: flex;
+    flex-flow: row;
+    gap: 1rem;
+    justify-content: space-between;
+
+    list-style: none;
+    padding-left: 0;
+
+    > li {
+        display: contents;
+    }
+
+    > li + li::before {
+        content: '|';
+    }
+}
+
 button.double-icon {
     &:not(:hover) > .hide {
         display: none;
