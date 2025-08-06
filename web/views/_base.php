@@ -18,6 +18,8 @@ declare(strict_types=1);
             crossorigin="anonymous"></script>
     <script src="/static/js/index.js" type="module"></script>
     <link rel="stylesheet" href="/static/styles/index.css">
+
+    <?= $extraHead ?? '' ?>
 </head>
 <body>
     <?= $content ?? '' ?>
