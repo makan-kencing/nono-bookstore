@@ -13,3 +13,11 @@
 /*    }*/
 /*    -moz-appearance: textfield;*/
 /*}*/
+
+a {
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: revert;
+    }
+}

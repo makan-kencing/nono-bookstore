@@ -5,17 +5,11 @@ header {
 
     border-bottom: 1px solid;
 
+    padding: 0 2rem;
+
     > * {
         max-width: 1280px;
         width: 100%;
-    }
-
-    a {
-        text-decoration: none;
-
-        &:hover {
-            text-decoration: revert;
-        }
     }
 
     > div {
@@ -85,7 +79,28 @@ main {
 }
 
 footer {
+    display: flex;
+    align-items: center;
+    flex-flow: column;
 
+    padding: 2rem;
+
+    border-top: 1px solid;
+
+    > div {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        flex-flow: row;
+
+        max-width: 1280px;
+        width: 100%;
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+    }
 }
 
 section#book-listing {
