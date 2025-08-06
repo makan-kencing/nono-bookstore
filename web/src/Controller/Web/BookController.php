@@ -25,14 +25,19 @@ readonly class BookController extends WebController
     }
 
     /**
-     * @param string $isbn
-     * @param string $slug
+     * View a book and its details.
+     *
+     * @param string $isbn The isbn of the book
+     * @param string $slug The url slug of the book. Used for readability purposes.
+     * @param string $type The cover type of the book. Defaults to Paperback.
      * @return void
      * @throws WebExceptionWrapper
      */
-    #[Path('/{isbn}/{slug}')]
     #[GET]
-    public function viewBook(string $isbn, string $slug): void
+    #[Path('/{isbn}')]
+    #[Path('/{isbn}/{slug}')]
+    #[Path('/{isbn}/{slug}/{type}')]
+    public function viewBook(string $isbn, string $slug = '', string $type = '1'): void
     {
         $query = new QueryBookWithFullDetail();
         $query->isbn = $isbn;
