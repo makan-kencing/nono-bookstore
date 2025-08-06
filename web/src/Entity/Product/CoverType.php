@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity\Product;
 
-enum CoverType
+enum CoverType: int
 {
-    case HARDCOVER;
-    case PAPERBACK;
+    case PAPERBACK = 1;
+    case HARDCOVER = 2;
 }
