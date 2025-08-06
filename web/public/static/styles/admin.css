@@ -1,6 +1,6 @@
-/* 全局样式 */
+
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     line-height: 1.6;
     margin: 0;
     padding: 0;
@@ -8,9 +8,10 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    background: white;
 }
 
-/* 头部样式 */
+
 header {
     background: #4CAF50;
     color: white;
@@ -19,6 +20,9 @@ header {
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 
@@ -32,7 +36,7 @@ header {
     transform: scale(1.1);
 }
 
-/* 导航样式 */
+
 nav ul {
     list-style: none;
     padding: 0;
@@ -58,39 +62,98 @@ nav a:hover {
     border-radius: 100%;
 }
 
-/* 主体内容样式 */
-main {
-    padding: 2rem;
+
+:root {
+    --primary-color: #4361ee;
+    --bg-color: #f8f9fa;
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+}
+
+.profile-container {
+    margin: auto;
+    width: 100%;
     max-width: 1200px;
-    margin: 0 auto;
-    flex: 1;
-    padding-bottom: 80px; /* 为footer留出空间 */
+    padding: 2rem;
 }
 
-/* 页脚样式 */
-footer {
-    background: #333;
-    color: white;
+.profile-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    padding: 2.5rem;
+    overflow: hidden;
+}
+
+.avatar-section {
     text-align: center;
-    padding: 1.5rem;
-    margin-top: auto;
+    margin: 2rem 0;
 }
 
+.avatar-section i {
+    font-size: 10rem;
+    color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    padding: 1rem;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
 
-/* 响应式设计 */
-@media (max-width: 768px) {
-    header {
-        flex-direction: column;
-        padding: 1rem;
-    }
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
 
-    .header-left {
-        margin-bottom: 1rem;
-    }
+.form-group {
+    background: rgba(255, 255, 255, 0.6);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
 
-    nav ul {
-        flex-direction: column;
-        gap: 10px;
-        text-align: center;
-    }
+.address-form {
+    grid-column: span 2;
+}
+
+label {
+    display: block;
+    margin: 0.8rem 0 0.3rem;
+    font-weight: 500;
+    color: #333;
+}
+
+input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+}
+
+.btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn:hover {
+    background: #3a56d4;
+    transform: translateY(-2px);
 }
