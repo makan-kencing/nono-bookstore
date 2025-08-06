@@ -12,7 +12,7 @@ use App\Repository\Repository;
  */
 readonly class UserProfileRepository extends Repository
 {
-    public function addUserProfile(UserProfile $userProfile): void{
+    public function insertProfile(UserProfile $userProfile): void{
 
 
         $stmt = $this->conn->prepare('
@@ -23,7 +23,7 @@ readonly class UserProfileRepository extends Repository
         $stmt->bindValue(':dob', $userProfile->dob);
     }
 
-    public function updateUserProfile(UserProfile $userProfile): void{
+    public function updateProfile(UserProfile $userProfile): void{
         $stmt = $this->conn->prepare('
         Update user_profile
         SET contact_no=:contact_no,dob=:dob

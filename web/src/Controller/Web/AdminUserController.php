@@ -14,7 +14,7 @@ use App\Router\Path;
 use App\Router\RequireAuth;
 use PDO;
 
-#[Path('/admin/user')]
+#[Path('/admin/users')]
 #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER, redirect: false)]
 readonly class AdminUserController extends WebController
 {
@@ -26,7 +26,7 @@ readonly class AdminUserController extends WebController
         $this->userRepository = new UserRepository($this->pdo);
     }
 
-    #[GET]
+    #[GET] //This is for database using
     public function viewUserList(): void
     {
         $query = new QueryUserListing();

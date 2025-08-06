@@ -1,0 +1,96 @@
+/* 全局样式 */
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 头部样式 */
+header {
+    background: #4CAF50;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+
+.profile {
+    font-size: 2rem;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.profile:hover {
+    transform: scale(1.1);
+}
+
+/* 导航样式 */
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 20px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+nav a:hover {
+    background-color: rgba(255,255,255,0.2);
+}
+
+.profile-link {
+    border-radius: 100%;
+}
+
+/* 主体内容样式 */
+main {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex: 1;
+    padding-bottom: 80px; /* 为footer留出空间 */
+}
+
+/* 页脚样式 */
+footer {
+    background: #333;
+    color: white;
+    text-align: center;
+    padding: 1.5rem;
+    margin-top: auto;
+}
+
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .header-left {
+        margin-bottom: 1rem;
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+}
