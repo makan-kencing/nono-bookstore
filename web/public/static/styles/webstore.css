@@ -1,0 +1,140 @@
+
+main {
+    display: flex;
+    align-items: center;
+    flex-flow: column;
+
+    gap: 2rem;
+
+    > * {
+        max-width: 1280px;
+    }
+}
+
+section#book-listing {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+        'preview info'
+        'preview purchase';
+    gap: 2rem;
+    align-items: stretch;
+
+    width: 100%;
+    padding: 0 5rem;
+
+    #book-preview {
+        grid-area: preview;
+
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    #book-information {
+        grid-area: info;
+    }
+
+    #book-purchase {
+        grid-area: purchase;
+
+        display: flex;
+        flex-flow: column;
+        justify-content: space-between;
+        gap: 1rem;
+
+        p {
+            margin: 0;
+        }
+
+        form {
+            display: contents;
+        }
+
+        .price {
+            font-weight: bold;
+        }
+
+        #product-variants {
+            font-size: 0.8rem;
+            text-align: center;
+
+            display: flex;
+            flex-flow: row;
+            gap: 1rem;
+
+            .product-variant {
+                text-decoration: inherit;
+                color: inherit;
+
+                outline: 1px solid rgba(0, 0, 0, 0.5);
+                background-color: rgba(0, 0, 0, 0);
+
+                padding: 0.5rem 1rem;
+
+                &:not(a) {
+                    outline: 2px solid;
+                    background-color: rgba(0, 0, 0, 0.05);
+                }
+            }
+        }
+
+        #product-ordering {
+            display: flex;
+            flex-flow: row;
+
+            padding: 1rem;
+            border: 1px solid;
+
+            #product-stocks {
+                display: flex;
+                flex-flow: column;
+                gap: 0.5rem;
+
+                font-weight: bold;
+            }
+
+            #product-quantity {
+                display: flex;
+                flex-flow: row;
+                align-items: center;
+                gap: 1rem;
+
+                margin-left: auto;
+
+                input[type='number'] {
+                    width: 4rem;
+                    text-align: center;
+                }
+
+                button {
+                    padding: 0.5rem 1rem;
+                }
+            }
+        }
+
+        #wishlisting {
+            #wishlist, #wishlisted {
+                border: none;
+                background: none;
+
+                align-self: center;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+
+            &[data-wishlist='1'] #wishlist {
+                display: none;
+            }
+
+            &[data-wishlist='0'] #wishlisted {
+                display: none;
+            }
+        }
+    }
+}
+
