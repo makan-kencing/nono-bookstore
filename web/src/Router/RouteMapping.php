@@ -76,6 +76,11 @@ class RouteMapping
             }
 
             $paths = self::getAnnotatedPaths($reflectionMethod);
+            // ensures at least one path to be mapped
+            if (!$paths) {
+                $paths[0] = '';
+            }
+
             foreach ($httpMethods as $httpMethod) {
                 foreach ($paths as $path) {
                     $fullpath = $pathPrefix . $path;
