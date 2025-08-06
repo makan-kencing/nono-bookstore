@@ -13,6 +13,6 @@ readonly class CartController extends WebController
     #[GET]
     public function viewCart(): void
     {
-        echo $this->render('cart.php');
+        echo $this->render('webstore/cart.php');
     }
 }

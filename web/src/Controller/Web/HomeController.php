@@ -13,7 +13,7 @@ readonly class HomeController extends WebController
     #[GET]
     public function index(): void
     {
-        echo $this->render('home.php', [
+        echo $this->render('webstore/home.php', [
             'home' => 'wahahaha'
         ]);
     }

@@ -18,6 +18,6 @@ readonly class SeriesController extends WebController
     #[Path('/{slug}')]
     public function viewSeries(string $slug): void
     {
-        echo $this->render('series.php');
+        echo $this->render('webstore/series.php');
     }
 }

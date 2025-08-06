@@ -18,6 +18,6 @@ readonly class AuthorController extends WebController
     #[Path('/{slug}')]
     public function viewAuthor(string $slug): void
     {
-        echo $this->render('author.php');
+        echo $this->render('webstore/author.php');
     }
 }

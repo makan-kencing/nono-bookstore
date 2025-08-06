@@ -48,7 +48,7 @@ readonly class BookController extends WebController
             return;
         }
 
-        echo $this->render('book.php', [
+        echo $this->render('webstore/book.php', [
             'book' => $book
         ]);
     }

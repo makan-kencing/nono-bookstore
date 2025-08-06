@@ -13,6 +13,6 @@ readonly class WishlistController extends WebController
     #[GET]
     public function viewWishlist(): void
     {
-        echo $this->render('wishlist.php');
+        echo $this->render('webstore/wishlist.php');
     }
 }

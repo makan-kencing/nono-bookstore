@@ -17,7 +17,7 @@ readonly class OrderController extends WebController
     #[GET]
     public function viewOrders(): void
     {
-        echo $this->render('orders.php');
+        echo $this->render('webstore/orders.php');
     }
 
     /**
@@ -28,6 +28,6 @@ readonly class OrderController extends WebController
     #[Path('/{id}')]
     public function viewOrderDetails(string $id): void
     {
-        echo $this->render('order.php');
+        echo $this->render('webstore/order.php');
     }
 }

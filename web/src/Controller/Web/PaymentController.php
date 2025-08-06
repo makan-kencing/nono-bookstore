@@ -17,6 +17,6 @@ readonly class PaymentController extends WebController
     #[GET]
     public function viewPayment(): void
     {
-        echo $this->render('payment.php');
+        echo $this->render('webstore/payment.php');
     }
 }

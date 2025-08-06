@@ -20,10 +20,6 @@ declare(strict_types=1);
     <link rel="stylesheet" href="/static/styles/index.css">
 </head>
 <body>
-    <?php include __DIR__ . "/partials/_header.php" ?>
-
     <?= $content ?? '' ?>
-
-    <?php include __DIR__ . "/partials/_footer.php" ?>
 </body>
 </html>

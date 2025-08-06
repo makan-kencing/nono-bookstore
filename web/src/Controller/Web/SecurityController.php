@@ -20,6 +20,6 @@ readonly class SecurityController extends WebController
     #[Path('/register')]
     public function register(): void
     {
-        echo $this->render('register.php');
+        echo $this->render('auth/register.php');
     }
 }
