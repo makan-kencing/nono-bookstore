@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Router;
 
 use App\Controller\Controller;
+use App\Router\Method\HttpMethod;
 use App\Router\Method\Method;
 use JetBrains\PhpStorm\Language;
 use ReflectionAttribute;
@@ -34,20 +35,27 @@ class RouteMapping
 
     /**
      * @param ReflectionClass<Controller>|ReflectionMethod $reflection
-     * @return string
+     * @return string[]
      */
-    private static function getAnnotatedPath(ReflectionClass|ReflectionMethod $reflection): string
+    private static function getAnnotatedPaths(ReflectionClass|ReflectionMethod $reflection): array
     {
-        $pathReflection = $reflection->getAttributes(Path::class)[0] ?? null;
+        $pathsReflection = $reflection->getAttributes(Path::class);
 
-        if ($pathReflection) {
-            $path = $pathReflection->getArguments()[0];
-            assert(is_string($path));
+        return array_map(fn ($reflection) => $reflection->getArguments()[0], $pathsReflection);
+    }
 
-            return $path;
-        }
+    /**
+     * @param ReflectionMethod $reflection
+     * @return HttpMethod[]
+     */
+    private static function getAnnotatedHttpMethods(ReflectionMethod $reflection): array
+    {
+        $httpMethodsReflection = $reflection->getAttributes(
+            Method::class,
+            ReflectionAttribute::IS_INSTANCEOF
+        );
 
-        return '';
+        return array_map(fn ($reflection) => $reflection->newInstance()::METHOD, $httpMethodsReflection);
     }
 
     /**
@@ -59,31 +67,35 @@ class RouteMapping
     {
         $reflectionClass = new ReflectionClass($controller);
 
-        $pathPrefix = self::getAnnotatedPath($reflectionClass);
+        $pathPrefix = self::getAnnotatedPaths($reflectionClass)[0] ?? '';
 
         foreach ($reflectionClass->getMethods() as $reflectionMethod) {
-            $methodsReflection = $reflectionMethod->getAttributes(Method::class, ReflectionAttribute::IS_INSTANCEOF);
-            if (!$methodsReflection) {
+            $httpMethods = self::getAnnotatedHttpMethods($reflectionMethod);
+            if (!$httpMethods) {
                 continue;
             }
 
-            foreach ($methodsReflection as $methodReflection) {
-                $path = $pathPrefix . self::getAnnotatedPath($reflectionMethod);
-                $httpMethod = $methodReflection->newInstance()::METHOD;
-                $regex = self::compilePath($path);
+            $paths = self::getAnnotatedPaths($reflectionMethod);
+            foreach ($httpMethods as $httpMethod) {
+                foreach ($paths as $path) {
+                    $fullpath = $pathPrefix . $path;
+                    $regex = self::compilePath($fullpath);
 
-                $this->routes[$regex] ??= [];
-                if (isset($this->routes[$regex][$httpMethod->value])) {
-                    $inUse = $this->routes[$regex][$httpMethod->value];
-                    throw new RouteInUseException(
-                        $httpMethod,
-                        $path,
-                        $inUse[0] . '::' . $inUse[1],
-                        $reflectionClass->getName() . '::' . $reflectionMethod->getName()
-                    );
+                    $this->routes[$regex] ??= [];
+                    if (isset($this->routes[$regex][$httpMethod->value])) {
+                        $inUse = $this->routes[$regex][$httpMethod->value];
+                        throw new RouteInUseException(
+                            $httpMethod,
+                            $fullpath,
+                            $inUse[0] . '::' . $inUse[1],
+                            $reflectionClass->getName() . '::' . $reflectionMethod->getName()
+                        );
+                    }
+
+                    $this->routes[$regex][$httpMethod->value] = [
+                        $reflectionClass->getName(), $reflectionMethod->getName()
+                    ];
                 }
-
-                $this->routes[$regex][$httpMethod->value] = [$reflectionClass->getName(), $reflectionMethod->getName()];
             }
         }
     }
