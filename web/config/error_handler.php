@@ -17,7 +17,7 @@ if ($_ENV['APP_ENV'] == 'dev') {
 } else {
     $whoops->pushHandler(function (Throwable $_) {
         http_response_code(500);
-        echo View::render('error/500.php');
+        echo View::render('webstore/error/500.php');
 
         return Handler::QUIT;
     });
@@ -32,13 +32,13 @@ $whoops->pushHandler(function (Throwable $e) {
     $whoops->sendHttpCode($e->getCode());
 
     if ($e instanceof ForbiddenException) {
-        echo View::render('errors/404.php');
+        echo View::render('webstore/errors/404.php');
     } elseif ($e instanceof NotFoundException) {
-        echo View::render('errors/404.php');
+        echo View::render('webstore/errors/404.php');
     } elseif ($e instanceof MethodNotAllowedException) {
-        echo View::render('errors/404.php');
+        echo View::render('webstore/errors/404.php');
     } else {
-        echo View::render('errors/500.php');
+        echo View::render('webstore/errors/500.php');
     }
 
     return Handler::QUIT;
