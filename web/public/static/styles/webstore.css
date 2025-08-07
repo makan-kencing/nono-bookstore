@@ -1,3 +1,13 @@
+header, footer {
+    a {
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: revert;
+        }
+    }
+}
+
 header {
     display: flex;
     align-items: center;
