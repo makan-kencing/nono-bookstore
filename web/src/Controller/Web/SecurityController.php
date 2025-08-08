@@ -7,7 +7,6 @@ namespace App\Controller\Web;
 use App\Router\Method\GET;
 use App\Router\Path;
 
-#[Path('/auth')]
 readonly class SecurityController extends WebController
 {
     #[GET]
