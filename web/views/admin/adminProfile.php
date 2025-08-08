@@ -18,13 +18,20 @@ ob_start();
 
                 <form class="form-group">
                     <label for="username">Username</label>
-                    <input type="text" id="username" name="username">
+                    <input type="text" id="username" name="username" data-username-taken="0">
+                    <span class="hint" style="color: red">Username taken</span>
 
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email">
 
                     <button type="submit" class="btn">Update</button>
                 </form>
+
+                <style>
+                    [data-username-taken='0'] + span.hint {
+                        display: none;
+                    }
+                </style>
 
                 <form class="form-group">
                     <label for="Contect No">Contact No</label>
@@ -63,7 +70,24 @@ ob_start();
                 </form>
             </div>
         </div>
+
     </div>
+
+    <script>
+        $("input#username").change(/** @param {jQuery.Event} e */ (e) => {
+            console.log(e);
+
+            $.get(
+                "/api/user/username/" + e.target.value,
+                (data) => {
+                    if (data.exists)
+                        e.target.dataset.usernameTaken = "1";
+                    else
+                        e.target.dataset.usernameTaken = "0";
+                }
+            )
+        })
+    </script>
 
 
 <?php
