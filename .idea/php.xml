@@ -132,6 +132,10 @@
       <path value="$PROJECT_DIR$/web/vendor/claviska/simpleimage" />
       <path value="$PROJECT_DIR$/web/vendor/league/color-extractor" />
       <path value="$PROJECT_DIR$/web/vendor/jetbrains/phpstorm-attributes" />
+      <path value="$PROJECT_DIR$/web/vendor/spomky-labs/otphp" />
+      <path value="$PROJECT_DIR$/web/vendor/paragonie/constant_time_encoding" />
+      <path value="$PROJECT_DIR$/web/vendor/psr/clock" />
+      <path value="$PROJECT_DIR$/web/vendor/phpmailer/phpmailer" />
     </include_path>
   </component>
   <component name="PhpProjectServersManager">
