@@ -21,7 +21,7 @@ class BookRowMapper extends RowMapper
     public const string ISBN = 'isbn';
     public const string TITLE = 'title';
     public const string DESCRIPTION = 'description';
-    public const string PUBLISHER = 'publisher';
+    public const string PUBLISHER = 'publisher.';
     public const string PUBLISHED_DATE = 'publishedDate';
     public const string NUMBER_OF_PAGES = 'numberOfPages';
     public const string LANGUAGE = 'language';
@@ -64,7 +64,7 @@ class BookRowMapper extends RowMapper
         $object->isbn = $this->getColumn($row, self::ISBN);
         $object->title = $this->getColumn($row, self::TITLE);
         $object->description = $this->getColumn($row, self::DESCRIPTION);
-        $object->publisher = $this->getColumn($row, self::PUBLISHER);
+        $object->publisher = $this->useMapper(PublisherRowMapper::class, self::PUBLISHER)->mapRow($row);
         $object->publishedDate = DateTime::createFromFormat(
             'Y-m-d',
             $this->getColumn($row, self::PUBLISHED_DATE)

@@ -12,6 +12,7 @@ use App\Repository\Mapper\BookRowMapper;
 use App\Repository\Mapper\CategoryDefinitionRowMapper;
 use App\Repository\Mapper\CategoryRowMapper;
 use App\Repository\Mapper\FileRowMapper;
+use App\Repository\Mapper\PublisherRowMapper;
 use App\Repository\Mapper\RatingRowMapper;
 use App\Repository\Mapper\ReplyRowMapper;
 use App\Repository\Mapper\SeriesRowMapper;
@@ -39,7 +40,9 @@ class QueryBookWithFullDetail extends Query
                    b.isbn              `$prefix{$c(BookRowMapper::ISBN)}`,
                    b.title             `$prefix{$c(BookRowMapper::TITLE)}`,
                    b.description       `$prefix{$c(BookRowMapper::DESCRIPTION)}`,
-                   b.publisher         `$prefix{$c(BookRowMapper::PUBLISHER)}`,
+                   p.id                `$prefix{$c(BookRowMapper::PUBLISHER)}{$c(PublisherRowMapper::ID)}`,
+                   p.slug              `$prefix{$c(BookRowMapper::PUBLISHER)}{$c(PublisherRowMapper::SLUG)}`,
+                   p.name              `$prefix{$c(BookRowMapper::PUBLISHER)}{$c(PublisherRowMapper::NAME)}`,
                    b.published_date    `$prefix{$c(BookRowMapper::PUBLISHED_DATE)}`,
                    b.number_of_pages   `$prefix{$c(BookRowMapper::NUMBER_OF_PAGES)}`,
                    b.language          `$prefix{$c(BookRowMapper::LANGUAGE)}`,
@@ -92,6 +95,7 @@ class QueryBookWithFullDetail extends Query
                    rru.role            `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::REPLIES)}{$c(ReplyRowMapper::USER)}{$c(UserRowMapper::ROLE)}`,
                    rru.is_verified     `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::REPLIES)}{$c(ReplyRowMapper::USER)}{$c(UserRowMapper::IS_VERIFIED)}`
             FROM book b
+                     JOIN publisher p on b.publisher_id = p.id
                      LEFT JOIN book_image bi on b.id = bi.book_id
                      LEFT JOIN file f on bi.file_id = f.id
                      LEFT JOIN author_definition ad on b.id = ad.book_id

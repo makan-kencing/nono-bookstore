@@ -28,7 +28,7 @@ class Book extends Entity
     public array $categories;
     /** @var Rating[] */
     public array $ratings;
-    public string $publisher;
+    public Publisher $publisher;
     public DateTime $publishedDate;
     public int $numberOfPages;
     public ?Series $series;

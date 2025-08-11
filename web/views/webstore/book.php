@@ -143,7 +143,7 @@ ob_start();
                 </tr>
                 <tr>
                     <td>Publisher</td>
-                    <td><?= $book->publisher ?></td>
+                    <td><?= $book->publisher->name ?></td>
                 </tr>
                 <tr>
                     <td>Publication Date</td>
