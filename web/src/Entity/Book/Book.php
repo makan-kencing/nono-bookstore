@@ -32,6 +32,7 @@ class Book extends Entity
     public DateTime $publishedDate;
     public int $numberOfPages;
     public ?Series $series;
+    public ?int $seriesPosition;
     public string $language;
     public string $dimensions;
 }

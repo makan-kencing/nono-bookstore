@@ -23,6 +23,7 @@ class BookRowMapper extends RowMapper
     public const string DESCRIPTION = 'description';
     public const string PUBLISHER = 'publisher.';
     public const string PUBLISHED_DATE = 'publishedDate';
+    public const string SERIES_POSITION = 'seriesPosition';
     public const string NUMBER_OF_PAGES = 'numberOfPages';
     public const string LANGUAGE = 'language';
     public const string DIMENSION = 'dimensions';
@@ -73,6 +74,7 @@ class BookRowMapper extends RowMapper
         $object->language = $this->getColumn($row, self::LANGUAGE);
         $object->dimensions = $this->getColumn($row, self::DIMENSION);
         $object->series = $this->useMapper(SeriesRowMapper::class, self::SERIES)->mapRowOrNull($row);
+        $object->seriesPosition = $this->getColumn($row, self::SERIES_POSITION);
     }
 
     /**

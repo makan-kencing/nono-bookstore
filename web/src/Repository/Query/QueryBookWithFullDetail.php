@@ -74,6 +74,7 @@ class QueryBookWithFullDetail extends Query
                    s.slug              `$prefix{$c(BookRowMapper::SERIES)}{$c(SeriesRowMapper::SLUG)}`,
                    s.name              `$prefix{$c(BookRowMapper::SERIES)}{$c(SeriesRowMapper::NAME)}`,
                    s.description       `$prefix{$c(BookRowMapper::SERIES)}{$c(SeriesRowMapper::DESCRIPTION)}`,
+                   b.series_position   `$prefix{$c(BookRowMapper::SERIES_POSITION)}`,
                    r.id                `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::ID)}`,
                    r.rating            `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::RATING)}`,
                    r.title             `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::TITLE)}`,
