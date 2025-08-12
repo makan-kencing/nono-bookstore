@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Entity\User;
 
-use App\Entity\ABC\Entity;
+use App\Entity\ABC\IdentifiableEntity;
 
-class Address extends Entity
+class Address extends IdentifiableEntity
 {
-    public ?int $id;
     public User $user;
     public string $address1;
     public ?string $address2;

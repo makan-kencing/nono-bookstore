@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Entity\ABC;
 
-abstract class Entity
+abstract class AssociativeEntity extends Entity
 {
-    public bool $isLazy = false;
 }

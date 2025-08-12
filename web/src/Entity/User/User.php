@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Entity\User;
 
 use App\Entity\ABC\Entity;
+use App\Entity\ABC\IdentifiableEntity;
 use App\Entity\Book\Book;
 use App\Entity\Cart\Cart;
 use App\Entity\Order\Order;
 
-class User extends Entity
+class User extends IdentifiableEntity
 {
-    public ?int $id;
     public string $username;
     public string $email;
     public string $hashedPassword;

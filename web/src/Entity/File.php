@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Entity\ABC\Entity;
+use App\Entity\ABC\IdentifiableEntity;
 use App\Entity\User\User;
 use DateTime;
 
-class File extends Entity
+class File extends IdentifiableEntity
 {
-    public ?int $id;
     public string $filename;
     public string $mimetype;
     public ?string $alt;

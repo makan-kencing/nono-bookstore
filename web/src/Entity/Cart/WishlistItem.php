@@ -6,10 +6,10 @@ namespace App\Entity\Cart;
 
 use App\Entity\ABC\AssociativeEntity;
 use App\Entity\Product\Product;
+use App\Entity\User\User;
 
-class CartItem extends AssociativeEntity
+class WishlistItem extends AssociativeEntity
 {
-    public Cart $cart;
-    public Product $product;
-    public int $quantity;
+    public User $user;
+    public Product $items;
 }

@@ -2,11 +2,10 @@
 
 namespace App\Entity\Book\Series;
 
-use App\Entity\ABC\Entity;
-use App\Entity\ABC\Trait\Commentable;
+use App\Entity\ABC\AssociativeEntity;
 use App\Entity\Book\Book;
 
-class SeriesDefinition extends Entity
+class SeriesDefinition extends AssociativeEntity
 {
     public Book $book;
     public Series $series;
