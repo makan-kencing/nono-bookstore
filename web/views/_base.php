@@ -20,7 +20,6 @@ declare(strict_types=1);
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
     <link rel="stylesheet" href="/static/styles/index.css">
-    <link rel="icon" type="image/x-icon" href="./static/assets/favicon.ico">
 
     <?= $extraHead ?? '' ?>
 </head>
