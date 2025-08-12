@@ -8,7 +8,7 @@ use App\Entity\ABC\Entity;
 use App\Entity\ABC\Trait\Sluggable;
 use App\Entity\Book\Author\AuthorDefinition;
 use App\Entity\Book\Category\CategoryDefinition;
-use App\Entity\Book\Series\Series;
+use App\Entity\Book\Series\SeriesDefinition;
 use App\Entity\Rating\Rating;
 use DateTime;
 
@@ -29,10 +29,9 @@ class Book extends Entity
     /** @var Rating[] */
     public array $ratings;
     public Publisher $publisher;
-    public DateTime $publishedDate;
+    public string $publishedDate;
     public int $numberOfPages;
-    public ?Series $series;
-    public ?int $seriesPosition;
+    public ?SeriesDefinition $series;
     public string $language;
     public string $dimensions;
 }

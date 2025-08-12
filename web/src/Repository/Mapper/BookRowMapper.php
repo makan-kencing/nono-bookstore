@@ -66,15 +66,11 @@ class BookRowMapper extends RowMapper
         $object->title = $this->getColumn($row, self::TITLE);
         $object->description = $this->getColumn($row, self::DESCRIPTION);
         $object->publisher = $this->useMapper(PublisherRowMapper::class, self::PUBLISHER)->mapRow($row);
-        $object->publishedDate = DateTime::createFromFormat(
-            'Y-m-d',
-            $this->getColumn($row, self::PUBLISHED_DATE)
-        );
+        $object->publishedDate = $this->getColumn($row, self::PUBLISHED_DATE);
         $object->numberOfPages = $this->getColumn($row, self::NUMBER_OF_PAGES);
         $object->language = $this->getColumn($row, self::LANGUAGE);
         $object->dimensions = $this->getColumn($row, self::DIMENSION);
-        $object->series = $this->useMapper(SeriesRowMapper::class, self::SERIES)->mapRowOrNull($row);
-        $object->seriesPosition = $this->getColumn($row, self::SERIES_POSITION);
+        $object->series = $this->useMapper(SeriesDefinitionRowMapper::class, self::SERIES)->mapRowOrNull($row);
     }
 
     /**

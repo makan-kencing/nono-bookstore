@@ -39,8 +39,8 @@ ob_start();
 
                 <?php if ($book->series) : ?>
                     <p>
-                        <a href="/series/<?= $book->series->slug ?>">
-                            Part of: <?= $book->series->name ?></a>
+                        <a href="/series/<?= $book->series->series->slug ?>">
+                            Part of: <?= $book->series->series->name ?></a>
                     </p>
                 <?php endif; ?>
             </div>
@@ -147,12 +147,12 @@ ob_start();
                 </tr>
                 <tr>
                     <td>Publication Date</td>
-                    <td><?= $book->publishedDate->format('d/m/Y') ?></td>
+                    <td><?= $book->publishedDate ?></td>
                 </tr>
                 <?php if ($book->series) : ?>
                     <tr>
                         <td>Series</td>
-                        <td><?= $book->series->name ?></td>
+                        <td><?= $book->series->series->name ?></td>
                     </tr>
                 <?php endif; ?>
                 <tr>

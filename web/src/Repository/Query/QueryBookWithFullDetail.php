@@ -15,6 +15,7 @@ use App\Repository\Mapper\FileRowMapper;
 use App\Repository\Mapper\PublisherRowMapper;
 use App\Repository\Mapper\RatingRowMapper;
 use App\Repository\Mapper\ReplyRowMapper;
+use App\Repository\Mapper\SeriesDefinitionRowMapper;
 use App\Repository\Mapper\SeriesRowMapper;
 use App\Repository\Mapper\UserRowMapper;
 use PDO;
@@ -70,11 +71,12 @@ class QueryBookWithFullDetail extends Query
                    cd.comment          `$prefix{$c(BookRowMapper::CATEGORIES)}{$c(CategoryDefinitionRowMapper::COMMENT)}`,
                    cd.from_date        `$prefix{$c(BookRowMapper::CATEGORIES)}{$c(CategoryDefinitionRowMapper::FROM_DATE)}`,
                    cd.thru_date        `$prefix{$c(BookRowMapper::CATEGORIES)}{$c(CategoryDefinitionRowMapper::THRU_DATE)}`,
-                   s.id                `$prefix{$c(BookRowMapper::SERIES)}{$c(SeriesRowMapper::ID)}`,
-                   s.slug              `$prefix{$c(BookRowMapper::SERIES)}{$c(SeriesRowMapper::SLUG)}`,
-                   s.name              `$prefix{$c(BookRowMapper::SERIES)}{$c(SeriesRowMapper::NAME)}`,
-                   s.description       `$prefix{$c(BookRowMapper::SERIES)}{$c(SeriesRowMapper::DESCRIPTION)}`,
-                   b.series_position   `$prefix{$c(BookRowMapper::SERIES_POSITION)}`,
+                   s.id                `$prefix{$c(BookRowMapper::SERIES)}{$c(SeriesDefinitionRowMapper::SERIES)}{$c(SeriesRowMapper::ID)}`,
+                   s.slug              `$prefix{$c(BookRowMapper::SERIES)}{$c(SeriesDefinitionRowMapper::SERIES)}{$c(SeriesRowMapper::SLUG)}`,
+                   s.name              `$prefix{$c(BookRowMapper::SERIES)}{$c(SeriesDefinitionRowMapper::SERIES)}{$c(SeriesRowMapper::NAME)}`,
+                   s.description       `$prefix{$c(BookRowMapper::SERIES)}{$c(SeriesDefinitionRowMapper::SERIES)}{$c(SeriesRowMapper::DESCRIPTION)}`,
+                   sd.position         `$prefix{$c(BookRowMapper::SERIES)}{$c(SeriesDefinitionRowMapper::POSITION)}`,
+                   sd.series_order     `$prefix{$c(BookRowMapper::SERIES)}{$c(SeriesDefinitionRowMapper::SERIES_ORDER)}`,
                    r.id                `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::ID)}`,
                    r.rating            `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::RATING)}`,
                    r.title             `$prefix{$c(BookRowMapper::RATINGS)}{$c(RatingRowMapper::TITLE)}`,
@@ -99,11 +101,12 @@ class QueryBookWithFullDetail extends Query
                      JOIN publisher p on b.publisher_id = p.id
                      LEFT JOIN book_image bi on b.id = bi.book_id
                      LEFT JOIN file f on bi.file_id = f.id
-                     LEFT JOIN author_definition ad on b.id = ad.book_id
-                     LEFT JOIN author a on ad.author_id = a.id
+                     JOIN author_definition ad on b.id = ad.book_id
+                     JOIN author a on ad.author_id = a.id
                      LEFT JOIN category_definition cd on b.id = cd.book_id
                      LEFT JOIN category c on cd.category_id = c.id
-                     LEFT JOIN series s on b.series_id = s.id
+                     LEFT JOIN series_definition sd on b.id = sd.book_id
+                     LEFT JOIN series s on sd.series_id = s.id
                      LEFT JOIN rating r on b.id = r.book_id
                      LEFT JOIN user ru on r.user_id = ru.id
                      LEFT JOIN reply rr on r.id = rr.rating_id
