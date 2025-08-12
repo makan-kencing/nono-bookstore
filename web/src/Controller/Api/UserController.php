@@ -9,6 +9,7 @@ use App\Entity\User\User;
 use App\Entity\User\UserRole;
 use App\Exception\BadRequestException;
 use App\Exception\ConflictException;
+use App\Exception\UnauthorizedException;
 use App\Exception\UnprocessableEntityException;
 use App\Repository\Query\QueryUserCount;
 use App\Repository\UserRepository;
@@ -34,6 +35,19 @@ readonly class UserController extends ApiController
     {
         $query = new QueryUserCount();
         $query->username = $username;
+
+        $count = $this->userRepository->count($query);
+
+        header('Content-type: application/json');
+        echo json_encode(['exists' => $count != 0]);
+    }
+
+    #[GET]
+    #[Path('/email/{email}')]
+    public function checkEmailExists(string $email): void
+    {
+        $query = new QueryUserCount();
+        $query->email = $email;
 
         $count = $this->userRepository->count($query);
 
@@ -101,5 +115,62 @@ readonly class UserController extends ApiController
                 "isVerified" => $user->isVerified
             ]
         ]);
+    }
+
+    #[POST]
+    #[Path('/login')]
+    public function login(): void
+    {
+        header('Content-type: application/json');
+
+        $_POST = self::getJsonBody();
+
+        if (!isset($_POST['password']) || !isset($_POST['email'])) {
+            throw new BadRequestException();
+        }
+
+        $email = trim((string)($_POST['email'] ?? ''));
+        $password = (string)$_POST['password'];
+
+        // Validate email format
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new UnprocessableEntityException([]);
+        }
+
+        // Fetch a email
+//        $user = $this->userRepository->get($email);
+
+        // Validate credentials
+//        if ($user === null || !isset($user->hashedPassword) || !password_verify($password, $user->hashedPassword)) {
+//            throw new UnauthorizedException();
+//        }
+
+        // TODO: check user role
+
+        // TODO: integrate 2FA checks
+
+        // Start session
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+
+//        $_SESSION['auth'] = [
+//            'username' => $user->username,
+//            'email' => $user->email,
+//            'role' => UserRole::USER,
+//            'isVerified' => $user->isVerified,
+//        ];
+//
+//        echo json_encode([
+//            'status' => 'success',
+//            'loginStatus' => 'SUCCESS',
+//            'message' => 'Logged in successfully',
+//            'data' => [
+//                'username' => $user->username,
+//                'email' => $user->email,
+//                'role' => UserRole::USER,
+//                'isVerified' => $user->isVerified,
+//            ],
+//        ]);
     }
 }

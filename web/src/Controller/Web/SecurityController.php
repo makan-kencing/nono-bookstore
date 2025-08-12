@@ -13,6 +13,7 @@ readonly class SecurityController extends WebController
     #[Path('/login')]
     public function login(): void
     {
+        echo $this->render('auth/login.php');
     }
 
     #[GET]
