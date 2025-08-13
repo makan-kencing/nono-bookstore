@@ -1,0 +1,158 @@
+.register-container {
+    font-family: 'Inter', sans-serif;
+    /* center content */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.left-section,
+.right-section {
+    flex: 1;
+    padding: 32px;
+    position: relative;
+    flex-direction: column;
+    justify-content: center;
+}
+
+h2 {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #1f2937;
+}
+
+.form-container {
+    margin-top: 24px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1f2937;
+    margin-bottom: 8px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 80%;
+    padding: 8px 8px;
+    border: 1px solid var(--border-gray-300);
+    border-radius: 6px;
+    font-size: 16px;
+    color: #1f2937;
+}
+
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder {
+    color: var(--text-gray-500);
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.terms-policy {
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: var(--text-gray-600);
+}
+
+.terms-policy a {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.terms-policy a:hover {
+    text-decoration: underline;
+}
+
+button {
+    width: 80%;
+    padding: 12px 20px;
+    background-color: var(--primary-blue);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+button:hover {
+    background-color: var(--primary-blue-dark);
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+    .register-container {
+        margin: 32px;
+    }
+
+    .left-section {
+        flex: 0.5; /* Adjust flex basis for better image fit */
+    }
+
+    .right-section {
+        flex: 0.5; /* Adjust flex basis */
+        padding: 48px 64px; /* More padding on larger screens */
+    }
+}
+
+@media (max-width: 767px) {
+    .right-section {
+        padding: 32px; /* Less padding on smaller screens */
+    }
+}
+
+input[data-username-taken="0"] + .hint,
+input[data-email-taken="0"] + .hint,
+input[data-match="0"] + .hint {
+    display: none;
+}
+
+.hint {
+    font-size: 14px;
+    color: var(--red-500);
+    margin-top: 4px;
+}
+
+.return-login {
+    margin-top: 10px;
+    font-size: 15px;
+    color: var(--text-gray-500);
+}
+
+.return-login a {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* Let flex children shrink so they don't force horizontal overflow */
+.left-section,
+.right-section {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+/* Prevent images from overflowing their columns */
+.register-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}

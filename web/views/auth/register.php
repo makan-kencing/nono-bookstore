@@ -5,10 +5,10 @@ declare(strict_types=1);
 $title = 'Register';
 ob_start();
 ?>
-    <link rel="stylesheet" href="/static/styles/register.css"/>
+    <link rel="stylesheet" href="/static/styles/Auth/register.css"/>
     <div class="register-container">
         <div class="left-section">
-            <img src="./static/assets/register-icon.jpg" alt="registration-icon"/>
+            <img src="/static/assets/register-illustration.jpeg" alt="registration-illustration"/>
         </div>
         <div class="right-section">
             <h2>Register An Account</h2>
