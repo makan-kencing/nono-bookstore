@@ -12,8 +12,6 @@ class Category extends IdentifiableEntity
     use Sluggable;
 
     public string $name;
+
     public ?string $description;
-    public ?Category $parent;
-    /** @var Category[] */
-    public array $subcategories;
 }
