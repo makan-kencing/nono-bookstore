@@ -10,10 +10,10 @@ use DateTime;
 
 class File extends IdentifiableEntity
 {
+    public User $user;
     public string $filename;
     public string $mimetype;
     public ?string $alt;
     public string $filepath;
     public DateTime $createdAt;
-    public User $createdBy;
 }
