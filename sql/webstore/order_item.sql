@@ -1,12 +1,12 @@
 create or replace table order_item
 (
-    id         bigint unsigned auto_increment
-        primary key,
+    id         bigint unsigned not null,
     order_id   bigint unsigned not null,
     product_id bigint unsigned not null,
     quantity   int unsigned    not null,
     unit_price bigint unsigned not null,
     comment    varchar(255)    null,
+    primary key (order_id, product_id),
     constraint order_item_ibfk_1
         foreign key (order_id) references `order` (id),
     constraint order_item_ibfk_2

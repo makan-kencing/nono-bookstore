@@ -12,6 +12,5 @@ class OrderItem extends CartItem
     use Commentable;
 
     public int $unitPrice;
-    /** @var OrderAdjustment[] */
-    public array $adjustments;
+    public int $quantity;
 }
