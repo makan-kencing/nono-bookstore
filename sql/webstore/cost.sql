@@ -6,6 +6,7 @@ create or replace table cost
     amount     bigint unsigned not null,
     from_date  datetime        not null,
     thru_date  datetime        null,
+    comment    varchar(255)    null,
     constraint cost_ibfk_1
         foreign key (product_id) references product (id)
 );

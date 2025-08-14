@@ -11,6 +11,7 @@ use App\Entity\ABC\Trait\TimeLimited;
 class Cost extends IdentifiableEntity
 {
     use TimeLimited;
+    use Commentable;
 
     public Product $product;
     public int $amount;
