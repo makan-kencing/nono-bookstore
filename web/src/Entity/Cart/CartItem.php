@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace App\Entity\Cart;
 
-use App\Entity\ABC\AssociativeEntity;
 use App\Entity\Product\Product;
+use App\Orm\Entity;
+use App\Orm\ManyToOne;
 
-class CartItem extends AssociativeEntity
+class CartItem extends Entity
 {
+    #[ManyToOne]
     public Cart $cart;
+
+    #[ManyToOne]
     public Product $product;
+
     public int $quantity;
 }

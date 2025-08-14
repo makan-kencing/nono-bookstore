@@ -2,15 +2,20 @@
 
 namespace App\Entity\Book\Author;
 
-use App\Entity\ABC\AssociativeEntity;
-use App\Entity\ABC\Trait\Commentable;
 use App\Entity\Book\Book;
+use App\Entity\Trait\Commentable;
+use App\Orm\Entity;
+use App\Orm\ManyToOne;
 
-class AuthorDefinition extends AssociativeEntity
+class AuthorDefinition extends Entity
 {
     use Commentable;
 
+    #[ManyToOne]
     public Book $book;
+
+    #[ManyToOne]
     public Author $author;
+
     public AuthorDefinitionType $type;
 }

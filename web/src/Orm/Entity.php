@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Entity\ABC;
+namespace App\Orm;
 
 abstract class Entity
 {
-    public bool $isLazy = false;
+    public bool $isLazy = true;
 }

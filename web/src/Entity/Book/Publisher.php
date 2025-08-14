@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace App\Entity\Book;
 
-use App\Entity\ABC\IdentifiableEntity;
-use App\Entity\ABC\Trait\Sluggable;
+use App\Entity\Trait\Sluggable;
+use App\Orm\Entity;
+use App\Orm\Id;
 
-class Publisher extends IdentifiableEntity
+class Publisher extends Entity
 {
     use Sluggable;
 
+    #[Id]
     public ?int $id;
+
     public string $name;
 }

@@ -4,14 +4,22 @@ declare(strict_types=1);
 
 namespace App\Entity\User;
 
-use App\Entity\ABC\Entity;
-use App\Entity\ABC\ExtensionEntity;
-use App\Entity\ABC\Trait\TimeLimited;
+use App\Entity\Trait\TimeLimited;
+use App\Orm\Entity;
+use App\Orm\Id;
+use App\Orm\MapsId;
+use App\Orm\OneToOne;
 
-class Membership extends ExtensionEntity
+class Membership extends Entity
 {
     use TimeLimited;
 
+    #[Id]
+    public ?int $userId;
+
+    #[MapsId]
+    #[OneToOne]
     public User $user;
+
     public string $cardNo;
 }

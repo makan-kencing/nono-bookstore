@@ -4,20 +4,44 @@ declare(strict_types=1);
 
 namespace App\Entity\Product;
 
-use App\Entity\ABC\IdentifiableEntity;
-use App\Entity\ABC\Trait\TimeLimited;
 use App\Entity\Book\Book;
+use App\Entity\Cart\CartItem;
+use App\Entity\Order\OrderItem;
+use App\Entity\Trait\TimeLimited;
+use App\Orm\Entity;
+use App\Orm\Id;
+use App\Orm\ManyToOne;
+use App\Orm\OneToMany;
 
-abstract class Product extends IdentifiableEntity
+abstract class Product extends Entity
 {
     use TimeLimited;
 
+    #[Id]
+    public ?int $id;
+
+    #[ManyToOne]
     public Book $book;
+
     public CoverType $coverType;
+
     /** @var Cost[] */
-    public array $cost;
+    #[OneToMany(Cost::class, mappedBy: 'product')]
+    public array $costs;
+
     /** @var Price[] */
+    #[OneToMany(Price::class, mappedBy: 'product')]
     public array $prices;
+
     /** @var Inventory[] */
+    #[OneToMany(Inventory::class, mappedBy: 'product')]
     public array $inventories;
+
+    /** @var CartItem[] */
+    #[OneToMany(CartItem::class, mappedBy: 'product')]
+    public array $inCarts;
+
+    /** @var OrderItem[] */
+    #[OneToMany(OrderItem::class, mappedBy: 'product')]
+    public array $inOrders;
 }

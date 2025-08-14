@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Entity\ABC\Trait;
+namespace App\Entity\Trait;
 
-use App\Entity\ABC\Entity;
+use App\Orm\Entity;
 use DateTime;
 
 /**
