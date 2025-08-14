@@ -7,7 +7,6 @@ namespace App\Entity\Product;
 use App\Entity\ABC\IdentifiableEntity;
 use App\Entity\ABC\Trait\TimeLimited;
 use App\Entity\Book\Book;
-use App\Entity\Product\Price\PriceDefinition;
 
 abstract class Product extends IdentifiableEntity
 {
@@ -15,9 +14,10 @@ abstract class Product extends IdentifiableEntity
 
     public Book $book;
     public CoverType $coverType;
-    public Cost $cost;
-    /** @var PriceDefinition[] */
-    public array $priceDefinitions;
+    /** @var Cost[] */
+    public array $cost;
+    /** @var Price[] */
+    public array $prices;
     /** @var Inventory[] */
     public array $inventories;
 }
