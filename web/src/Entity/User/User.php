@@ -66,4 +66,12 @@ class User extends Entity
     /** @var File[] */
     #[OneToMany(File::class, mappedBy: 'user', optional: true)]
     public array $uploadedFiles;
+
+    /** @var UserSecurityEvent[] */
+    #[OneToMany(UserSecurityEvent::class, mappedBy: 'user', optional: true)]
+    public array $securityEvents;
+
+    /** @var UserToken[] */
+    #[OneToMany(UserToken::class, mappedBy: 'user', optional: true)]
+    public array $tokens;
 }
