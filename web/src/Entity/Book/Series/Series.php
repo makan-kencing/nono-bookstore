@@ -3,9 +3,9 @@
 namespace App\Entity\Book\Series;
 
 use App\Entity\Trait\Sluggable;
+use App\Orm\Attribute\Id;
+use App\Orm\Attribute\OneToMany;
 use App\Orm\Entity;
-use App\Orm\Id;
-use App\Orm\OneToMany;
 
 class Series extends Entity
 {

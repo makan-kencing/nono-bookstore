@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Entity\Cart;
 
 use App\Entity\User\User;
+use App\Orm\Attribute\Id;
+use App\Orm\Attribute\OneToMany;
+use App\Orm\Attribute\OneToOne;
 use App\Orm\Entity;
-use App\Orm\Id;
-use App\Orm\OneToMany;
-use App\Orm\OneToOne;
 
 class Cart extends Entity
 {

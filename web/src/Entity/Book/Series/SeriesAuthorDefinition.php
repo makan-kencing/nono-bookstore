@@ -5,8 +5,8 @@ namespace App\Entity\Book\Series;
 use App\Entity\Book\Author\Author;
 use App\Entity\Book\Author\AuthorDefinitionType;
 use App\Entity\Trait\Commentable;
+use App\Orm\Attribute\ManyToOne;
 use App\Orm\Entity;
-use App\Orm\ManyToOne;
 
 class SeriesAuthorDefinition extends Entity
 {

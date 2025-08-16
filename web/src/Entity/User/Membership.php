@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Entity\User;
 
 use App\Entity\Trait\TimeLimited;
+use App\Orm\Attribute\Id;
+use App\Orm\Attribute\MapsId;
+use App\Orm\Attribute\OneToOne;
 use App\Orm\Entity;
-use App\Orm\Id;
-use App\Orm\MapsId;
-use App\Orm\OneToOne;
 
 class Membership extends Entity
 {

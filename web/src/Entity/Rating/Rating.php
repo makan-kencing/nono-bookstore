@@ -6,10 +6,10 @@ namespace App\Entity\Rating;
 
 use App\Entity\Book\Book;
 use App\Entity\User\User;
+use App\Orm\Attribute\Id;
+use App\Orm\Attribute\ManyToOne;
+use App\Orm\Attribute\OneToMany;
 use App\Orm\Entity;
-use App\Orm\Id;
-use App\Orm\ManyToOne;
-use App\Orm\OneToMany;
 use DateTime;
 
 class Rating extends Entity

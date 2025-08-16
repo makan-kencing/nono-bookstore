@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Entity\Book;
 
 use App\Entity\Trait\Sluggable;
+use App\Orm\Attribute\Id;
 use App\Orm\Entity;
-use App\Orm\Id;
 
 class Publisher extends Entity
 {

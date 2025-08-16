@@ -7,8 +7,8 @@ namespace App\Entity\Book\Category;
 use App\Entity\Book\Book;
 use App\Entity\Trait\Commentable;
 use App\Entity\Trait\TimeLimited;
+use App\Orm\Attribute\ManyToOne;
 use App\Orm\Entity;
-use App\Orm\ManyToOne;
 
 class CategoryDefinition extends Entity
 {

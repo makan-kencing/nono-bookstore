@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Orm;
+namespace App\Orm\Attribute;
 
+use App\Orm\Entity;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]

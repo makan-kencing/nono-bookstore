@@ -4,8 +4,8 @@ namespace App\Entity\Book\Author;
 
 use App\Entity\Book\Book;
 use App\Entity\Trait\Commentable;
+use App\Orm\Attribute\ManyToOne;
 use App\Orm\Entity;
-use App\Orm\ManyToOne;
 
 class AuthorDefinition extends Entity
 {

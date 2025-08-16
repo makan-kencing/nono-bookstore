@@ -11,10 +11,10 @@ use App\Entity\Cart\WishlistItem;
 use App\Entity\Product\Product;
 use App\Entity\Rating\Rating;
 use App\Entity\Trait\Sluggable;
+use App\Orm\Attribute\Id;
+use App\Orm\Attribute\OneToMany;
+use App\Orm\Attribute\OneToOne;
 use App\Orm\Entity;
-use App\Orm\Id;
-use App\Orm\OneToMany;
-use App\Orm\OneToOne;
 
 class Book extends Entity
 {

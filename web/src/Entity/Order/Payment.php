@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Entity\Order;
 
+use App\Orm\Attribute\Id;
+use App\Orm\Attribute\OneToOne;
 use App\Orm\Entity;
-use App\Orm\Id;
-use App\Orm\OneToOne;
 use DateTime;
 
 class Payment extends Entity

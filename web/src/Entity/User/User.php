@@ -11,10 +11,10 @@ use App\Entity\File;
 use App\Entity\Order\Order;
 use App\Entity\Rating\Rating;
 use App\Entity\Rating\Reply;
+use App\Orm\Attribute\Id;
+use App\Orm\Attribute\OneToMany;
+use App\Orm\Attribute\OneToOne;
 use App\Orm\Entity;
-use App\Orm\Id;
-use App\Orm\OneToMany;
-use App\Orm\OneToOne;
 
 class User extends Entity
 {

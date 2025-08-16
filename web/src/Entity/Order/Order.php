@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Entity\Order;
 
 use App\Entity\Cart\Cart;
-use App\Orm\OneToMany;
-use App\Orm\OneToOne;
+use App\Orm\Attribute\OneToMany;
+use App\Orm\Attribute\OneToOne;
 use DateTime;
 
 class Order extends Cart

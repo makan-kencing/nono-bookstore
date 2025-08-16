@@ -3,11 +3,11 @@
 namespace App\Entity\Book\Series;
 
 use App\Entity\Book\Book;
+use App\Orm\Attribute\Id;
+use App\Orm\Attribute\ManyToOne;
+use App\Orm\Attribute\MapsId;
+use App\Orm\Attribute\OneToOne;
 use App\Orm\Entity;
-use App\Orm\Id;
-use App\Orm\ManyToOne;
-use App\Orm\MapsId;
-use App\Orm\OneToOne;
 
 class SeriesDefinition extends Entity
 {
