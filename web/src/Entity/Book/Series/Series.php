@@ -19,10 +19,10 @@ class Series extends Entity
     public ?string $description;
 
     /** @var SeriesDefinition[] */
-    #[OneToMany(SeriesDefinition::class, mappedBy: 'series', optional: true)]
+    #[OneToMany(SeriesDefinition::class, mappedBy: 'series')]
     public array $books;
 
     /** @var SeriesAuthorDefinition[] */
-    #[OneToMany(SeriesAuthorDefinition::class, mappedBy: 'author', optional: true)]
+    #[OneToMany(SeriesAuthorDefinition::class, mappedBy: 'author')]
     public array $authors;
 }

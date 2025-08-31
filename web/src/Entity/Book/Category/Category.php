@@ -21,6 +21,6 @@ class Category extends Entity
     public ?string $description;
 
     /** @var CategoryDefinition[] */
-    #[OneToMany(CategoryDefinition::class, mappedBy: 'category', optional: true)]
+    #[OneToMany(CategoryDefinition::class, mappedBy: 'category')]
     public array $books;
 }

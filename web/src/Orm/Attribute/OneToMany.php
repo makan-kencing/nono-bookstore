@@ -13,12 +13,10 @@ readonly class OneToMany
     /**
      * @param class-string<Entity> $targetClass
      * @param ?string $mappedBy
-     * @param bool $optional
      */
     public function __construct(
         public string $targetClass,
         public ?string $mappedBy = null,
-        public bool $optional = false
     ) {
     }
 }

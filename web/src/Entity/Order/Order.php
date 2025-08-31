@@ -26,6 +26,6 @@ class Order extends Cart
     public array $items;
 
     /** @var OrderAdjustment[] */
-    #[OneToMany(OrderAdjustment::class, mappedBy: 'order', optional: true)]
+    #[OneToMany(OrderAdjustment::class, mappedBy: 'order')]
     public ?array $adjustments;
 }

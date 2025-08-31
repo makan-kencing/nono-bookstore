@@ -12,8 +12,6 @@ use DateTime;
 class UserProfile extends Entity
 {
     #[Id]
-    public ?int $userId;
-
     #[OneToOne]
     public User $user;
 

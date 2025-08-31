@@ -32,6 +32,6 @@ class Rating extends Entity
     public DateTime $ratedAt;
 
     /** @var Reply[] */
-    #[OneToMany(Reply::class, mappedBy: 'rating', optional: true)]
+    #[OneToMany(Reply::class, mappedBy: 'rating')]
     public array $replies;
 }

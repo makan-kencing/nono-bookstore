@@ -21,6 +21,6 @@ class Author extends Entity
     public ?string $description;
 
     /** @var AuthorDefinition[] */
-    #[OneToMany(AuthorDefinition::class, mappedBy: 'author', optional: true)]
+    #[OneToMany(AuthorDefinition::class, mappedBy: 'author')]
     public array $books;
 }

@@ -44,34 +44,34 @@ class User extends Entity
     public ?Address $defaultAddress;
 
     /** @var Address[] */
-    #[OneToMany(Address::class, mappedBy: 'user', optional: true)]
+    #[OneToMany(Address::class, mappedBy: 'user')]
     public array $addresses;
 
     /** @var Book[] */
-    #[OneToMany(WishlistItem::class, mappedBy: 'user', optional: true)]
+    #[OneToMany(WishlistItem::class, mappedBy: 'user')]
     public array $wishlist;
 
     /** @var Order[] */
-    #[OneToMany(Order::class, mappedBy: 'user', optional: true)]
+    #[OneToMany(Order::class, mappedBy: 'user')]
     public array $orders;
 
     /** @var Rating[] */
-    #[OneToMany(Rating::class, mappedBy: 'user', optional: true)]
+    #[OneToMany(Rating::class, mappedBy: 'user')]
     public array $ratings;
 
     /** @var Reply[] */
-    #[OneToMany(Reply::class, mappedBy: 'user', optional: true)]
+    #[OneToMany(Reply::class, mappedBy: 'user')]
     public array $replies;
 
     /** @var File[] */
-    #[OneToMany(File::class, mappedBy: 'user', optional: true)]
+    #[OneToMany(File::class, mappedBy: 'user')]
     public array $uploadedFiles;
 
     /** @var UserSecurityEvent[] */
-    #[OneToMany(UserSecurityEvent::class, mappedBy: 'user', optional: true)]
+    #[OneToMany(UserSecurityEvent::class, mappedBy: 'user')]
     public array $securityEvents;
 
     /** @var UserToken[] */
-    #[OneToMany(UserToken::class, mappedBy: 'user', optional: true)]
+    #[OneToMany(UserToken::class, mappedBy: 'user')]
     public array $tokens;
 }

@@ -30,7 +30,7 @@ class Book extends Entity
     public ?string $description;
 
     /** @var BookImage[] */
-    #[OneToMany(BookImage::class, mappedBy: 'book', optional: true)]
+    #[OneToMany(BookImage::class, mappedBy: 'book')]
     public array $images;
 
     /** @var AuthorDefinition[] */
@@ -38,11 +38,11 @@ class Book extends Entity
     public array $authors;
 
     /** @var CategoryDefinition[] */
-    #[OneToMany(CategoryDefinition::class, mappedBy: 'category', optional: true)]
+    #[OneToMany(CategoryDefinition::class, mappedBy: 'category')]
     public array $categories;
 
     /** @var Rating[] */
-    #[OneToMany(Rating::class, mappedBy: 'book', optional: true)]
+    #[OneToMany(Rating::class, mappedBy: 'book')]
     public array $ratings;
 
     #[OneToOne]
@@ -50,7 +50,7 @@ class Book extends Entity
 
     public string $publishedDate;
 
-    #[OneToOne]
+    #[OneToOne(mappedBy: 'book')]
     public ?SeriesDefinition $series;
 
     public int $numberOfPages;
@@ -60,10 +60,10 @@ class Book extends Entity
     public string $dimensions;
 
     /** @var Product[] */
-    #[OneToMany(Product::class, mappedBy: 'book', optional: true)]
+    #[OneToMany(Product::class, mappedBy: 'book')]
     public array $products;
 
     /** @var WishlistItem[] */
-    #[OneToMany(WishlistItem::class, mappedBy: 'book', optional: true)]
+    #[OneToMany(WishlistItem::class, mappedBy: 'book')]
     public array $wishlisted;
 }
