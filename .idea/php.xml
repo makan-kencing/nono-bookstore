@@ -21,25 +21,6 @@
     </option>
     <option name="transferred" value="true" />
   </component>
-  <component name="PHPCSFixerOptionsConfiguration">
-    <option name="codingStandard" value="PSR12" />
-    <option name="transferred" value="true" />
-  </component>
-  <component name="PHPCodeSnifferOptionsConfiguration">
-    <option name="codingStandard" value="PSR12" />
-    <option name="highlightLevel" value="WARNING" />
-    <option name="transferred" value="true" />
-  </component>
-  <component name="PhpCSFixer">
-    <phpcsfixer_settings>
-      <PhpCSFixerConfiguration tool_path="$PROJECT_DIR$/web/vendor/bin/php-cs-fixer" />
-    </phpcsfixer_settings>
-  </component>
-  <component name="PhpCodeSniffer">
-    <phpcs_settings>
-      <PhpCSConfiguration beautifier_path="$PROJECT_DIR$/web/vendor/bin/phpcbf" tool_path="$PROJECT_DIR$/web/vendor/bin/phpcs" />
-    </phpcs_settings>
-  </component>
   <component name="PhpIncludePathManager">
     <include_path>
       <path value="$PROJECT_DIR$/web/vendor/phar-io/version" />
@@ -91,32 +72,16 @@
       <path value="$PROJECT_DIR$/web/vendor/phpspec/prophecy" />
       <path value="$PROJECT_DIR$/web/vendor/phpspec/phpspec" />
       <path value="$PROJECT_DIR$/web/vendor/symfony/dependency-injection" />
-      <path value="$PROJECT_DIR$/web/vendor/squizlabs/php_codesniffer" />
       <path value="$PROJECT_DIR$/web/vendor/symfony/config" />
       <path value="$PROJECT_DIR$/web/vendor/symfony/filesystem" />
       <path value="$PROJECT_DIR$/web/vendor/filp/whoops" />
-      <path value="$PROJECT_DIR$/web/vendor/fidry/cpu-core-counter" />
-      <path value="$PROJECT_DIR$/web/vendor/react/event-loop" />
-      <path value="$PROJECT_DIR$/web/vendor/react/stream" />
-      <path value="$PROJECT_DIR$/web/vendor/react/promise" />
-      <path value="$PROJECT_DIR$/web/vendor/react/cache" />
-      <path value="$PROJECT_DIR$/web/vendor/react/dns" />
-      <path value="$PROJECT_DIR$/web/vendor/friendsofphp/php-cs-fixer" />
-      <path value="$PROJECT_DIR$/web/vendor/react/socket" />
-      <path value="$PROJECT_DIR$/web/vendor/react/child-process" />
-      <path value="$PROJECT_DIR$/web/vendor/clue/ndjson-react" />
-      <path value="$PROJECT_DIR$/web/vendor/evenement/evenement" />
       <path value="$PROJECT_DIR$/web/vendor/symfony/deprecation-contracts" />
       <path value="$PROJECT_DIR$/web/vendor/symfony/process" />
       <path value="$PROJECT_DIR$/web/vendor/symfony/string" />
       <path value="$PROJECT_DIR$/web/vendor/symfony/service-contracts" />
-      <path value="$PROJECT_DIR$/web/vendor/symfony/options-resolver" />
       <path value="$PROJECT_DIR$/web/vendor/symfony/polyfill-intl-normalizer" />
-      <path value="$PROJECT_DIR$/web/vendor/symfony/polyfill-php80" />
-      <path value="$PROJECT_DIR$/web/vendor/symfony/polyfill-php81" />
       <path value="$PROJECT_DIR$/web/vendor/symfony/event-dispatcher-contracts" />
       <path value="$PROJECT_DIR$/web/vendor/symfony/polyfill-intl-grapheme" />
-      <path value="$PROJECT_DIR$/web/vendor/symfony/stopwatch" />
       <path value="$PROJECT_DIR$/web/vendor/symfony/var-exporter" />
       <path value="$PROJECT_DIR$/web/vendor/psr/container" />
       <path value="$PROJECT_DIR$/web/vendor/psr/event-dispatcher" />
