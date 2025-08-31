@@ -4,15 +4,22 @@ declare(strict_types=1);
 
 namespace App\Entity\Order;
 
-use App\Entity\ABC\Entity;
-use App\Entity\ABC\Trait\Commentable;
-use App\Entity\ABC\Value\Value;
+use App\Entity\Trait\Commentable;
+use App\Orm\Attribute\Id;
+use App\Orm\Attribute\ManyToOne;
+use App\Orm\Entity;
 
 abstract class OrderAdjustment extends Entity
 {
     use Commentable;
 
+    #[Id]
     public ?int $id;
+
+    #[ManyToOne]
+    public Order $order;
+
     public OrderAdjustmentType $type;
-    public Value $value;
+
+    public int $amount;
 }

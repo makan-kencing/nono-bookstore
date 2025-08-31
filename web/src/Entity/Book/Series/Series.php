@@ -2,19 +2,27 @@
 
 namespace App\Entity\Book\Series;
 
-use App\Entity\ABC\Entity;
-use App\Entity\ABC\Trait\Sluggable;
-use App\Entity\Book\Book;
+use App\Entity\Trait\Sluggable;
+use App\Orm\Attribute\Id;
+use App\Orm\Attribute\OneToMany;
+use App\Orm\Entity;
 
 class Series extends Entity
 {
     use Sluggable;
 
+    #[Id]
     public ?int $id;
+
     public string $name;
+
     public ?string $description;
-    /** @var Book[] */
+
+    /** @var SeriesDefinition[] */
+    #[OneToMany(SeriesDefinition::class, mappedBy: 'series')]
     public array $books;
+
     /** @var SeriesAuthorDefinition[] */
+    #[OneToMany(SeriesAuthorDefinition::class, mappedBy: 'author')]
     public array $authors;
 }

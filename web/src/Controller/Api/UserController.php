@@ -9,9 +9,9 @@ use App\Entity\User\User;
 use App\Entity\User\UserRole;
 use App\Exception\BadRequestException;
 use App\Exception\ConflictException;
-use App\Exception\UnauthorizedException;
 use App\Exception\UnprocessableEntityException;
-use App\Repository\Query\QueryUserCount;
+use App\Repository\Query\UserCriteria;
+use App\Repository\Query\UserQuery;
 use App\Repository\UserRepository;
 use App\Router\Method\GET;
 use App\Router\Method\POST;
@@ -33,10 +33,11 @@ readonly class UserController extends ApiController
     #[Path('/username/{username}')]
     public function checkUsernameExists(string $username): void
     {
-        $query = new QueryUserCount();
-        $query->username = $username;
+        $qb = UserQuery::withMinimalDetails()
+            ->where(UserCriteria::byUsername())
+            ->bind(':username', $username);
 
-        $count = $this->userRepository->count($query);
+        $count = $this->userRepository->count($qb);
 
         header('Content-type: application/json');
         echo json_encode(['exists' => $count != 0]);
@@ -46,10 +47,11 @@ readonly class UserController extends ApiController
     #[Path('/email/{email}')]
     public function checkEmailExists(string $email): void
     {
-        $query = new QueryUserCount();
-        $query->email = $email;
+        $qb = UserQuery::withMinimalDetails()
+            ->where(UserCriteria::byEmail())
+            ->bind(':email', $email);
 
-        $count = $this->userRepository->count($query);
+        $count = $this->userRepository->count($qb);
 
         header('Content-type: application/json');
         echo json_encode(['exists' => $count != 0]);
@@ -80,16 +82,18 @@ readonly class UserController extends ApiController
         // TODO: validate password format
 
         // Check if username already exists
-        $query = new QueryUserCount();
-        $query->username = $_POST['username'];
-        if ($this->userRepository->count($query) > 0) {
+        $qb = UserQuery::withMinimalDetails()
+            ->where(UserCriteria::byUsername())
+            ->bind(':username', $_POST['username']);
+        if ($this->userRepository->count($qb) > 0) {
             throw new ConflictException([]);
         }
 
         // Check if email already exists
-        $query = new QueryUserCount();
-        $query->email = $_POST['email'];
-        if ($this->userRepository->count($query) > 0) {
+        $qb = UserQuery::withMinimalDetails()
+            ->where(UserCriteria::byEmail())
+            ->bind(':email', $_POST['email']);
+        if ($this->userRepository->count($qb) > 0) {
             throw new ConflictException([]);
         }
 

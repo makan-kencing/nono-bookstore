@@ -2,14 +2,26 @@
 
 namespace App\Entity\Book\Series;
 
-use App\Entity\ABC\Entity;
-use App\Entity\ABC\Trait\Commentable;
 use App\Entity\Book\Book;
+use App\Orm\Attribute\Id;
+use App\Orm\Attribute\ManyToOne;
+use App\Orm\Attribute\MapsId;
+use App\Orm\Attribute\OneToOne;
+use App\Orm\Entity;
 
 class SeriesDefinition extends Entity
 {
+    #[Id]
+    public ?int $bookId;
+
+    #[MapsId]
+    #[OneToOne]
     public Book $book;
+
+    #[ManyToOne]
     public Series $series;
+
     public string $position;
+
     public int $seriesOrder;
 }

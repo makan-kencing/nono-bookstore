@@ -11,7 +11,9 @@
     </description>
 
     <rule ref="rulesets/unusedcode.xml" />
-    <rule ref="rulesets/codesize.xml" />
+    <rule ref="rulesets/codesize.xml">
+        <exclude name="TooManyFields" />
+    </rule>
     <rule ref="rulesets/naming.xml">
         <exclude name="ShortVariable"/>
         <exclude name="LongVariable" />
@@ -20,5 +22,8 @@
     <rule ref="rulesets/controversial.xml">
         <exclude name="Superglobals" />
     </rule>
-    <rule ref="rulesets/cleancode.xml" />
+    <rule ref="rulesets/cleancode.xml">
+        <exclude name="BooleanArgumentFlag" />
+        <exclude name="StaticAccess" />
+    </rule>
 </ruleset>

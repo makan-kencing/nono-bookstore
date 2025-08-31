@@ -8,7 +8,8 @@ use App\Core\View;
 use App\Entity\User\User;
 use App\Entity\User\UserRole;
 use App\Exception\ConflictException;
-use App\Repository\Query\QueryUserCount;
+use App\Repository\Query\UserCriteria;
+use App\Repository\Query\UserQuery;
 use App\Repository\UserRepository;
 use App\Router\AuthRule;
 use App\Router\Method\DELETE;
@@ -35,10 +36,10 @@ readonly class AdminUserController extends ApiController
     {
         $_POST = self::getJsonBody();
 
-        $query = new QueryUserCount();
-        $query->username = $_POST['username'];
-
-        if ($this->userRepository->count($query) > 0) {
+        $qb = UserQuery::withMinimalDetails()
+            ->where(UserCriteria::byUsername())
+            ->bind(':username', $_POST['username']);
+        if ($this->userRepository->count($qb) > 0) {
             throw new ConflictException([['field' => 'username']]);
         }
 

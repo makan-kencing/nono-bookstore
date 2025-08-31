@@ -6,7 +6,7 @@ namespace App\Controller\Web;
 
 use App\Core\View;
 use App\Entity\User\UserRole;
-use App\Repository\Query\QueryUserListing;
+use App\Repository\Query\UserQuery;
 use App\Repository\UserRepository;
 use App\Router\AuthRule;
 use App\Router\Method\GET;
@@ -29,9 +29,9 @@ readonly class AdminUserController extends WebController
     #[GET] //This is for database using
     public function viewUserList(): void
     {
-        $query = new QueryUserListing();
+        $qb = UserQuery::userListings();
 
-        $users = $this->userRepository->get($query);
+        $users = $this->userRepository->get($qb);
 
         // convert to dto
 
