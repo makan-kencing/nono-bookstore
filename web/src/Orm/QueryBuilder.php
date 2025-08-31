@@ -43,7 +43,7 @@ class QueryBuilder
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<literal-string, mixed>
      */
     public function getParameters(): array
     {
