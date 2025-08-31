@@ -8,13 +8,14 @@ use App\Core\View;
 use App\Exception\NotFoundException;
 use App\Exception\Wrapper\WebExceptionWrapper;
 use App\Repository\BookRepository;
-use App\Repository\Query\QueryBookWithFullDetail;
+use App\Repository\Query\BookCriteria;
+use App\Repository\Query\BookQuery;
 use App\Router\Method\GET;
 use App\Router\Path;
 use PDO;
 
 #[Path('/book')]
-readonly class BookController extends WebController
+readonly class ProductController extends WebController
 {
     private BookRepository $bookRepository;
 
@@ -39,14 +40,14 @@ readonly class BookController extends WebController
     #[Path('/{isbn}/{slug}/{type}')]
     public function viewBook(string $isbn, string $slug = '', string $type = '1'): void
     {
-        $query = new QueryBookWithFullDetail();
-        $query->isbn = $isbn;
+        $query = BookQuery::withFullDetails()
+            ->where(BookCriteria::byIsbn()
+                ->and(BookCriteria::notSoftDeleted()))
+            ->bind(':isbn', '1231414');
 
-        $book = $this->bookRepository->get($query);
-        if (!$book) {
+        $book = $this->bookRepository->getOne($query);
+        if (!$book)
             throw new WebExceptionWrapper(new NotFoundException());
-        }
-        $book = $book[0];
 
         if ($slug != $book->slug) {
             header('Location: ' . "/book/$isbn/$book->slug");

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\ABC\Entity;
+use App\Orm\Entity;
+use App\Orm\QueryBuilder;
+use App\Orm\ResultSetMapper;
 use PDO;
 
 /**
@@ -19,4 +21,47 @@ abstract readonly class Repository
         $this->conn = $conn;
     }
 
+    /**
+     * @param QueryBuilder<T> $qb
+     * @return T[]
+     */
+    public function get(QueryBuilder $qb): array
+    {
+        $stmt = $this->conn->prepare($qb->getQuery());
+        foreach ($qb->getParameters() as $param => $value)
+            $stmt->bindValue($param, $value);
+        $stmt->execute();
+
+        $mapper = new ResultSetMapper($qb->getClass());
+        return $mapper->map($stmt);
+    }
+
+    /**
+     * @param QueryBuilder<T> $qb
+     * @return ?T
+     */
+    public function getOne(QueryBuilder $qb): ?Entity
+    {
+        $stmt = $this->conn->prepare($qb->getQuery());
+        foreach ($qb->getParameters() as $param => $value)
+            $stmt->bindValue($param, $value);
+        $stmt->execute();
+
+        $mapper = new ResultSetMapper($qb->getClass());
+        return $mapper->mapOne($stmt);
+    }
+
+    /**
+     * @param QueryBuilder<T> $qb
+     * @return int
+     */
+    public function count(QueryBuilder $qb): int
+    {
+        $stmt = $this->conn->prepare($qb->getCount());
+        foreach ($qb->getParameters() as $param => $value)
+            $stmt->bindValue($param, $value);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_NUM)[0];
+    }
 }
