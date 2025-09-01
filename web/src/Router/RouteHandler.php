@@ -68,6 +68,9 @@ readonly class RouteHandler
     {
 
         try {
+            if (is_subclass_of($this->controller, ApiController::class))
+                header('Content-Type: application/json');
+
             if ($this->authConstraint)
                 if (!$this->handleAuthMiddleware())
                     return;
