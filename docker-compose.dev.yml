@@ -15,6 +15,15 @@ services:
             PHP_IDE_CONFIG: "serverName=Docker"
         volumes:
             - ./deploy/php-fpm/php-xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+        develop:
+            watch:
+                -   path: ./web
+                    action: sync
+                    target: /var/www/webapp
+                    ignore:
+                        - node_modules/
+                -   path: ./web/composer.json
+                    action: rebuild
     phpmyadmin:
         environment:
             PMA_ABSOLUTE_URI: https://localhost/phpmyadmin/
