@@ -19,21 +19,19 @@ readonly class RequireAuth
     public function __construct(
         public array $allowedRoles = [],
         public array $disallowedRoles = [],
-        public AuthRule $rule = AuthRule::HIGHER,
+        public AuthRule $rule = AuthRule::HIGHER_OR_EQUAL,
         public bool $redirect = true
     ) {
     }
 
     public function check(UserRole $role): bool
     {
-        if (in_array($role, $this->disallowedRoles)) {
+        if (in_array($role, $this->disallowedRoles))
             return false;
-        }
 
-        return match ($this->rule) {
-            AuthRule::EXACT => in_array($role, $this->allowedRoles),
-            AuthRule::HIGHER => $role->value >= min(array_map(fn($role) => $role->value, $this->allowedRoles)),
-            AuthRule::LOWER => $role->value <= max(array_map(fn($role) => $role->value, $this->allowedRoles)),
-        };
+        return array_any(
+            $this->allowedRoles,
+            fn($allowedRole) => $this->rule->check($role, $allowedRole)
+        );
     }
 }
