@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace App\Router;
 
-use App\Controller\Api\ApiController;
 use App\Controller\Controller;
 use App\Core\View;
 use App\Exception\MethodNotAllowedException;
 use App\Exception\NotFoundException;
-use App\Exception\WebException;
-use App\Exception\Wrapper\ApiExceptionWrapper;
 use App\Exception\Wrapper\ExceptionWrapper;
-use App\Exception\Wrapper\WebExceptionWrapper;
 use App\Router\Method\HttpMethod;
 use JetBrains\PhpStorm\Language;
 use PDO;
@@ -75,12 +71,6 @@ class Router
         }
 
         $handler = $httpMethodMap[$method];
-        if ($handler->authConstraint != null) {
-            session_start();
-
-            // TODO: do auth checking here
-        }
-
         $params = self::extractPathParams($regex, $uri);
         $handler->handle($this->pdo, $this->view, $params);
     }
