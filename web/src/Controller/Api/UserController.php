@@ -5,56 +5,42 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Core\View;
-use App\Entity\User\User;
-use App\Entity\User\UserRole;
+use App\DTO\UserLoginDTO;
+use App\DTO\UserRegisterDTO;
 use App\Exception\BadRequestException;
 use App\Exception\ConflictException;
 use App\Exception\UnprocessableEntityException;
-use App\Repository\Query\UserCriteria;
-use App\Repository\Query\UserQuery;
-use App\Repository\UserRepository;
 use App\Router\Method\GET;
 use App\Router\Method\POST;
 use App\Router\Path;
+use App\Service\UserService;
 use PDO;
 
 #[Path('/api/user')]
 readonly class UserController extends ApiController
 {
-    private UserRepository $userRepository;
+    private UserService $userService;
 
     public function __construct(PDO $pdo, View $view)
     {
         parent::__construct($pdo, $view);
-        $this->userRepository = new UserRepository($this->pdo);
+        $this->userService = new UserService($this->pdo);
     }
 
     #[GET]
     #[Path('/username/{username}')]
     public function checkUsernameExists(string $username): void
     {
-        $qb = UserQuery::withMinimalDetails()
-            ->where(UserCriteria::byUsername())
-            ->bind(':username', $username);
-
-        $count = $this->userRepository->count($qb);
-
         header('Content-type: application/json');
-        echo json_encode(['exists' => $count != 0]);
+        echo json_encode(['exists' => $this->userService->checkUsernameExists($username)]);
     }
 
     #[GET]
     #[Path('/email/{email}')]
     public function checkEmailExists(string $email): void
     {
-        $qb = UserQuery::withMinimalDetails()
-            ->where(UserCriteria::byEmail())
-            ->bind(':email', $email);
-
-        $count = $this->userRepository->count($qb);
-
         header('Content-type: application/json');
-        echo json_encode(['exists' => $count != 0]);
+        echo json_encode(['exists' => $this->userService->checkEmailExists($email)]);
     }
 
     /**
@@ -66,115 +52,31 @@ readonly class UserController extends ApiController
     #[Path('/register')]
     public function register(): void
     {
+
+        $dto = UserRegisterDTO::jsonDeserialize(self::getJsonBody());
+        $dto->validate();
+
+        $this->userService->register($dto);
+
         header('Content-type: application/json');
-
-        $_POST = self::getJsonBody();
-
-        if (!isset($_POST['username']) || !isset($_POST['email']) || !isset($_POST['password'])) {
-            throw new BadRequestException();
-        }
-
-        // Validate email format
-        if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-            throw new UnprocessableEntityException([]);
-        }
-
-        // TODO: validate password format
-
-        // Check if username already exists
-        $qb = UserQuery::withMinimalDetails()
-            ->where(UserCriteria::byUsername())
-            ->bind(':username', $_POST['username']);
-        if ($this->userRepository->count($qb) > 0) {
-            throw new ConflictException([]);
-        }
-
-        // Check if email already exists
-        $qb = UserQuery::withMinimalDetails()
-            ->where(UserCriteria::byEmail())
-            ->bind(':email', $_POST['email']);
-        if ($this->userRepository->count($qb) > 0) {
-            throw new ConflictException([]);
-        }
-
-        // Create new user
-        $user = new User();
-        $user->username = trim($_POST['username']);
-        $user->email = trim($_POST['email']);
-        $user->hashedPassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
-        $user->role = UserRole::USER;
-        $user->isVerified = false;
-
-        $this->userRepository->insert($user);
-
-        // Return success response
-        http_response_code(201); // Created
-        echo json_encode([
-            "status" => "success",
-            "message" => "User registered successfully",
-            "data" => [
-                "username" => $user->username,
-                "email" => $user->email,
-                "role" => $user->role->name,
-                "isVerified" => $user->isVerified
-            ]
-        ]);
+        http_response_code(201);
     }
 
+    /**
+     * @throws UnprocessableEntityException
+     * @throws BadRequestException
+     */
     #[POST]
     #[Path('/login')]
     public function login(): void
     {
+        $dto = UserLoginDTO::jsonDeserialize(self::getJsonBody());
+        $dto->validate();
+
         header('Content-type: application/json');
-
-        $_POST = self::getJsonBody();
-
-        if (!isset($_POST['password']) || !isset($_POST['email'])) {
-            throw new BadRequestException();
-        }
-
-        $email = trim((string)($_POST['email'] ?? ''));
-        $password = (string)$_POST['password'];
-
-        // Validate email format
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new UnprocessableEntityException([]);
-        }
-
-        // Fetch a email
-//        $user = $this->userRepository->get($email);
-
-        // Validate credentials
-//        if ($user === null || !isset($user->hashedPassword) || !password_verify($password, $user->hashedPassword)) {
-//            throw new UnauthorizedException();
-//        }
-
-        // TODO: check user role
-
-        // TODO: integrate 2FA checks
-
-        // Start session
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
-
-//        $_SESSION['auth'] = [
-//            'username' => $user->username,
-//            'email' => $user->email,
-//            'role' => UserRole::USER,
-//            'isVerified' => $user->isVerified,
-//        ];
-//
-//        echo json_encode([
-//            'status' => 'success',
-//            'loginStatus' => 'SUCCESS',
-//            'message' => 'Logged in successfully',
-//            'data' => [
-//                'username' => $user->username,
-//                'email' => $user->email,
-//                'role' => UserRole::USER,
-//                'isVerified' => $user->isVerified,
-//            ],
-//        ]);
+        if ($this->userService->login($dto))
+            http_response_code(200);
+        else
+            http_response_code(401);
     }
 }

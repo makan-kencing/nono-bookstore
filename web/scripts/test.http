@@ -9,9 +9,8 @@ Content-Type: application/json
 {
     "username": "asdasd",
     "email": "asdasd@asdasd.com",
-    "hashed_password": "wasda",
-    "role": "USER",
-    "is_verified": false
+    "password": "wasda",
+    "role": "USER"
 }
 
 ###
@@ -21,9 +20,8 @@ Content-Type: application/json
 {
     "username": "asdasd",
     "email": "asdasd@asdatt.com",
-    "hashed_password": "wasda",
-    "role": "USER",
-    "is_verified": false
+    "password": "wasda",
+    "role": "USER"
 }
 
 ###
