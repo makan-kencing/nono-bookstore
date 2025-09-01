@@ -115,7 +115,7 @@ readonly class UserService extends Service
         if (session_status() !== PHP_SESSION_ACTIVE)
             session_start();
 
-        /** @type UserLoginContextDTO $context */
+        /** @var UserLoginContextDTO $context */
         $context = $_SESSION['user'];
         if ($context->role->value < $dto->role->value)
             throw new UnauthorizedException();

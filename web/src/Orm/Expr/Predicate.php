@@ -56,7 +56,7 @@ class Predicate
      */
     public function toClauses(): array
     {
-        /** @type string[] $clauses */
+        /** @var string[] $clauses */
         $clauses = [];
         $clauses[] = $this->left;
 

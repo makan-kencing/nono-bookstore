@@ -63,7 +63,7 @@ class From extends Expression
      */
     public function toSelectClauses(?string $columnPrefix = null): array
     {
-        /** @type string[] $clauses */
+        /** @var string[] $clauses */
         $clauses = [];
         $columnPrefix ??= self::toSnakeCase(new ReflectionClass($this->class)->getShortName()) . '.';
 
@@ -112,7 +112,7 @@ class From extends Expression
      */
     public function toJoinClauses(): array
     {
-        /** @type string[] $clauses */
+        /** @var string[] $clauses */
         $clauses = [];
 
         foreach ($this->joins as $property => $join) {
