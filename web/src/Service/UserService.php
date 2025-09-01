@@ -134,12 +134,13 @@ readonly class UserService extends Service
         $this->userRepository->insert($user);
     }
 
+    /**
+     * @throws ForbiddenException
+     */
     public function update(UserUpdateDTO $dto): void
     {
         /** @var UserLoginContextDTO $context */
         $context = $_SESSION['user'];
-        if (!AuthRule::HIGHER->check($context->role, $dto->role))
-            throw new ForbiddenException();
 
         $qb = UserQuery::withMinimalDetails();
         if ($dto->id != null)
@@ -151,8 +152,14 @@ readonly class UserService extends Service
         else if ($dto->email != null)
             $qb->where(UserCriteria::byEmail())
                 ->bind(':email', $dto->email);
+        else if ($dto->role != null)
+            if (!AuthRule::HIGHER->check($context->role, $dto->role))
+                throw new ForbiddenException();
 
         $user = $this->userRepository->getOne($qb);
+
+        if (!AuthRule::HIGHER->check($context->role, $user->role))
+            throw new ForbiddenException();
 
         $dto->update($user);
 
