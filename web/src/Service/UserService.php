@@ -8,13 +8,15 @@ use App\DTO\UserCreateDTO;
 use App\DTO\UserLoginContextDTO;
 use App\DTO\UserLoginDTO;
 use App\DTO\UserRegisterDTO;
+use App\DTO\UserUpdateDTO;
 use App\Entity\User\User;
 use App\Entity\User\UserRole;
 use App\Exception\ConflictException;
-use App\Exception\UnauthorizedException;
+use App\Exception\ForbiddenException;
 use App\Repository\Query\UserCriteria;
 use App\Repository\Query\UserQuery;
 use App\Repository\UserRepository;
+use App\Router\AuthRule;
 use PDO;
 
 readonly class UserService extends Service
@@ -101,7 +103,7 @@ readonly class UserService extends Service
 
     /**
      * @throws ConflictException
-     * @throws UnauthorizedException
+     * @throws ForbiddenException
      */
     public function create(UserCreateDTO $dto): void
     {
@@ -112,13 +114,10 @@ readonly class UserService extends Service
         if ($this->checkEmailExists($dto->email))
             throw new ConflictException([]);
 
-        if (session_status() !== PHP_SESSION_ACTIVE)
-            session_start();
-
         /** @var UserLoginContextDTO $context */
         $context = $_SESSION['user'];
-        if ($context->role->value < $dto->role->value)
-            throw new UnauthorizedException();
+        if (!AuthRule::HIGHER->check($context->role, $dto->role))
+            throw new ForbiddenException();
 
         $user = new User();
         $user->username = $dto->username;
@@ -128,5 +127,30 @@ readonly class UserService extends Service
         $user->isVerified = false;
 
         $this->userRepository->insert($user);
+    }
+
+    public function update(UserUpdateDTO $dto): void
+    {
+        /** @var UserLoginContextDTO $context */
+        $context = $_SESSION['user'];
+        if (!AuthRule::HIGHER->check($context->role, $dto->role))
+            throw new ForbiddenException();
+
+        $qb = UserQuery::withMinimalDetails();
+        if ($dto->id != null)
+            $qb->where(UserCriteria::byId())
+                ->bind(':id', $dto->id);
+        else if ($dto->username != null)
+            $qb->where(UserCriteria::byUsername())
+                ->bind(':username', $dto->username);
+        else if ($dto->email != null)
+            $qb->where(UserCriteria::byEmail())
+                ->bind(':email', $dto->email);
+
+        $user = $this->userRepository->getOne($qb);
+
+        $dto->update($user);
+
+        $this->userRepository->update($user);
     }
 }

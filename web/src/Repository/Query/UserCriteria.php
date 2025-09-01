@@ -12,6 +12,11 @@ class UserCriteria
     {
     }
 
+    public static function byId(string $param = ':id'): Predicate
+    {
+        return new Predicate('id = ' . $param);
+    }
+
     /**
      * @param literal-string $param
      * @return Predicate

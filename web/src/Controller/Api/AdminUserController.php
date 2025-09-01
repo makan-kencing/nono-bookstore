@@ -6,8 +6,12 @@ namespace App\Controller\Api;
 
 use App\Core\View;
 use App\DTO\UserCreateDTO;
-use App\Entity\User\User;
+use App\DTO\UserUpdateDTO;
 use App\Entity\User\UserRole;
+use App\Exception\BadRequestException;
+use App\Exception\ConflictException;
+use App\Exception\ForbiddenException;
+use App\Exception\UnprocessableEntityException;
 use App\Router\AuthRule;
 use App\Router\Method\DELETE;
 use App\Router\Method\POST;
@@ -29,6 +33,12 @@ readonly class AdminUserController extends ApiController
         $this->userService = new UserService($this->pdo);
     }
 
+    /**
+     * @throws ConflictException
+     * @throws ForbiddenException
+     * @throws UnprocessableEntityException
+     * @throws BadRequestException
+     */
     #[POST]
     public function addUser(): void
     {
@@ -37,22 +47,23 @@ readonly class AdminUserController extends ApiController
 
         $this->userService->create($dto);
 
+        http_response_code(201);
     }
 
+    /**
+     * @throws ForbiddenException
+     * @throws BadRequestException
+     * @throws UnprocessableEntityException
+     */
     #[PUT]
     public function editUser(): void
     {
-        $_PUT = self::getJsonBody();
+        $dto = UserUpdateDTO::jsonDeserialize(self::getJsonBody());
+        $dto->validate();
 
-        $user = new User();
+        $this->userService->update($dto);
 
-        $user->username = $_PUT['username'];
-        $user->email = $_PUT['email'];
-        $user->hashedPassword = $_PUT['hashed_password'];
-        $user->role = UserRole::{$_PUT['role']};
-        $user->isVerified = $_PUT['is_verified'];
-
-        $this->userService->update($user);
+        http_response_code(204);
     }
 
     #[DELETE]
