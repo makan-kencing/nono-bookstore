@@ -31,18 +31,13 @@ abstract readonly class Controller
         return $this->view->render($file, $data);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public static function getJsonBody(): array
+    public static function getJsonBody(): mixed
     {
         $resource = fopen(INPUT, 'r');
         if (!$resource) {
             throw new RuntimeException(INPUT . ' stream cant be opened.');
         }
 
-        $obj = json_decode(stream_get_contents($resource), true);
-        assert(is_array($obj));
-        return $obj;
+        return json_decode(stream_get_contents($resource), true);
     }
 }
