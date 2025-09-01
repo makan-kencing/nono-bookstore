@@ -101,6 +101,11 @@ readonly class UserService extends Service
         return true;
     }
 
+    public function logout(): void
+    {
+        unset($_SESSION['user']);
+    }
+
     /**
      * @throws ConflictException
      * @throws ForbiddenException

@@ -13,6 +13,7 @@ use App\Exception\UnprocessableEntityException;
 use App\Router\Method\GET;
 use App\Router\Method\POST;
 use App\Router\Path;
+use App\Router\RequireAuth;
 use App\Service\UserService;
 use PDO;
 
@@ -31,7 +32,6 @@ readonly class UserController extends ApiController
     #[Path('/username/{username}')]
     public function checkUsernameExists(string $username): void
     {
-        header('Content-type: application/json');
         echo json_encode(['exists' => $this->userService->checkUsernameExists($username)]);
     }
 
@@ -39,7 +39,6 @@ readonly class UserController extends ApiController
     #[Path('/email/{email}')]
     public function checkEmailExists(string $email): void
     {
-        header('Content-type: application/json');
         echo json_encode(['exists' => $this->userService->checkEmailExists($email)]);
     }
 
@@ -58,7 +57,6 @@ readonly class UserController extends ApiController
 
         $this->userService->register($dto);
 
-        header('Content-type: application/json');
         http_response_code(201);
     }
 
@@ -73,10 +71,19 @@ readonly class UserController extends ApiController
         $dto = UserLoginDTO::jsonDeserialize(self::getJsonBody());
         $dto->validate();
 
-        header('Content-type: application/json');
         if ($this->userService->login($dto))
             http_response_code(200);
         else
             http_response_code(401);
+    }
+
+    #[POST]
+    #[Path('/logout')]
+    #[RequireAuth(redirect: false)]
+    public function logout(): void
+    {
+        $this->userService->logout();
+
+        http_response_code(204);
     }
 }
