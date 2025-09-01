@@ -29,6 +29,9 @@ readonly class RequireAuth
         if (in_array($role, $this->disallowedRoles))
             return false;
 
+        if (!$this->allowedRoles)
+            return true;
+
         return array_any(
             $this->allowedRoles,
             fn($allowedRole) => $this->rule->check($role, $allowedRole)
