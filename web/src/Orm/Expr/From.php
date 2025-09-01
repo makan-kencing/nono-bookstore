@@ -65,7 +65,7 @@ class From extends Expression
     {
         /** @var string[] $clauses */
         $clauses = [];
-        $columnPrefix ??= self::toSnakeCase(new ReflectionClass($this->class)->getShortName()) . '.';
+        $columnPrefix ??= new ReflectionClass($this->class)->getShortName() . '.';
 
         $reflectionClass = new ReflectionClass($this->class);
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
