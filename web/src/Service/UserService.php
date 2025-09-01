@@ -13,6 +13,7 @@ use App\Entity\User\User;
 use App\Entity\User\UserRole;
 use App\Exception\ConflictException;
 use App\Exception\ForbiddenException;
+use App\Exception\NotFoundException;
 use App\Repository\Query\UserCriteria;
 use App\Repository\Query\UserQuery;
 use App\Repository\UserRepository;
@@ -136,6 +137,7 @@ readonly class UserService extends Service
 
     /**
      * @throws ForbiddenException
+     * @throws NotFoundException
      */
     public function update(UserUpdateDTO $dto): void
     {
@@ -157,6 +159,8 @@ readonly class UserService extends Service
                 throw new ForbiddenException();
 
         $user = $this->userRepository->getOne($qb);
+        if ($user == null)
+            throw new NotFoundException();
 
         if (!AuthRule::HIGHER->check($context->role, $user->role))
             throw new ForbiddenException();
