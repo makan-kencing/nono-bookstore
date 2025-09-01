@@ -11,6 +11,7 @@ use App\Entity\User\UserRole;
 use App\Exception\BadRequestException;
 use App\Exception\ConflictException;
 use App\Exception\ForbiddenException;
+use App\Exception\NotFoundException;
 use App\Exception\UnprocessableEntityException;
 use App\Router\AuthRule;
 use App\Router\Method\DELETE;
@@ -54,6 +55,7 @@ readonly class AdminUserController extends ApiController
      * @throws ForbiddenException
      * @throws BadRequestException
      * @throws UnprocessableEntityException
+     * @throws NotFoundException
      */
     #[PUT]
     public function editUser(): void
