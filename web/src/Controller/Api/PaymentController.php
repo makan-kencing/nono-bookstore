@@ -11,7 +11,7 @@ use App\Router\Path;
 use App\Router\RequireAuth;
 
 #[Path('/api/payment')]
-#[RequireAuth([UserRole::USER], rule: AuthRule::HIGHER)]
+#[RequireAuth(redirect: false)]
 readonly class PaymentController extends ApiController
 {
     #[POST]

@@ -13,7 +13,7 @@ use App\Router\Path;
 use App\Router\RequireAuth;
 
 #[Path('/api/rating')]
-#[RequireAuth([UserRole::USER], rule: AuthRule::HIGHER)]
+#[RequireAuth(redirect: false)]
 readonly class RatingController extends ApiController
 {
     #[POST]

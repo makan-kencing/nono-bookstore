@@ -11,7 +11,7 @@ use App\Router\Path;
 use App\Router\RequireAuth;
 
 #[Path('/order')]
-#[RequireAuth([UserRole::USER], rule: AuthRule::HIGHER)]
+#[RequireAuth]
 readonly class OrderController extends WebController
 {
     #[GET]

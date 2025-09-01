@@ -11,7 +11,7 @@ use App\Router\Path;
 use App\Router\RequireAuth;
 
 #[Path('/payment')]
-#[RequireAuth([UserRole::USER], rule: AuthRule::HIGHER)]
+#[RequireAuth]
 readonly class PaymentController extends WebController
 {
     #[GET]

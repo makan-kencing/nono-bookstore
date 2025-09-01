@@ -8,6 +8,7 @@ use App\Router\Method\GET;
 use App\Router\Path;
 
 #[Path('/admin/profile')]
+//#[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL)]
 readonly class AdminProfileController extends WebController
 {
     #[GET]

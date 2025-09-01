@@ -15,7 +15,7 @@ use App\Router\RequireAuth;
 use PDO;
 
 #[Path('/admin/users')]
-#[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER, redirect: false)]
+#[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL)]
 readonly class AdminUserController extends WebController
 {
     private UserRepository $userRepository;

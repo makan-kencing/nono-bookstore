@@ -22,7 +22,7 @@ use App\Service\UserService;
 use PDO;
 
 #[Path('/api/user')]
-#[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER)]
+#[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
 readonly class AdminUserController extends ApiController
 {
     private UserService $userService;

@@ -11,7 +11,7 @@ use App\Router\Path;
 use App\Router\RequireAuth;
 
 #[Path('/checkout')]
-#[RequireAuth([UserRole::USER], rule: AuthRule::HIGHER)]
+#[RequireAuth]
 readonly class CheckoutController extends WebController
 {
     #[GET]
