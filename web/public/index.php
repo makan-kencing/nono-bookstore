@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../config/error_handler.php';
+require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../config/error_handler.php';
 
 use App\Core\View;
 use App\Exception\WebException;
