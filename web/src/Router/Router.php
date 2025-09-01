@@ -75,17 +75,13 @@ class Router
         }
 
         $handler = $httpMethodMap[$method];
+        if ($handler->authConstraint != null) {
+            session_start();
+
+            // TODO: do auth checking here
+        }
 
         $params = self::extractPathParams($regex, $uri);
-        $controller = new $handler[0]($this->pdo, $this->view);
-        try {
-            $controller->{$handler[1]}(...$params);
-            return;
-        } catch (WebException $e) {
-            if (is_subclass_of($controller, ApiController::class)) {
-                throw new ApiExceptionWrapper($e);
-            }
-            throw new WebExceptionWrapper($e);
-        }
+        $handler->handle($this->pdo, $this->view, $params);
     }
 }

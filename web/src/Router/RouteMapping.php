@@ -14,8 +14,7 @@ use ReflectionException;
 use ReflectionMethod;
 
 /**
- * @phpstan-type Handler array{0: class-string<Controller>, 1: callable}
- * @phpstan-type HttpMethodMapping array<string, Handler>
+ * @phpstan-type HttpMethodMapping array<string, RouteHandler>
  * @phpstan-type Routes array<string, HttpMethodMapping>
  */
 class RouteMapping
@@ -68,6 +67,7 @@ class RouteMapping
         $reflectionClass = new ReflectionClass($controller);
 
         $pathPrefix = self::getAnnotatedPaths($reflectionClass)[0] ?? '';
+        $rootAuthConstraint = $reflectionClass->getAttributes(RequireAuth::class)[0] ?? null;
 
         foreach ($reflectionClass->getMethods() as $reflectionMethod) {
             $httpMethods = self::getAnnotatedHttpMethods($reflectionMethod);
@@ -80,6 +80,8 @@ class RouteMapping
             if (!$paths) {
                 $paths[0] = '';
             }
+
+            $authConstraint = $reflectionMethod->getAttributes(RequireAuth::class)[0] ?? $rootAuthConstraint;
 
             foreach ($httpMethods as $httpMethod) {
                 foreach ($paths as $path) {
@@ -97,9 +99,11 @@ class RouteMapping
                         );
                     }
 
-                    $this->routes[$regex][$httpMethod->value] = [
-                        $reflectionClass->getName(), $reflectionMethod->getName()
-                    ];
+                    $this->routes[$regex][$httpMethod->value] = new RouteHandler(
+                        $reflectionClass->getName(),
+                        $reflectionMethod->getName(),
+                        $authConstraint?->newInstance()
+                    );
                 }
             }
         }
