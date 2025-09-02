@@ -14,12 +14,17 @@ use ReflectionClass;
  */
 class Root extends From
 {
+    public function getRootPrefix(): string
+    {
+        $shortname = new ReflectionClass($this->class)->getShortName();
+        return $shortname . '.';
+    }
+
     /**
      * @inheritDoc
      */
     public function toSelectClauses(string $aliasPrefix = ''): array
     {
-        $shortname = new ReflectionClass($this->class)->getShortName();
-        return parent::toSelectClauses($shortname . '.');
+        return parent::toSelectClauses($this->getRootPrefix());
     }
 }

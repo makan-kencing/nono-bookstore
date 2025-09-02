@@ -23,7 +23,7 @@ class Expression
         $this->alias = $alias ?? strtolower($class);
     }
 
-    protected static function toSnakeCase(string $camelCase): string
+    public static function toSnakeCase(string $camelCase): string
     {
         $camelCase = preg_replace('/(?<!^)[A-Z]/', '_$0', $camelCase);
         assert(is_string($camelCase));
