@@ -112,9 +112,11 @@ class ResultSetMapper
             }
 
             $e = $this->mapToMany($this->root, $entities, $this->root->getRootPrefix());
-            if (count($entities) > 1)
+
+            $entity ??= $e;
+            if ($entity !== $e)
                 return $entity;
-            $entity = $e;
+
             $this->processingRow = null;
         }
         return $entity;
