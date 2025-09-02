@@ -89,6 +89,9 @@ readonly class UserService extends Service
         if (!password_verify($dto->password, $user->hashedPassword))
             return false;
 
+        if (session_status() != PHP_SESSION_ACTIVE)
+            session_start();
+
         // TODO: check otp / prompt for otp verification
 
         // TODO: implement remember me tokens
@@ -98,7 +101,7 @@ readonly class UserService extends Service
         $_SESSION['user'] = new UserLoginContextDTO(
             $user->username,
             $user->role
-        );
+        )->jsonSerialize();
         return true;
     }
 
