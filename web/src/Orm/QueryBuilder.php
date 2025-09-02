@@ -55,6 +55,16 @@ class QueryBuilder
         return new Predicate($predicate);
     }
 
+    public function createOrderBy(string $property, OrderDirection $direction = OrderDirection::ASCENDING): OrderBy
+    {
+        return new OrderBy($property, $direction);
+    }
+
+    public function createPageRequest(int $page, int $pageSize): PageRequest
+    {
+        return new PageRequest($page, $pageSize);
+    }
+
     /**
      * @param class-string<X> $class
      * @param ?string $alias
@@ -90,13 +100,15 @@ class QueryBuilder
     }
 
     /**
-     * @param literal-string $property
+     * @param literal-string|OrderBy $property
      * @param OrderDirection $direction
      * @return $this
      */
-    public function orderBy(string $property, OrderDirection $direction = OrderDirection::ASCENDING): static
+    public function orderBy(string|OrderBy $property, OrderDirection $direction = OrderDirection::ASCENDING): static
     {
-        $this->orderBys[$property] = new OrderBy($property, $direction);
+        if (is_string($property))
+            $property = $this->createOrderBy($property, $direction);
+        $this->orderBys[$property->property] = $property;
         return $this;
     }
 
@@ -168,8 +180,8 @@ class QueryBuilder
     private function getSqlLimitOffsetClause(): string
     {
         if ($this->pageRequest) {
-            return 'LIMIT ' . $this->pageRequest->size . ' '
-                . 'OFFSET ' . (($this->pageRequest->page - 1) * $this->pageRequest->size);
+            return 'LIMIT ' . $this->pageRequest->pageSize . ' '
+                . 'OFFSET ' . (($this->pageRequest->page - 1) * $this->pageRequest->pageSize);
         }
         return '';
     }
