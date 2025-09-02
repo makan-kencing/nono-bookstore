@@ -33,7 +33,7 @@ services:
         build: web
         working_dir: /var/www/webapp
         volumes:
-            - ./deploy/php-fpm/php.ini:/usr/local/etc/php/php.ini
+            - ./deploy/php-fpm/php.ini:/usr/local/etc/php/conf.d/php-overrides.ini
         env_file:
             - .env
             - path: .env.local
