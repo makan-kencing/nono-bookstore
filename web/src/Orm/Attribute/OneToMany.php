@@ -16,7 +16,7 @@ readonly class OneToMany
      */
     public function __construct(
         public string $targetClass,
-        public ?string $mappedBy = null,
+        public string $mappedBy,
     ) {
     }
 }
