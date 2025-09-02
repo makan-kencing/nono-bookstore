@@ -21,18 +21,19 @@ services:
             timeout: 5s
             retries: 5
     webserver:
-        image: caddy:alpine
+        build:
+            context: web
+            dockerfile: caddy.Dockerfile
         working_dir: /var/www/webapp
         volumes:
             - ./deploy/caddy:/etc/caddy:ro
-            - ./web/public:/var/www/webapp/public:z
             - ./var/caddy/data:/data/caddy:z
             - ./var/caddy/config:/config/caddy:z
     web:
         build: web
         working_dir: /var/www/webapp
         volumes:
-            - ./deploy/php-fpm/php-overrides.ini:/usr/local/etc/php/php.ini
+            - ./deploy/php-fpm/php.ini:/usr/local/etc/php/php.ini
         env_file:
             - .env
             - path: .env.local

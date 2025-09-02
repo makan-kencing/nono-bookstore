@@ -9,6 +9,11 @@ services:
             - "80:80"
             - "443:443"
             - "443:443/udp"
+        develop:
+            watch:
+                -   path: ./web/public
+                    action: sync
+                    target: /var/www/webapp/public
     web:
         build: web
         environment:
