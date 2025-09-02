@@ -14,4 +14,12 @@ use ReflectionClass;
  */
 class Root extends From
 {
+    /**
+     * @inheritDoc
+     */
+    public function toSelectClauses(string $aliasPrefix = ''): array
+    {
+        $shortname = new ReflectionClass($this->class)->getShortName();
+        return parent::toSelectClauses($shortname . '.');
+    }
 }

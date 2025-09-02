@@ -10,6 +10,7 @@ use App\Orm\Attribute\OneToOne;
 use App\Orm\Attribute\Transient;
 use App\Orm\Entity;
 use ReflectionClass;
+use ReflectionException;
 use ReflectionProperty;
 
 /**
@@ -44,56 +45,48 @@ class From extends Expression
         return $join;
     }
 
-    private function hasSelectClause(ReflectionProperty $reflectionProperty): bool
-    {
-        if ($reflectionProperty->getAttributes(Transient::class))
-            return false;
-        else if ($oneToAny = $reflectionProperty->getAttributes(OneToMany::class)
-            ?: $reflectionProperty->getAttributes(OneToOne::class)) {
-            assert(count($oneToAny) == 1);
-
-            return $oneToAny[0]->newInstance()->mappedBy == null
-                || array_key_exists($reflectionProperty->getName(), $this->joins);
-        }
-        return true;
-    }
-
     /**
+     * @param string $aliasPrefix
      * @return string[]
+     * @throws ReflectionException
      */
-    public function toSelectClauses(?string $columnPrefix = null): array
+    public function toSelectClauses(string $aliasPrefix): array
     {
         /** @var string[] $clauses */
         $clauses = [];
-        $columnPrefix ??= new ReflectionClass($this->class)->getShortName() . '.';
 
         $reflectionClass = new ReflectionClass($this->class);
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
-            if (!$this->hasSelectClause($reflectionProperty))
-                continue;
-            $columnAlias = $columnPrefix;
-
             $join = $this->joins[$reflectionProperty->getName()] ?? null;
 
-            if ($reflectionProperty->getAttributes(OneToMany::class)
-                || $reflectionProperty->getAttributes(OneToOne::class)
-                || $reflectionProperty->getAttributes(ManyToOne::class)) {
-                $select = $this->alias . '.' . self::toSnakeCase($reflectionProperty->getName()) . '_id';
+            // check if have select
+            if ($reflectionProperty->getAttributes(Transient::class))
+                continue;
+
+            $oneToOne = ($reflectionProperty->getAttributes(OneToOne::class)[0] ?? null)?->newInstance();
+            $oneToMany = ($reflectionProperty->getAttributes(OneToMany::class)[0] ?? null)?->newInstance();
+            $manyToOne = ($reflectionProperty->getAttributes(ManyToOne::class)[0] ?? null)?->newInstance();
+
+            if ($oneToAny = $oneToOne ?? $oneToMany)
+                if ($oneToAny->mappedBy && $join == null)
+                    continue;
+
+            // building select clause
+            $alias = $aliasPrefix . $reflectionProperty->getName();
+            $select = $this->alias . '.' . self::toSnakeCase($reflectionProperty->getName());
+
+            if ($oneToOne || $oneToMany || $manyToOne) {
+                $select .= '_id';
 
                 if (!$join)
-                    $columnAlias .= $reflectionProperty->getName() . '.id';
-                else
-                    $columnAlias .= $reflectionProperty->getName();
-            } else {
-                $select = $this->alias . '.' . self::toSnakeCase($reflectionProperty->getName());
-                $columnAlias .= $reflectionProperty->getName();
+                    $alias .= '.id';
             }
 
             if ($join)
-                foreach ($join->toSelectClauses($columnAlias . '.') as $clause)
+                foreach ($join->toSelectClauses($alias . '.') as $clause)
                     $clauses[] = $clause;
             else
-                $clauses[] = $select . ' `' . $columnAlias . '`';
+                $clauses[] = $select . ' `' . $alias . '`';
         }
 
         return $clauses;
