@@ -43,7 +43,7 @@ readonly class ProductController extends WebController
         $query = BookQuery::withFullDetails()
             ->where(BookCriteria::byIsbn()
                 ->and(BookCriteria::notSoftDeleted()))
-            ->bind(':isbn', '1231414');
+            ->bind(':isbn', $isbn);
 
         $book = $this->bookRepository->getOne($query);
         if (!$book)
