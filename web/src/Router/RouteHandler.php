@@ -7,6 +7,7 @@ namespace App\Router;
 use App\Controller\Api\ApiController;
 use App\Core\View;
 use App\DTO\UserLoginContextDTO;
+use App\Exception\BadRequestException;
 use App\Exception\ForbiddenException;
 use App\Exception\UnauthorizedException;
 use App\Exception\WebException;
@@ -34,6 +35,7 @@ readonly class RouteHandler
     /**
      * @throws UnauthorizedException
      * @throws ForbiddenException
+     * @throws BadRequestException
      */
     public function handleAuthMiddleware(): bool
     {
@@ -41,7 +43,6 @@ readonly class RouteHandler
 
         session_start();
 
-        /** @var ?UserLoginContextDTO $context */
         $context = $_SESSION['user'] ?? null;
         if ($context == null) {
             if ($this->authConstraint->redirect)
@@ -50,6 +51,8 @@ readonly class RouteHandler
                 throw new UnauthorizedException();
             return false;
         }
+        /** @var UserLoginContextDTO $context */
+        $context = UserLoginContextDTO::jsonDeserialize($context);
 
         if (!$this->authConstraint->check($context->role))
             throw new ForbiddenException();

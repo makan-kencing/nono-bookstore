@@ -20,7 +20,10 @@ readonly class UserLoginContextDTO extends DTO
      */
     public static function jsonDeserialize(mixed $json): UserLoginContextDTO
     {
-        throw new UnexpectedValueException("Not implemented");
+        return new self(
+            $json['username'],
+            UserRole::{$json['role']}
+        );
     }
 
     /**
@@ -35,6 +38,9 @@ readonly class UserLoginContextDTO extends DTO
      */
     public function jsonSerialize(): mixed
     {
-        throw new UnexpectedValueException("Not implemented");
+        return [
+            'username' => $this->username,
+            'role' => $this->role->name
+        ];
     }
 }
