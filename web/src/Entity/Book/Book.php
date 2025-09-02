@@ -34,11 +34,11 @@ class Book extends Entity
     public array $images;
 
     /** @var AuthorDefinition[] */
-    #[OneToMany(AuthorDefinition::class, mappedBy: 'author')]
+    #[OneToMany(AuthorDefinition::class, mappedBy: 'book')]
     public array $authors;
 
     /** @var CategoryDefinition[] */
-    #[OneToMany(CategoryDefinition::class, mappedBy: 'category')]
+    #[OneToMany(CategoryDefinition::class, mappedBy: 'book')]
     public array $categories;
 
     /** @var Rating[] */
