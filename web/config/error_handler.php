@@ -12,7 +12,7 @@ use Whoops\Handler\Handler;
 use Whoops\Handler\PrettyPageHandler;
 
 $whoops = new Whoops\Run();
-if ($_ENV['APP_ENV'] == 'dev') {
+if (getenv('APP_ENV') == 'dev') {
     $whoops->pushHandler(new PrettyPageHandler());
 } else {
     $whoops->pushHandler(function (Throwable $_) {

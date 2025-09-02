@@ -14,9 +14,9 @@ $view = new View();
 $view::$viewPath = __DIR__ . "/../views";
 
 $pdo = new PDO(
-    'mysql:dbname=' . $_ENV['DATABASE_NAME'] . ';host=' . $_ENV['DATABASE_HOST'] . ';port=' . $_ENV['DATABASE_PORT'],
-    $_ENV['DATABASE_USER'],
-    $_ENV['DATABASE_PASSWORD'],
+    'mysql:dbname=' . getenv('DATABASE_NAME') . ';host=' . getenv('DATABASE_HOST') . ';port=' . getenv('DATABASE_PORT'),
+    getenv('DATABASE_USER') ?: throw new RuntimeException('DATABASE_USER not defined'),
+    getenv('DATABASE_PASSWORD') ?: throw new RuntimeException('DATABASE_PASSWORD not defined'),
     [
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
     ]
