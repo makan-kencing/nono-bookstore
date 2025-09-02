@@ -32,8 +32,8 @@ abstract readonly class Repository
             $stmt->bindValue($param, $value);
         $stmt->execute();
 
-        $mapper = new ResultSetMapper($qb->getClass());
-        return $mapper->map($stmt);
+        return $qb->getResultMapper()
+            ->map($stmt);
     }
 
     /**
@@ -47,8 +47,8 @@ abstract readonly class Repository
             $stmt->bindValue($param, $value);
         $stmt->execute();
 
-        $mapper = new ResultSetMapper($qb->getClass());
-        return $mapper->mapOne($stmt);
+        return $qb->getResultMapper()
+            ->mapOne($stmt);
     }
 
     /**

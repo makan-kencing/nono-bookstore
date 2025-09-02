@@ -50,6 +50,15 @@ class QueryBuilder
         return $this->parameters;
     }
 
+    /**
+     * @return ResultSetMapper<X>
+     */
+    public function getResultMapper(): ResultSetMapper
+    {
+        assert($this->root != null);
+        return new ResultSetMapper($this->root, $this->pageRequest);
+    }
+
     public function createPredicate(string $predicate): Predicate
     {
         return new Predicate($predicate);
@@ -177,15 +186,6 @@ class QueryBuilder
             );
     }
 
-    private function getSqlLimitOffsetClause(): string
-    {
-        if ($this->pageRequest) {
-            return 'LIMIT ' . $this->pageRequest->pageSize . ' '
-                . 'OFFSET ' . (($this->pageRequest->page - 1) * $this->pageRequest->pageSize);
-        }
-        return '';
-    }
-
     public function getQuery(): string
     {
         $query = "SELECT\n"
@@ -199,10 +199,6 @@ class QueryBuilder
 
         if ($orderByPart = $this->getSqlOrderByClause()) {
             $query .= "\n" . $orderByPart;
-        }
-
-        if ($offsetPart = $this->getSqlLimitOffsetClause()) {
-            $query .= "\n" . $offsetPart;
         }
 
         return $query . ';';
