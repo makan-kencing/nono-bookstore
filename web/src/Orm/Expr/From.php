@@ -67,9 +67,11 @@ class From extends Expression
             $oneToMany = ($reflectionProperty->getAttributes(OneToMany::class)[0] ?? null)?->newInstance();
             $manyToOne = ($reflectionProperty->getAttributes(ManyToOne::class)[0] ?? null)?->newInstance();
 
-            if ($oneToAny = $oneToOne ?? $oneToMany)
-                if ($oneToAny->mappedBy && $join == null)
-                    continue;
+            if ($oneToMany && $join == null)
+                continue;
+
+            if ($oneToOne && $oneToOne->mappedBy && $join == null)
+                continue;
 
             // building select clause
             $alias = $aliasPrefix . $reflectionProperty->getName();
