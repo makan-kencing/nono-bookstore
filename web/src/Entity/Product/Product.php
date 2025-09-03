@@ -13,7 +13,7 @@ use App\Orm\Attribute\ManyToOne;
 use App\Orm\Attribute\OneToMany;
 use App\Orm\Entity;
 
-abstract class Product extends Entity
+class Product extends Entity
 {
     use TimeLimited;
 
