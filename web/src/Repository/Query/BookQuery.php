@@ -28,7 +28,10 @@ class BookQuery
             ->leftJoin($qb->createJoin('categories', 'cd')
                 ->leftJoin('category', 'c'))
             ->leftJoin($qb->createJoin('series', 'sd')
-                ->leftJoin('series', 's'));
+                ->leftJoin('series', 's'))
+            ->join($qb->createJoin('products', 'pro')
+                ->join('prices', 'pri')
+                ->leftJoin('inventories', 'i'));
 
         return $qb;
     }

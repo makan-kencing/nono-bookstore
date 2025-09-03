@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 use App\Entity\Book\Book;
+use App\Entity\Product\Product;
 
 assert(isset($book) && $book instanceof Book);
+assert(isset($selectedProduct) && $selectedProduct instanceof Product);
 
 $title = $book->title ?? 'Book';
 
@@ -46,39 +48,52 @@ ob_start();
             </div>
 
             <div id="book-purchase">
-                <!--suppress HtmlWrongAttributeValue -->
-                <form action="/api/cart" method="patch" id="add-to-cart">
+                <form action="/api/cart" id="add-to-cart">
                     <input type="hidden" name="isbn" value="<?= $book->isbn ?>">
-                    <input type="hidden" name="type" value="1">
-
-                    <div>
-                        <p class="type">Paperback</p>
-                        <p class="price">$13.00</p>
-                    </div>
+                    <input type="hidden" name="type" value="<?= $selectedProduct->coverType->value ?>">
 
                     <div id="product-variants">
-                        <div class="product-variant">
-                            <p class="type">Paperback</p>
-                            <p class="price">$13.00</p>
-                        </div>
-
-                        <a href="/book/<?= $book->isbn ?>/<?= $book->slug ?>/2" class="product-variant">
-                            <p class="type">Hardcover</p>
-                            <p class="price">$18.00</p>
-                        </a>
+                        <?php foreach ($book->products as $product): ?>
+                            <?php if ($product->id == $selectedProduct->id): ?>
+                                <div class="product-variant">
+                                    <p class="type"><?= $product->coverType->title() ?></p>
+                                    <p class="price"><?= $product->getCurrentPrice()?->amount / 100 ?></p>
+                                </div>
+                            <?php else: ?>
+                                <a href="/book/<?= $book->isbn ?>/<?= $book->slug ?>/<?= $product->coverType->value ?>"
+                                   class="product-variant">
+                                    <p class="type"><?= $product->coverType->title() ?></p>
+                                    <p class="price"><?= $product->getCurrentPrice()?->amount / 100 ?></p>
+                                </a>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
                     </div>
 
                     <div id="product-ordering">
+                        <?php $inventory = $selectedProduct->getClosestStock() ?>
+                        <?php $total = $selectedProduct->getTotalInStock() ?>
                         <div id="product-stocks">
-                            <p><i class="fa-solid fa-check"></i> In Stock</p>
-                            <p>Ships within 1-2 days</p>
+                            <?php if ($inventory != null): ?>
+                                <p><i class="fa-solid fa-check"></i>
+                                    In stock.
+                                    <?php if ($total < 50): ?>
+                                        (<?= $total ?> left)
+                                    <?php endif; ?>
+                                </p>
+                                <p><?= $inventory->location->getEstimatedShipping() ?></p>
+                            <?php else: ?>
+                                <p><i class="fa-solid fa-x"></i> No products in stock</p>
+                            <?php endif; ?>
                         </div>
 
+                        <?php if ($total > 0): ?>
                         <div id="product-quantity">
                             <label for="quantity">Quantity</label>
-                            <input type="number" name="quantity" id="quantity" value="1" min="1" step="1">
+                            <input type="number" name="quantity" id="quantity"
+                                   value="1" min="1" max="<?= $total ?>" step="1">
                             <button type="submit">Add to Cart</button>
                         </div>
+                        <?php endif; ?>
                     </div>
                 </form>
 
@@ -89,6 +104,9 @@ ob_start();
                         const data = new FormData(e.target);
                         console.log(data);
                         // TODO: do stuff
+                        $.ajax(
+                            e.target.
+                        );
 
                         e.target.dataset.wishlist = '1';
                     });
