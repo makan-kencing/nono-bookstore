@@ -8,4 +8,9 @@ enum CoverType: int
 {
     case PAPERBACK = 1;
     case HARDCOVER = 2;
+
+    public function title(): string
+    {
+        return ucwords(strtolower($this->name));
+    }
 }

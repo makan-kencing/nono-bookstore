@@ -12,6 +12,7 @@ use App\Orm\Attribute\Id;
 use App\Orm\Attribute\ManyToOne;
 use App\Orm\Attribute\OneToMany;
 use App\Orm\Entity;
+use DateTime;
 
 class Product extends Entity
 {
@@ -44,4 +45,34 @@ class Product extends Entity
     /** @var OrderItem[] */
     #[OneToMany(OrderItem::class, mappedBy: 'product')]
     public array $inOrders;
+
+    public function getCurrentPrice(): ?Price
+    {
+        $now = new DateTime();
+        assert($now != null);
+
+        return array_find(
+            $this->prices,
+            fn(Price $price) => $now->getTimestamp() > $price->fromDate->getTimestamp()
+                && ($price->thruDate == null || $now->getTimestamp() < $price->thruDate->getTimestamp())
+        );
+    }
+
+    public function getTotalInStock(): int
+    {
+        return array_reduce(
+            $this->inventories,
+            fn (int $carry, Inventory $inventory) => $carry + $inventory->quantity,
+            0
+        );
+    }
+
+    public function getClosestStock(): ?Inventory
+    {
+        uasort(
+            $this->inventories,
+            fn (Inventory $a, Inventory $b) => $a->location->compareTo($b->location)
+        );
+        return current($this->inventories) ?: null;
+    }
 }
