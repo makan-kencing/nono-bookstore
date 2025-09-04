@@ -39,7 +39,7 @@ class ResultSetMapper
 
     /**
      * @template V
-     * @var array<class-string<V>, Closure(mixed): V >
+     * @var array<class-string<V>, Closure(mixed): ?V >
      */
     public static array $converters = [];
 
@@ -56,7 +56,7 @@ class ResultSetMapper
                 'string' => fn($val) => strval($val),
                 'int' => fn($val) => intval($val),
                 'bool' => fn($val) => boolval($val),
-                DateTime::class => fn($val) => DateTime::createFromFormat('Y-m-d H:i:s', strval($val)) ?: throw new InvalidArgumentException()
+                DateTime::class => fn($val) => DateTime::createFromFormat('Y-m-d H:i:s', strval($val)) ?: null
             ];
     }
 
