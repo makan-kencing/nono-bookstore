@@ -5,7 +5,9 @@ declare(strict_types=1);
 ob_start();
 ?>
 
-<link rel="stylesheet" href="/static/styles/admin.css">
+    <link rel="stylesheet" href="/static/styles/Admin/adminPage.css">
+
+    <link rel="stylesheet" href="/static/styles/Admin/users-table.css">
 
 <?php
 $extraHead = ob_get_clean();
