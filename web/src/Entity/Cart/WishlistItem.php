@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity\Cart;
 
-use App\Entity\Product\Product;
+use App\Entity\Book\Book;
+use App\Entity\Book\Work;
 use App\Entity\User\User;
 use App\Orm\Attribute\Id;
 use App\Orm\Attribute\ManyToOne;
@@ -18,5 +19,5 @@ class WishlistItem extends Entity
 
     #[Id]
     #[ManyToOne]
-    public Product $items;
+    public Work $work;
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Book\Category;
 
-use App\Entity\Book\Book;
+use App\Entity\Book\Work;
 use App\Entity\Trait\Commentable;
 use App\Entity\Trait\TimeLimited;
 use App\Orm\Attribute\Id;
@@ -18,7 +18,7 @@ class CategoryDefinition extends Entity
 
     #[Id]
     #[ManyToOne]
-    public Book $book;
+    public Work $work;
 
     #[Id]
     #[ManyToOne]

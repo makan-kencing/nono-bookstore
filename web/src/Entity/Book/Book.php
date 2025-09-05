@@ -5,29 +5,45 @@ declare(strict_types=1);
 namespace App\Entity\Book;
 
 use App\Entity\Book\Author\AuthorDefinition;
-use App\Entity\Book\Category\CategoryDefinition;
-use App\Entity\Book\Series\SeriesDefinition;
-use App\Entity\Cart\WishlistItem;
-use App\Entity\Product\Product;
-use App\Entity\Rating\Rating;
-use App\Entity\Trait\Sluggable;
+use App\Entity\Cart\CartItem;
+use App\Entity\Order\OrderItem;
+use App\Entity\Product\Cost;
+use App\Entity\Product\CoverType;
+use App\Entity\Product\Inventory;
+use App\Entity\Product\Price;
 use App\Orm\Attribute\Id;
+use App\Orm\Attribute\ManyToOne;
 use App\Orm\Attribute\OneToMany;
-use App\Orm\Attribute\OneToOne;
 use App\Orm\Entity;
+use DateTime;
 
 class Book extends Entity
 {
-    use Sluggable;
-
     #[Id]
     public ?int $id;
 
+    #[ManyToOne]
+    public Work $work;
+
     public string $isbn;
 
-    public string $title;
-
     public ?string $description;
+
+    public string $publisher;
+
+    public string $publicationDate;
+
+    public int $numberOfPages;
+
+    public CoverType $coverType;
+
+    public ?string $editionInformation;
+
+    public ?string $language;
+
+    public ?string $dimensions;
+
+    public ?DateTime $deletedAt;
 
     /** @var BookImage[] */
     #[OneToMany(BookImage::class, mappedBy: 'book')]
@@ -37,33 +53,53 @@ class Book extends Entity
     #[OneToMany(AuthorDefinition::class, mappedBy: 'book')]
     public array $authors;
 
-    /** @var CategoryDefinition[] */
-    #[OneToMany(CategoryDefinition::class, mappedBy: 'book')]
-    public array $categories;
+    /** @var Cost[] */
+    #[OneToMany(Cost::class, mappedBy: 'book')]
+    public array $costs;
 
-    /** @var Rating[] */
-    #[OneToMany(Rating::class, mappedBy: 'book')]
-    public array $ratings;
+    /** @var Price[] */
+    #[OneToMany(Price::class, mappedBy: 'book')]
+    public array $prices;
 
-    #[OneToOne]
-    public Publisher $publisher;
+    /** @var Inventory[] */
+    #[OneToMany(Inventory::class, mappedBy: 'book')]
+    public array $inventories;
 
-    public string $publishedDate;
+    /** @var CartItem[] */
+    #[OneToMany(CartItem::class, mappedBy: 'book')]
+    public array $inCarts;
 
-    #[OneToOne(mappedBy: 'book')]
-    public ?SeriesDefinition $series;
+    /** @var OrderItem[] */
+    #[OneToMany(OrderItem::class, mappedBy: 'book')]
+    public array $inOrders;
 
-    public int $numberOfPages;
+    public function getCurrentPrice(): ?Price
+    {
+        $now = new DateTime();
+        assert($now != null);
 
-    public string $language;
+        return array_find(
+            $this->prices,
+            fn(Price $price) => $now->getTimestamp() > $price->fromDate->getTimestamp()
+                && ($price->thruDate == null || $now->getTimestamp() < $price->thruDate->getTimestamp())
+        );
+    }
 
-    public string $dimensions;
+    public function getTotalInStock(): int
+    {
+        return array_reduce(
+            $this->inventories,
+            fn (int $carry, Inventory $inventory) => $carry + $inventory->quantity,
+            0
+        );
+    }
 
-    /** @var Product[] */
-    #[OneToMany(Product::class, mappedBy: 'book')]
-    public array $products;
-
-    /** @var WishlistItem[] */
-    #[OneToMany(WishlistItem::class, mappedBy: 'book')]
-    public array $wishlisted;
+    public function getClosestStock(): ?Inventory
+    {
+        uasort(
+            $this->inventories,
+            fn (Inventory $a, Inventory $b) => $a->location->compareTo($b->location)
+        );
+        return current($this->inventories) ?: null;
+    }
 }

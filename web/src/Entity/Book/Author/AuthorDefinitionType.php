@@ -4,9 +4,15 @@ declare(strict_types=1);
 
 namespace App\Entity\Book\Author;
 
-enum AuthorDefinitionType: string
+use App\Utils\EnumUtils;
+
+enum AuthorDefinitionType
 {
-    case AUTHOR = 'Author';
-    case ILLUSTRATOR = 'Illustrator';
-    case CONTRIBUTOR = 'Contributor';
+    use EnumUtils;
+
+    case AUTHOR;
+    case ILLUSTRATOR;
+    case CONTRIBUTOR;
+    case EDITOR;
+    case TRANSLATOR;
 }

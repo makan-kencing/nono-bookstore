@@ -2,7 +2,7 @@
 
 namespace App\Entity\Book\Series;
 
-use App\Entity\Book\Book;
+use App\Entity\Book\Work;
 use App\Orm\Attribute\Id;
 use App\Orm\Attribute\ManyToOne;
 use App\Orm\Attribute\OneToOne;
@@ -12,12 +12,10 @@ class SeriesDefinition extends Entity
 {
     #[Id]
     #[OneToOne]
-    public Book $book;
+    public Work $work;
 
     #[ManyToOne]
     public Series $series;
 
     public string $position;
-
-    public int $seriesOrder;
 }

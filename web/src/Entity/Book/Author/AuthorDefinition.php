@@ -20,5 +20,5 @@ class AuthorDefinition extends Entity
     #[ManyToOne]
     public Author $author;
 
-    public AuthorDefinitionType $type;
+    public ?AuthorDefinitionType $type;
 }

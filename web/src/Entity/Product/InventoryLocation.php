@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace App\Entity\Product;
 
+use App\Utils\EnumUtils;
+
 enum InventoryLocation: int
 {
+    use EnumUtils;
+
     case STORE = 1;
     case WAREHOUSE = 2;
     case OFFSITE = 3;

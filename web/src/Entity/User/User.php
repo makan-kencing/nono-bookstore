@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\User;
 
-use App\Entity\Book\Book;
+use App\Entity\Book\Work;
 use App\Entity\Cart\Cart;
 use App\Entity\Cart\WishlistItem;
 use App\Entity\File;
@@ -31,6 +31,12 @@ class User extends Entity
 
     public bool $isVerified = false;
 
+    #[OneToOne]
+    public ?File $image;
+
+    #[OneToOne]
+    public ?Address $defaultAddress;
+
     #[OneToOne(mappedBy: 'user')]
     public ?UserProfile $profile;
 
@@ -40,14 +46,11 @@ class User extends Entity
     #[OneToOne(mappedBy: 'user')]
     public ?Cart $cart;
 
-    #[OneToOne(mappedBy: 'user')]
-    public ?Address $defaultAddress;
-
     /** @var Address[] */
     #[OneToMany(Address::class, mappedBy: 'user')]
     public array $addresses;
 
-    /** @var Book[] */
+    /** @var Work[] */
     #[OneToMany(WishlistItem::class, mappedBy: 'user')]
     public array $wishlist;
 

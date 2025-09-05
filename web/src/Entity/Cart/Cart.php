@@ -19,6 +19,6 @@ class Cart extends Entity
     public ?User $user;
 
     /** @var CartItem[] */
-    #[OneToMany(CartItem::class)]
+    #[OneToMany(CartItem::class, mappedBy: 'cart')]
     public array $items;
 }

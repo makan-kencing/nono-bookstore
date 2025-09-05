@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Product;
 
+use App\Entity\Book\Book;
 use App\Entity\Trait\Commentable;
 use App\Entity\Trait\TimeLimited;
 use App\Orm\Attribute\Id;
@@ -19,7 +20,7 @@ class Cost extends Entity
     public ?int $id;
 
     #[ManyToOne]
-    public Product $product;
+    public Book $book;
 
     public int $amount;
 }

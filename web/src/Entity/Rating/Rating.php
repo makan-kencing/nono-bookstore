@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Rating;
 
-use App\Entity\Book\Book;
+use App\Entity\Book\Work;
 use App\Entity\User\User;
 use App\Orm\Attribute\Id;
 use App\Orm\Attribute\ManyToOne;
@@ -18,7 +18,7 @@ class Rating extends Entity
     public ?int $id;
 
     #[ManyToOne]
-    public Book $book;
+    public Work $work;
 
     #[ManyToOne]
     public User $user;
