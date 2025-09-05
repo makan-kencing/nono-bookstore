@@ -1,16 +1,15 @@
 create or replace table series_definition
 (
-    book_id      bigint unsigned   not null
-        primary key,
-    series_id    bigint unsigned   not null,
-    position     varchar(100)      not null,
-    series_order smallint unsigned not null,
-    constraint book_id
-        unique (book_id, series_order),
-    constraint series_definition_ibfk_1
-        foreign key (book_id) references book (id),
+    work_id   bigint unsigned   not null,
+    series_id bigint unsigned   not null,
+    position  smallint unsigned not null,
+    primary key (work_id, series_id),
+    constraint work_id
+        unique (work_id, position),
     constraint series_definition_ibfk_2
-        foreign key (series_id) references series (id)
+        foreign key (series_id) references series (id),
+    constraint series_definition_ibfk_3
+        foreign key (work_id) references work (id)
 );
 
 create or replace index series_id
