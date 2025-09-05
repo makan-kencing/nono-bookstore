@@ -133,12 +133,12 @@ class ResultSetMapper
     private function mapToMany(From $from, array &$mapping, string $aliasPrefix): ?Entity
     {
         $hash = $this->getHash($from->class, $aliasPrefix);
-        if ($hash == null)
+        if ($hash === null)
             return null;
 
         $entity = $mapping[$hash] ?? null;
 
-        if ($entity == null) {
+        if ($entity === null) {
             $entity = new $from->class();
             $mapping[$hash] = $entity;
         }
@@ -157,14 +157,14 @@ class ResultSetMapper
      */
     private function mapToOne(From $from, ?Entity &$entity, string $aliasPrefix): ?Entity
     {
-        assert($this->processingRow != null);
+        assert($this->processingRow !== null);
 
-        if ($this->getHash($from->class, $aliasPrefix) == null)
+        if ($this->getHash($from->class, $aliasPrefix) === null)
             return null;
 
         $reflectionClass = new ReflectionClass($from->class);
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
-            assert($reflectionProperty->getType() != null);
+            assert($reflectionProperty->getType() !== null);
 
             $entity ??= new $from->class();
 
@@ -182,7 +182,7 @@ class ResultSetMapper
             $oneToMany = ($reflectionProperty->getAttributes(OneToMany::class)[0] ?? null)?->newInstance();
             $manyToOne = ($reflectionProperty->getAttributes(ManyToOne::class)[0] ?? null)?->newInstance();
 
-            if ($oneToMany && $join == null)
+            if ($oneToMany && $join === null)
                 continue;
 
             if ($oneToOne && $oneToOne->mappedBy && $join == null)
@@ -194,7 +194,7 @@ class ResultSetMapper
 
                 assert(is_array($entity->$property));
                 $related = $this->mapToMany($join, $entity->$property, $alias . '.');
-                if ($related != null)
+                if ($related !== null)
                     $related->{$oneToMany->mappedBy} = $entity;
             } else if ($oneToOne || $manyToOne)
                 if (!$join) {
@@ -204,7 +204,7 @@ class ResultSetMapper
                     $alias .= '.id';
 
                     $rawValue = $this->processingRow[$alias];
-                    if ($rawValue == null)
+                    if ($rawValue === null)
                         $entity->$property = null;
                     else {
                         $entity->$property = new $type();
@@ -213,7 +213,7 @@ class ResultSetMapper
                 } else {
                     $related = $entity->$property ?? null;
                     $related = $entity->$property = $this->mapToOne($join, $related, $alias . '.');
-                    if ($related != null)
+                    if ($related !== null)
                         if ($oneToOne && $oneToOne->mappedBy)
                             $related->{$oneToOne->mappedBy} = $entity;
                 }
@@ -223,7 +223,7 @@ class ResultSetMapper
                     continue;
 
                 $rawValue = $this->processingRow[$alias];
-                if ($rawValue == null)
+                if ($rawValue === null)
                     $entity->$property = null;
                 else {
                     $value = $this->convertValue($type, $rawValue);
