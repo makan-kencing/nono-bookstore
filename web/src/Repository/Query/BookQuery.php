@@ -16,22 +16,22 @@ class BookQuery
     /**
      * @return QueryBuilder<Book>
      */
-    public static function withFullDetails(): QueryBuilder
+    public static function asBookListing(): QueryBuilder
     {
         $qb = new QueryBuilder();
         $qb->from(Book::class, 'b')
-            ->join('publisher', 'p')
             ->leftJoin($qb->createJoin('images', 'bi')
                 ->leftJoin('file', 'f'))
             ->join($qb->createJoin('authors', 'ad')
                 ->join('author', 'a'))
-            ->leftJoin($qb->createJoin('categories', 'cd')
-                ->leftJoin('category', 'c'))
-            ->leftJoin($qb->createJoin('series', 'sd')
-                ->leftJoin('series', 's'))
-            ->join($qb->createJoin('products', 'pro')
-                ->join('prices', 'pri')
-                ->leftJoin('inventories', 'i'));
+            ->join($qb->createJoin('work', 'w')
+                ->leftJoin($qb->createJoin('categories', 'cd')
+                    ->leftJoin('category', 'c'))
+                ->leftJoin($qb->createJoin('series', 'sd')
+                    ->leftJoin('series', 's'))
+                ->join('books', 'wb'))
+            ->leftJoin('prices', 'pri')
+            ->leftJoin('inventories', 'i');
 
         return $qb;
     }

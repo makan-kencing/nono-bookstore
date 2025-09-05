@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace App\Controller\Web;
 
 use App\Core\View;
+use App\Entity\Book\Work;
 use App\Entity\Book\Book;
 use App\Entity\Product\CoverType;
-use App\Entity\Product\Product;
 use App\Exception\NotFoundException;
-use App\Repository\Query\BookCriteria;
-use App\Repository\Query\BookQuery;
 use App\Router\Method\GET;
 use App\Router\Path;
 use App\Service\BookService;
@@ -39,30 +37,18 @@ readonly class BookController extends WebController
     #[GET]
     #[Path('/{isbn}')]
     #[Path('/{isbn}/{slug}')]
-    #[Path('/{isbn}/{slug}/{type}')]
-    public function viewBook(string $isbn, string $slug = '', string $type = '1'): void
+    public function viewBook(string $isbn, string $slug = ''): void
     {
-        $type = CoverType::tryFrom((int) $type);
+        $book = $this->bookService->getBookProductDetails($isbn) ?? throw new NotFoundException();
 
-        /**
-         * @var Book $book
-         * @var Product $product
-         */
-        list($book, $product) = $this->bookService->getBookProductDetails($isbn, $type) ?? throw new NotFoundException();
-
-        if ($book->slug != $slug) {
-            header('Location: ' . "/book/$isbn/$book->slug");
+        if ($book->work->slug != $slug) {
+            header('Location: ' . "/book/$isbn/{$book->work->slug}");
             return;
         }
 
-        if ($product->coverType != $type) {
-            header('Location: ' . "/book/$isbn/$book->slug/{$product->coverType->value}");
-            return;
-        }
-
-        echo $this->render('webstore/book.php', [
-            'book' => $book,
-            'selectedProduct' => $product
-        ]);
+        xdebug_var_dump($book);
+//        echo $this->render('webstore/book.php', [
+//            'book' => $book,
+//        ]);
     }
 }

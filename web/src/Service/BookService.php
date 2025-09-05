@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Book\Work;
 use App\Entity\Book\Book;
 use App\Entity\Product\CoverType;
-use App\Entity\Product\Product;
 use App\Exception\NotFoundException;
 use App\Repository\BookRepository;
 use App\Repository\Query\BookCriteria;
@@ -25,13 +25,12 @@ readonly class BookService extends Service
 
     /**
      * @param string $isbn
-     * @param CoverType|null $type
-     * @return ?array{0: Book, 1: Product}
+     * @return ?Book
      * @throws NotFoundException
      */
-    public function getBookProductDetails(string $isbn, ?CoverType $type = null): ?array
+    public function getBookProductDetails(string $isbn): ?Book
     {
-        $qb = BookQuery::withFullDetails()
+        $qb = BookQuery::asBookListing()
             ->where(BookCriteria::byIsbn()
                 ->and(BookCriteria::notSoftDeleted()))
             ->bind(':isbn', $isbn);
@@ -40,13 +39,6 @@ readonly class BookService extends Service
         if ($book == null)
             return null;
 
-        $product = array_find(
-            $book->products,
-            fn (Product $product) => $product->coverType == $type
-        );
-        if ($product == null)
-            $product = current($book->products) ?: throw new NotFoundException();
-
-        return [$book, $product];
+        return $book;
     }
 }
