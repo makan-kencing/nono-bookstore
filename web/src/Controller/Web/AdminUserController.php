@@ -5,17 +5,16 @@ declare(strict_types=1);
 namespace App\Controller\Web;
 
 use App\Core\View;
-use App\Entity\User\UserRole;
+use App\Exception\NotFoundException;
+use App\Repository\Query\UserCriteria;
 use App\Repository\Query\UserQuery;
 use App\Repository\UserRepository;
-use App\Router\AuthRule;
 use App\Router\Method\GET;
 use App\Router\Path;
-use App\Router\RequireAuth;
 use PDO;
 
-#[Path('/admin/users')]
-#[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL)]
+#[Path('/admin/user')]
+//#[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL)]
 readonly class AdminUserController extends WebController
 {
     private UserRepository $userRepository;
@@ -26,21 +25,21 @@ readonly class AdminUserController extends WebController
         $this->userRepository = new UserRepository($this->pdo);
     }
 
-    #[GET] //This is for database using
-    public function viewUserList(): void
-    {
-        $qb = UserQuery::userListings();
-
-        $users = $this->userRepository->get($qb);
-
-        // convert to dto
-
-        echo $this->render('admin/users.php', ['users' => $users]);
-    }
-
+    /**
+     * @throws NotFoundException
+     */
     #[GET]
     #[Path('/{id}')]
-    public function viewUserDetails(string $id): void
+    public function viewProfile(string $id): void
     {
+        $qb = UserQuery::userListings()
+            ->where(UserCriteria::byId())
+            ->bind(':id', $id);
+        $user = $this->userRepository->getOne($qb);
+
+        if ($user === null)
+            throw new NotFoundException();
+
+        echo $this->render('admin/user.php', ['user' => $user]);
     }
 }

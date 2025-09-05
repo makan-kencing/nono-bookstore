@@ -2,7 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Entity\User\User;
+
 $title = 'profile';
+/** @var User $user */
+assert(isset($user) && $user instanceof User );
 
 ob_start();
 ?>
@@ -18,11 +22,11 @@ ob_start();
 
                 <form class="form-group">
                     <label for="username">Username</label>
-                    <input type="text" id="username" name="username" data-username-taken="0">
+                    <input type="text" id="username" name="username" data-username-taken="0" value="<?= $user->username?>">
                     <span class="hint" style="color: red">Username taken</span>
 
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email">
+                    <input type="email" id="email" name="email" value="<?= $user->email?>">
 
                     <button type="submit" class="btn">Update</button>
                 </form>
@@ -35,10 +39,10 @@ ob_start();
 
                 <form class="form-group">
                     <label for="Contect No">Contact No</label>
-                    <input type="tel" id="phone" name="phone">
+                    <input type="tel" id="phone" name="phone" value="<?= $user->profile->phone?>">
 
                     <label for="birthday">Birthday</label>
-                    <input type="date" id="birthday" name="birthday" value="1995-05-03">
+                    <input type="date" id="birthday" name="birthday" value="<?= $user->profile->phone?>">
 
                     <button type="submit" class="btn">Update</button>
                 </form>

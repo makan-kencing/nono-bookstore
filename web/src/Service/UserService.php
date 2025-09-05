@@ -172,4 +172,10 @@ readonly class UserService extends Service
 
         $this->userRepository->update($user);
     }
+
+    public function delete(int $id): void
+    {
+
+        $this->userRepository->deleteById($id);
+    }
 }

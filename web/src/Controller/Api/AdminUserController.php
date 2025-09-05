@@ -69,7 +69,11 @@ readonly class AdminUserController extends ApiController
     }
 
     #[DELETE]
-    public function delUser(): void
+    #[Path('/{id}')]
+    public function delUser(string $id): void
     {
+        $this->userService->delete((int) $id);
+
+        http_response_code(204);
     }
 }

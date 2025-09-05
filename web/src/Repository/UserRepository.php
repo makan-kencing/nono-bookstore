@@ -44,4 +44,14 @@ readonly class UserRepository extends Repository
         $stmt->bindValue(':is_verified', $user->isVerified);
         $stmt->execute();
     }
+
+    public function deleteById(int $id): void
+    {
+        $stmt = $this->conn->prepare('
+        DELETE FROM user
+        WHERE id = :id;
+        ');
+        $stmt->bindValue(':id', $id);
+        $stmt->execute();
+    }
 }
