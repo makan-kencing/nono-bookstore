@@ -6,13 +6,13 @@ namespace App\Entity\Book\Author;
 
 use App\Utils\EnumUtils;
 
-enum AuthorDefinitionType
+enum AuthorDefinitionType: int
 {
     use EnumUtils;
 
-    case AUTHOR;
-    case ILLUSTRATOR;
-    case CONTRIBUTOR;
-    case EDITOR;
-    case TRANSLATOR;
+    case AUTHOR = 1;
+    case ILLUSTRATOR = 2;
+    case EDITOR = 3;
+    case CONTRIBUTOR = 4;
+    case TRANSLATOR = 5;
 }
