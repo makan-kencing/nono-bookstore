@@ -52,7 +52,7 @@ $whoops->pushHandler(function (Throwable $e) use ($whoops) {
 
     header('Content-Type: application/json');
     $e->setHeaders();
-    echo json_encode($e->jsonSerialize());
+    echo json_encode($e->details);
 
     return HANDLER::QUIT;
 });

@@ -8,7 +8,7 @@ use Exception;
 use JsonSerializable;
 use Throwable;
 
-abstract class WebException extends Exception implements JsonSerializable
+abstract class WebException extends Exception
 {
     public readonly JsonSerializable|array $details;
 
@@ -20,13 +20,6 @@ abstract class WebException extends Exception implements JsonSerializable
     ) {
         parent::__construct($message, $code, $previous);
         $this->details = $details;
-    }
-
-    public function jsonSerialize(): mixed
-    {
-        if (is_array($this->details))
-            return $this->details;
-        return $this->details->jsonSerialize();
     }
 
     public function setHeaders(): void
