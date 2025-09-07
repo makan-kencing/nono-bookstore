@@ -15,4 +15,14 @@ trait EnumUtils
     {
         return constant("self::$name");
     }
+
+    public function compareTo(self $other): int
+    {
+        return $this->value - $other->value;
+    }
+
+    public static function comparing(self $o1, self $o2): int
+    {
+        return $o1->compareTo($o2);
+    }
 }
