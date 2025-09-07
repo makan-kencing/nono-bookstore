@@ -49,10 +49,6 @@ class Work extends Entity
     #[OneToMany(Rating::class, mappedBy: 'work')]
     public array $ratings;
 
-    /** @var Book[] */
-    #[OneToMany(Book::class, mappedBy: 'work')]
-    public array $products;
-
     /** @var WishlistItem[] */
     #[OneToMany(WishlistItem::class, mappedBy: 'work')]
     public array $wishlisted;
