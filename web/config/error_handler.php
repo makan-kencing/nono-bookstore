@@ -22,12 +22,11 @@ if (getenv('APP_ENV') == 'dev') {
         return Handler::QUIT;
     });
 }
-$whoops->pushHandler(function (Throwable $e) {
+$whoops->pushHandler(function (Throwable $e) use ($whoops) {
     if (!$e instanceof WebExceptionWrapper) {
         return HANDLER::DONE;
     }
 
-    global $whoops;
     $e = $e->original;
     $whoops->sendHttpCode($e->getCode());
 
@@ -43,17 +42,17 @@ $whoops->pushHandler(function (Throwable $e) {
 
     return Handler::QUIT;
 });
-$whoops->pushHandler(function (Throwable $e) {
+$whoops->pushHandler(function (Throwable $e) use ($whoops) {
     if (!$e instanceof ApiExceptionWrapper) {
         return HANDLER::DONE;
     }
 
-    global $whoops;
     $e = $e->original;
     $whoops->sendHttpCode($e->getCode());
-    header('Content-Type: application/json');
 
-    echo json_encode(['hi' => 'world']);
+    header('Content-Type: application/json');
+    $e->setHeaders();
+    echo json_encode($e->jsonSerialize());
 
     return HANDLER::QUIT;
 });
