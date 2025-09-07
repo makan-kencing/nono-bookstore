@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace App\Controller\Web;
 
 use App\Core\View;
-use App\Entity\Book\Work;
-use App\Entity\Book\Book;
-use App\Entity\Product\CoverType;
 use App\Exception\NotFoundException;
 use App\Router\Method\GET;
 use App\Router\Path;
@@ -30,7 +27,6 @@ readonly class BookController extends WebController
      *
      * @param string $isbn The isbn of the book
      * @param string $slug The url slug of the book. Used for readability purposes.
-     * @param string $type The cover type of the book. Defaults to Paperback.
      * @return void
      * @throws NotFoundException
      */
@@ -42,13 +38,12 @@ readonly class BookController extends WebController
         $book = $this->bookService->getBookProductDetails($isbn) ?? throw new NotFoundException();
 
         if ($book->work->slug != $slug) {
-            header('Location: ' . "/book/$isbn/{$book->work->slug}");
+            $this->redirect("/book/$isbn/{$book->work->slug}");
             return;
         }
 
-        xdebug_var_dump($book);
-//        echo $this->render('webstore/book.php', [
-//            'book' => $book,
-//        ]);
+        echo $this->render('webstore/book.php', [
+            'book' => $book,
+        ]);
     }
 }

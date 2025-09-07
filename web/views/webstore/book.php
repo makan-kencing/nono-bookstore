@@ -2,17 +2,15 @@
 
 declare(strict_types=1);
 
+use App\Core\View;
+use App\Entity\Book\Author\AuthorDefinition;
 use App\Entity\Book\Book;
-use App\Entity\Product\Product;
 
 assert(isset($book) && $book instanceof Book);
-assert(isset($selectedProduct) && $selectedProduct instanceof Product);
-
-$title = $book->title ?? 'Book';
+$work = $book->work;
 
 ob_start();
 ?>
-
     <main>
         <section id="book-listing">
             <div id="book-preview" class="carousel">
@@ -26,23 +24,33 @@ ob_start();
             </div>
 
             <div id="book-information">
-                <h2><?= $book->title ?></h2>
+                <h2><?= $work->title ?></h2>
 
                 <div>by
                     <ul class="comma-list">
+                        <?php usort(
+                            $book->authors,
+                            function (AuthorDefinition $o1, AuthorDefinition $o2) {
+                                if ($o1->type === null) return -1;
+                                if ($o2->type === null) return 1;
+                                return $o1->type->compareTo($o2->type);
+                            }
+                        )?>
                         <?php foreach ($book->authors as $author) : ?>
                             <li>
                                 <a href="/author/<?= $author->author->slug ?>"><?= $author->author->name ?></a>
-                                (<?= $author->type->value ?>)
+                                <?php if ($author->type !== null): ?>
+                                    (<?= $author->type->title() ?>)
+                                <?php endif; ?>
                             </li>
                         <?php endforeach; ?>
                     </ul>
                 </div>
 
-                <?php if ($book->series) : ?>
+                <?php if ($work->series) : ?>
                     <p>
-                        <a href="/series/<?= $book->series->series->slug ?>">
-                            Part of: <?= $book->series->series->name ?></a>
+                        <a href="/series/<?= $work->series->series->slug ?>">
+                            Part of: <?= $work->series->series->name ?></a>
                     </p>
                 <?php endif; ?>
             </div>
@@ -50,28 +58,28 @@ ob_start();
             <div id="book-purchase">
                 <form action="/api/cart" id="add-to-cart">
                     <input type="hidden" name="isbn" value="<?= $book->isbn ?>">
-                    <input type="hidden" name="type" value="<?= $selectedProduct->coverType->value ?>">
 
                     <div id="product-variants">
-                        <?php foreach ($book->products as $product): ?>
-                            <?php if ($product->id == $selectedProduct->id): ?>
+                        <?php foreach ($work->books as $otherBook): ?>
+                            <?php if ($otherBook->getCurrentPrice() == 0) continue; ?>
+                            <?php if ($otherBook === $book): ?>
                                 <div class="product-variant">
-                                    <p class="type"><?= $product->coverType->title() ?></p>
-                                    <p class="price"><?= $product->getCurrentPrice()?->amount / 100 ?></p>
+                                    <p class="type"><?= $otherBook->coverType->title() ?></p>
+                                    <p class="price"><?= $otherBook->getCurrentPrice()?->amount / 100 ?></p>
                                 </div>
                             <?php else: ?>
-                                <a href="/book/<?= $book->isbn ?>/<?= $book->slug ?>/<?= $product->coverType->value ?>"
+                                <a href="/book/<?= $otherBook->isbn ?>/<?= $work->slug ?>"
                                    class="product-variant">
-                                    <p class="type"><?= $product->coverType->title() ?></p>
-                                    <p class="price"><?= $product->getCurrentPrice()?->amount / 100 ?></p>
+                                    <p class="type"><?= $otherBook->coverType->title() ?></p>
+                                    <p class="price"><?= $otherBook->getCurrentPrice()?->amount / 100 ?></p>
                                 </a>
                             <?php endif; ?>
                         <?php endforeach; ?>
                     </div>
 
                     <div id="product-ordering">
-                        <?php $inventory = $selectedProduct->getClosestStock() ?>
-                        <?php $total = $selectedProduct->getTotalInStock() ?>
+                        <?php $inventory = $book->getClosestStock() ?>
+                        <?php $total = $book->getTotalInStock() ?>
                         <div id="product-stocks">
                             <?php if ($inventory != null): ?>
                                 <p><i class="fa-solid fa-check"></i>
@@ -161,25 +169,31 @@ ob_start();
                 </tr>
                 <tr>
                     <td>Publisher</td>
-                    <td><?= $book->publisher->name ?></td>
+                    <td><?= $book->publisher ?></td>
                 </tr>
                 <tr>
                     <td>Publication Date</td>
-                    <td><?= $book->publishedDate ?></td>
+                    <td><?= $book->publicationDate ?></td>
                 </tr>
-                <?php if ($book->series) : ?>
+                <?php if ($work->series !== null) : ?>
                     <tr>
                         <td>Series</td>
-                        <td><?= $book->series->series->name ?></td>
+                        <td><?= $work->series->series->name ?></td>
                     </tr>
                 <?php endif; ?>
                 <tr>
                     <td>Pages</td>
                     <td><?= $book->numberOfPages ?></td>
                 </tr>
+                <?php if ($book->dimensions !== null): ?>
+                    <tr>
+                        <td>Product dimensions</td>
+                        <td><?= $book->dimensions ?></td>
+                    </tr>
+                <?php endif; ?>
                 <tr>
-                    <td>Product dimensions</td>
-                    <td><?= $book->dimensions ?></td>
+                    <td>Edition Information</td>
+                    <td><?= $book->editionInformation ?></td>
                 </tr>
                 <tr>
                     <td>Language</td>
@@ -197,5 +211,9 @@ ob_start();
 
 <?php
 $content = ob_get_clean();
+$title = $book->work->title ?? 'Book';
 
-include __DIR__ . "/_base.php";
+echo View::render(
+    'webstore/_base.php',
+    ['title' => $title, 'content' => $content]
+);
