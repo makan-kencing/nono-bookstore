@@ -124,7 +124,7 @@ readonly class UserService extends Service
             throw new ConflictException([]);
 
         /** @var UserLoginContextDTO $context */
-        $context = $_SESSION['user'];
+        $context = UserLoginContextDTO::jsonDeserialize($_SESSION['user']);
         if (!AuthRule::HIGHER->check($context->role, $dto->role))
             throw new ForbiddenException();
 

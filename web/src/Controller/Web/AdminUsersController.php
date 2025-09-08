@@ -38,9 +38,9 @@ readonly class AdminUsersController extends WebController
         echo $this->render('admin/users.php', ['users' => $users]);
     }
 
-    #[GET]
-    #[Path('/{id}')]
-    public function viewUserDetails(string $id): void
-    {
-    }
+//    #[GET]
+//    #[Path('/{id}')]
+//    public function viewUserDetails(string $id): void
+//    {
+//    }
 }
