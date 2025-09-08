@@ -15,6 +15,7 @@ use App\Router\Method\PUT;
 use App\Router\Path;
 use App\Service\CartService;
 use PDO;
+use Throwable;
 
 #[Path('/api/cart')]
 readonly class CartController extends ApiController
@@ -71,11 +72,19 @@ readonly class CartController extends ApiController
         $this->cartService->setItem($cart, $dto);
     }
 
+    /**
+     * @throws BadRequestException
+     */
     #[DELETE]
-    #[Path('/{bookId}')]
-    public function removeItem(string $bookId): void
+    public function removeItem(): void
     {
+        try {
+            $bookId = (int) $this::getJsonBody()['book_id'];
+        } catch (Throwable) {
+            throw new BadRequestException();
+        }
+
         $cart = $this->cartService->getOrCreateCart();
-        $this->cartService->removeItem($cart, (int) $bookId);
+        $this->cartService->removeItem($cart, $bookId);
     }
 }
