@@ -21,6 +21,8 @@ readonly class CartRepository extends Repository
 
         $cart = new Cart();
         $cart->id = (int)$this->conn->lastInsertId() ?: null;
+        $cart->user = null;
+        $cart->items = [];
         return $cart;
     }
 
@@ -36,6 +38,7 @@ readonly class CartRepository extends Repository
         $cart = new Cart();
         $cart->id = (int)$this->conn->lastInsertId() ?: null;
         $cart->user = $user;
+        $cart->items = [];
         return $cart;
     }
 
