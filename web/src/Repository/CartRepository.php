@@ -42,25 +42,6 @@ readonly class CartRepository extends Repository
         return $cart;
     }
 
-    public function update(Cart $cart): void
-    {
-        $stmt = $this->conn->prepare('
-            UPDATE cart
-            SET user_id = :user_id
-            WHERE id = :id
-        ');
-        $stmt->bindValue(':id', $cart->id);
-        $stmt->bindValue(':user_id', $cart->user?->id);
-        $stmt->execute();
-
-        foreach ($cart->items as $item)
-            try {
-                $this->insertItem($item);
-            } catch (PDOException) {
-                $this->updateItem($item);
-            }
-    }
-
     public function insertItem(CartItem $item): void
     {
         $stmt = $this->conn->prepare('

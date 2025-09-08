@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Book\Book;
+use App\DTO\Request\CartItemQuantityDTO;
 use App\Entity\Cart\Cart;
 use App\Entity\Cart\CartItem;
 use App\Exception\UnauthorizedException;
@@ -111,54 +111,52 @@ readonly class CartService extends Service
     public function mergeCart(Cart $source, Cart $target): Cart
     {
         foreach ($source->items as $item)
-            $this->addItem($target, $item->book, $item->quantity);
+            $this->addItem($target, new CartItemQuantityDTO($item->book->id, $item->quantity));
 
         return $target;
     }
 
-    public function addItem(Cart $cart, Book $book, int $quantity): void
+    public function addItem(Cart $cart, CartItemQuantityDTO $dto): void
     {
         foreach ($cart->items as $item)
-            if ($item->book->id === $book->id) {
-                $item->quantity += $quantity;
+            if ($item->book->id === $dto->bookId) {
+                $item->quantity += $dto->quantity;
                 $this->cartRepository->updateItem($item);
                 return;
             }
 
-        $item = new CartItem();
+        $item = $dto->toCartItemReference();
         $item->cart = $cart;
-        $item->quantity = $quantity;
 
         $cart->items[] = $item;
         $this->cartRepository->insertItem($item);
     }
 
-    public function setItem(Cart $cart, Book $book, int $quantity): void
+    public function setItem(Cart $cart, CartItemQuantityDTO $dto): void
     {
         foreach ($cart->items as $item)
-            if ($item->book->id === $book->id) {
-                $item->quantity = $quantity;
+            if ($item->book->id === $dto->bookId) {
+                $item->quantity = $dto->quantity;
                 $this->cartRepository->updateItem($item);
                 return;
             }
 
-        $item = new CartItem();
+        $item = $dto->toCartItemReference();
         $item->cart = $cart;
-        $item->quantity = $quantity;
 
         $cart->items[] = $item;
         $this->cartRepository->insertItem($item);
     }
 
-    public function subtractItem(Cart $cart, Book $book, int $quantity): void
+    public function subtractItem(Cart $cart, CartItemQuantityDTO $dto): void
     {
         $cart->items = array_filter(
             $cart->items,
-            function (CartItem $item) use ($book, $quantity) {
-                if ($item->book->id !== $book->id)
+            function (CartItem $item) use ($dto) {
+                if ($item->book->id !== $dto->bookId)
                     return true;
 
-                $item->quantity -= $quantity;
+                $item->quantity -= $dto->quantity;
                 if ($item->quantity > 0) {
                     $this->cartRepository->updateItem($item);
                     return true;
@@ -170,12 +168,12 @@ readonly class CartService extends Service
         );
     }
 
-    public function removeItem(Cart $cart, Book $book): void
+    public function removeItem(Cart $cart, int $bookId): void
     {
         $cart->items = array_filter(
             $cart->items,
-            function (CartItem $item) use ($book) {
-                if ($item->book->id !== $book->id)
+            function (CartItem $item) use ($bookId) {
+                if ($item->book->id !== $bookId)
                     return true;
 
                 $this->cartRepository->removeItem($item);
@@ -183,5 +181,4 @@ readonly class CartService extends Service
             }
         );
     }
-
 }
