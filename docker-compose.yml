@@ -29,11 +29,13 @@ services:
             - ./deploy/caddy:/etc/caddy:ro
             - ./var/caddy/data:/data/caddy:z
             - ./var/caddy/config:/config/caddy:z
+            - ./web/public:/var/www/webapp/public:z
     web:
         build: web
         working_dir: /var/www/webapp
         volumes:
             - ./deploy/php-fpm/php.ini:/usr/local/etc/php/conf.d/php-overrides.ini
+            - ./web:/var/www/webapp:z
         env_file:
             - .env
             - path: .env.local

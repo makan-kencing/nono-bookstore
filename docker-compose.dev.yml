@@ -9,11 +9,6 @@ services:
             - "80:80"
             - "443:443"
             - "443:443/udp"
-        develop:
-            watch:
-                -   path: ./web/public
-                    action: sync
-                    target: /var/www/webapp/public
     web:
         build: web
         environment:
@@ -22,11 +17,6 @@ services:
             - ./deploy/php-fpm/php-xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
         develop:
             watch:
-                -   path: ./web
-                    action: sync
-                    target: /var/www/webapp
-                    ignore:
-                        - node_modules/
                 -   path: ./web/composer.json
                     action: rebuild
     phpmyadmin:
