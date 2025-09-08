@@ -20,8 +20,7 @@ class RatingQuery
         $qb->from(Rating::class, 'r')
             ->join('user', 'ru')
             ->leftJoin($qb->createJoin('replies', 'rr')
-                ->leftJoin('user', 'rru'))
-            ->where('r.book_id = :book_id');
+                ->leftJoin('user', 'rru'));
 
         return $qb;
     }
