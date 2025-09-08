@@ -35,7 +35,10 @@ services:
         working_dir: /var/www/webapp
         volumes:
             - ./deploy/php-fpm/php.ini:/usr/local/etc/php/conf.d/php-overrides.ini
-            - ./web:/var/www/webapp:z
+            - ./web/public:/var/www/webapp/public:z
+            - ./web/config:/var/www/webapp/config:z
+            - ./web/src:/var/www/webapp/src:z
+            - ./web/views:/var/www/webapp/views:z
         env_file:
             - .env
             - path: .env.local
