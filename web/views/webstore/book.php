@@ -57,21 +57,21 @@ ob_start();
 
             <div id="book-purchase">
                 <form action="/api/cart" id="add-to-cart">
-                    <input type="hidden" name="isbn" value="<?= $book->isbn ?>">
+                    <input type="hidden" name="book_id" value="<?= $book->id ?>">
 
                     <div id="product-variants">
                         <?php foreach ($work->books as $otherBook): ?>
-                            <?php if ($otherBook->getCurrentPrice() == 0) continue; ?>
+                            <?php if ($otherBook->getCurrentPrice() === null) continue; ?>
                             <?php if ($otherBook === $book): ?>
                                 <div class="product-variant">
                                     <p class="type"><?= $otherBook->coverType->title() ?></p>
-                                    <p class="price"><?= $otherBook->getCurrentPrice()?->amount / 100 ?></p>
+                                    <p class="price"><?= $otherBook->getCurrentPrice()->amount / 100 ?></p>
                                 </div>
                             <?php else: ?>
                                 <a href="/book/<?= $otherBook->isbn ?>/<?= $work->slug ?>"
                                    class="product-variant">
                                     <p class="type"><?= $otherBook->coverType->title() ?></p>
-                                    <p class="price"><?= $otherBook->getCurrentPrice()?->amount / 100 ?></p>
+                                    <p class="price"><?= $otherBook->getCurrentPrice()->amount / 100 ?></p>
                                 </a>
                             <?php endif; ?>
                         <?php endforeach; ?>
@@ -110,18 +110,25 @@ ob_start();
                         e.preventDefault();
 
                         const data = new FormData(e.target);
-                        console.log(data);
-                        // TODO: do stuff
-                        $.ajax(
-                            e.target.
-                        );
 
-                        e.target.dataset.wishlist = '1';
+                        $.ajax(
+                            e.target.action,
+                            {
+                                method: "PATCH",
+                                data: JSON.stringify(Object.fromEntries(data.entries())),
+                                error: (jqXHR, textStatus, errorThrown) => {
+                                    console.error(jqXHR, textStatus, errorThrown)
+                                },
+                                success: (data, textStatus, jqXHR) => {
+                                    console.log(data, textStatus, jqXHR);
+                                }
+                            }
+                        );
                     });
                 </script>
 
                 <form action="/api/wishlist" method="post" id="wishlisting" data-wishlist="0">
-                    <input type="hidden" name="isbn" value="<?= $book->isbn ?>">
+                    <input type="hidden" name="book_id" value="<?= $book->id ?>">
 
                     <button id="wishlist" type="submit" class="double-icon">
                         <i class="fa-solid fa-heart hide"></i>
@@ -191,10 +198,12 @@ ob_start();
                         <td><?= $book->dimensions ?></td>
                     </tr>
                 <?php endif; ?>
+                <?php if ($book->editionInformation !== null): ?>
                 <tr>
                     <td>Edition Information</td>
                     <td><?= $book->editionInformation ?></td>
                 </tr>
+                <?php endif; ?>
                 <tr>
                     <td>Language</td>
                     <td><?= $book->language ?></td>
@@ -210,8 +219,9 @@ ob_start();
     </main>
 
 <?php
+
+        $title = $book->work->title ?? 'Book';
 $content = ob_get_clean();
-$title = $book->work->title ?? 'Book';
 
 echo View::render(
     'webstore/_base.php',
