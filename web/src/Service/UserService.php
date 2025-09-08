@@ -5,12 +5,9 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\DTO\Request\UserCreateDTO;
-use App\DTO\Request\UserLoginContextDTO;
-use App\DTO\Request\UserLoginDTO;
-use App\DTO\Request\UserRegisterDTO;
 use App\DTO\Request\UserUpdateDTO;
+use App\DTO\UserLoginContextDTO;
 use App\Entity\User\User;
-use App\Entity\User\UserRole;
 use App\Exception\ConflictException;
 use App\Exception\ForbiddenException;
 use App\Exception\NotFoundException;
@@ -47,67 +44,6 @@ readonly class UserService extends Service
             ->bind(':email', $email);
 
         return $this->userRepository->count($qb) != 0;
-    }
-
-    /**
-     * @param UserRegisterDTO $dto
-     * @return void
-     * @throws ConflictException
-     */
-    public function register(UserRegisterDTO $dto): void
-    {
-        // TODO: add conflict message
-        if ($this->checkUsernameExists($dto->username))
-            throw new ConflictException([]);
-
-        if ($this->checkEmailExists($dto->email))
-            throw new ConflictException([]);
-
-        $user = new User();
-        $user->username = $dto->username;
-        $user->email = $dto->email;
-        $user->hashedPassword = password_hash($dto->password, PASSWORD_DEFAULT);
-        $user->role = UserRole::USER;
-        $user->isVerified = false;
-
-        $this->userRepository->insert($user);
-    }
-
-    public function login(UserLoginDTO $dto): bool
-    {
-        $qb = UserQuery::withMinimalDetails()
-            ->where(UserCriteria::byEmail())
-            ->bind(':email', $dto->email);
-        $user = $this->userRepository->getOne($qb);
-
-        // prevent timing attack even if there's no has to compare with
-        if (!$user) {
-            password_verify($dto->password, 'placeholder');
-            return false;
-        }
-
-        if (!password_verify($dto->password, $user->hashedPassword))
-            return false;
-
-        if (session_status() != PHP_SESSION_ACTIVE)
-            session_start();
-
-        // TODO: check otp / prompt for otp verification
-
-        // TODO: implement remember me tokens
-
-        // TODO: log the login success / failure event
-
-        $_SESSION['user'] = new UserLoginContextDTO(
-            $user->username,
-            $user->role
-        )->jsonSerialize();
-        return true;
-    }
-
-    public function logout(): void
-    {
-        unset($_SESSION['user']);
     }
 
     /**
