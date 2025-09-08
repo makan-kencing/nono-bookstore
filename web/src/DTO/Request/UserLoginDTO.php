@@ -9,7 +9,7 @@ use App\Exception\BadRequestException;
 use Throwable;
 use UnexpectedValueException;
 
-readonly class UserLoginDTO extends DTO
+readonly class UserLoginDTO extends RequestDTO
 {
     public function __construct(
         public string $email,
@@ -43,13 +43,5 @@ readonly class UserLoginDTO extends DTO
      */
     public function validate(): void
     {
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function jsonSerialize(): mixed
-    {
-        throw new UnexpectedValueException("Not implemented");
     }
 }

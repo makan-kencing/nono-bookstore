@@ -10,7 +10,7 @@ use App\Exception\UnprocessableEntityException;
 use Throwable;
 use UnexpectedValueException;
 
-readonly class UserRegisterDTO extends DTO
+readonly class UserRegisterDTO extends RequestDTO
 {
     public function __construct(
         public string $username,
@@ -60,13 +60,5 @@ readonly class UserRegisterDTO extends DTO
 
         if ($rules)
             throw new UnprocessableEntityException($rules);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function jsonSerialize(): mixed
-    {
-        throw new UnexpectedValueException("Not implemented");
     }
 }

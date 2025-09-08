@@ -7,7 +7,7 @@ namespace App\DTO\Request;
 use App\DTO\DTO;
 use App\Entity\User\UserRole;
 
-readonly class UserLoginContextDTO extends DTO
+readonly class UserLoginContextDTO extends RequestDTO
 {
     public function __construct(
         public string $username,
@@ -33,9 +33,6 @@ readonly class UserLoginContextDTO extends DTO
     {
     }
 
-    /**
-     * @inheritDoc
-     */
     public function jsonSerialize(): mixed
     {
         return [
