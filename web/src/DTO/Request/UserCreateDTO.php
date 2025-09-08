@@ -2,39 +2,38 @@
 
 declare(strict_types=1);
 
-namespace App\DTO;
+namespace App\DTO\Request;
 
-
-use App\Entity\User\User;
+use App\DTO\DTO;
 use App\Entity\User\UserRole;
 use App\Exception\BadRequestException;
 use App\Exception\UnprocessableEntityException;
 use Throwable;
 use UnexpectedValueException;
 
-readonly class UserUpdateDTO extends DTO
+readonly class UserCreateDTO extends DTO
 {
     public function __construct(
-        public ?string $id = null,
-        public ?string $username = null,
-        public ?string $email = null,
-        public ?UserRole $role = null,
+        public string $username,
+        public string $email,
+        public string $password,
+        public UserRole $role,
     ) {
     }
 
     /**
      * @inheritDoc
      */
-    public static function jsonDeserialize(mixed $json): UserUpdateDTO
+    public static function jsonDeserialize(mixed $json): UserCreateDTO
     {
         assert(is_array($json));
 
         try {
             return new self(
-                $json['id'] ?? null,
-                $json['username'] ?? null,
-                $json['email'] ?? null,
-                UserRole::{$json['role']} ?? null
+                $json['username'],
+                $json['email'],
+                $json['password'],
+                UserRole::{$json['role']}
             );
         } catch (Throwable) {
             throw new BadRequestException();
@@ -54,14 +53,11 @@ readonly class UserUpdateDTO extends DTO
                 "reason" => "Invalid email format"
             ];
 
-        if (array_all(
-            [$this->id, $this->username, $this->email],
-            fn($val) => $val == null
-        ))
+        if (strlen($this->password) < 12)
             $rules[] = [
-                "field" => "id",
-                "type" => "NoIdentifiers",
-                "reason" => "No identifiable information found"
+                "field" => "password",
+                "type" => "length",
+                "reason" => "Less than 12 characters long"
             ];
 
         if ($rules)
@@ -74,19 +70,5 @@ readonly class UserUpdateDTO extends DTO
     public function jsonSerialize(): mixed
     {
         throw new UnexpectedValueException("Not implemented");
-    }
-
-    public function update(User $user): void
-    {
-        if ($this->email) {
-            $user->email = $this->email;
-            $user->isVerified = false;
-        }
-
-        if ($this->username)
-            $user->username = $this->username;
-
-        if ($this->role)
-            $user->role = $this->role;
     }
 }

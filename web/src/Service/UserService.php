@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\DTO\UserCreateDTO;
-use App\DTO\UserLoginContextDTO;
-use App\DTO\UserLoginDTO;
-use App\DTO\UserRegisterDTO;
-use App\DTO\UserUpdateDTO;
+use App\DTO\Request\UserCreateDTO;
+use App\DTO\Request\UserLoginContextDTO;
+use App\DTO\Request\UserLoginDTO;
+use App\DTO\Request\UserRegisterDTO;
+use App\DTO\Request\UserUpdateDTO;
 use App\Entity\User\User;
 use App\Entity\User\UserRole;
 use App\Exception\ConflictException;

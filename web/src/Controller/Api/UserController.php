@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Core\View;
-use App\DTO\UserLoginDTO;
-use App\DTO\UserRegisterDTO;
+use App\DTO\Request\UserLoginDTO;
+use App\DTO\Request\UserRegisterDTO;
 use App\Exception\BadRequestException;
 use App\Exception\ConflictException;
 use App\Exception\UnprocessableEntityException;

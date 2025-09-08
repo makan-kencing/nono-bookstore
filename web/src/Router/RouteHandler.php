@@ -6,7 +6,7 @@ namespace App\Router;
 
 use App\Controller\Api\ApiController;
 use App\Core\View;
-use App\DTO\UserLoginContextDTO;
+use App\DTO\Request\UserLoginContextDTO;
 use App\Exception\BadRequestException;
 use App\Exception\ForbiddenException;
 use App\Exception\UnauthorizedException;

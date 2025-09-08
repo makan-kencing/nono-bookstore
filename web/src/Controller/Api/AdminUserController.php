@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Core\View;
-use App\DTO\UserCreateDTO;
-use App\DTO\UserUpdateDTO;
+use App\DTO\Request\UserCreateDTO;
+use App\DTO\Request\UserUpdateDTO;
 use App\Entity\User\UserRole;
 use App\Exception\BadRequestException;
 use App\Exception\ConflictException;

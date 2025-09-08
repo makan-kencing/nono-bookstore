@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\DTO;
+namespace App\DTO\Request;
 
+use App\DTO\DTO;
 use App\Exception\BadRequestException;
 use App\Exception\UnprocessableEntityException;
-use InvalidArgumentException;
 use Throwable;
 use UnexpectedValueException;
 

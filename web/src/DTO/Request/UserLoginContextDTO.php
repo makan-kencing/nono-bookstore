@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\DTO;
+namespace App\DTO\Request;
 
+use App\DTO\DTO;
 use App\Entity\User\UserRole;
-use UnexpectedValueException;
 
 readonly class UserLoginContextDTO extends DTO
 {
