@@ -60,7 +60,7 @@ readonly class UserService extends Service
             throw new ConflictException([]);
 
         /** @var UserLoginContextDTO $context */
-        $context = UserLoginContextDTO::jsonDeserialize($_SESSION['user']);
+        $context = $this->getSessionContext();
         if (!AuthRule::HIGHER->check($context->role, $dto->role))
             throw new ForbiddenException();
 
@@ -111,7 +111,6 @@ readonly class UserService extends Service
 
     public function delete(int $id): void
     {
-
         $this->userRepository->deleteById($id);
     }
 }
