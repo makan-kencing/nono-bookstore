@@ -54,7 +54,7 @@ readonly class CartService extends Service
         if ($cart !== null)
             return $cart;
 
-        return $this->cartRepository->createGuestCart();
+        return $this->createGuestCart();
     }
 
     private function getGuestCart(): ?Cart
@@ -71,6 +71,13 @@ readonly class CartService extends Service
         if ($cart === null)
             $this->invalidateGuestCart();
 
+        return $cart;
+    }
+
+    private function createGuestCart(): Cart
+    {
+        $cart = $this->cartRepository->createGuestCart();
+        $_SESSION[self::CART] = $cart->id;
         return $cart;
     }
 
