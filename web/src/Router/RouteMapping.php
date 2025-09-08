@@ -94,7 +94,7 @@ class RouteMapping
                         throw new RouteInUseException(
                             $httpMethod,
                             $fullpath,
-                            $inUse[0] . '::' . $inUse[1],
+                            $inUse->controller . '::' . $inUse->method,
                             $reflectionClass->getName() . '::' . $reflectionMethod->getName()
                         );
                     }
