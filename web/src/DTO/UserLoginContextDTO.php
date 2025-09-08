@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
+use App\Entity\User\User;
 use App\Entity\User\UserRole;
 
 readonly class UserLoginContextDTO extends DTO
@@ -13,5 +14,12 @@ readonly class UserLoginContextDTO extends DTO
         public string $username,
         public UserRole $role
     ) {
+    }
+
+    public function toUserReference(): User
+    {
+        $user = new User();
+        $user->id = $this->id;
+        return $user;
     }
 }
