@@ -32,30 +32,18 @@ readonly class CartController extends ApiController
      * @throws BadRequestException
      * @throws UnprocessableEntityException
      */
-    #[POST]
-    #[Path('/add')]
-    public function addItem(): void
+    #[PATCH]
+    public function updateItem(): void
     {
         $dto = CartItemQuantityDTO::jsonDeserialize($this::getJsonBody());
         $dto->validate();
 
         $cart = $this->cartService->getOrCreateCart();
-        $this->cartService->addItem($cart, $dto);
-    }
 
-    /**
-     * @throws BadRequestException
-     * @throws UnprocessableEntityException
-     */
-    #[POST]
-    #[Path('/remove')]
-    public function subtractItem(): void
-    {
-        $dto = CartItemQuantityDTO::jsonDeserialize($this::getJsonBody());
-        $dto->validate();
-
-        $cart = $this->cartService->getOrCreateCart();
-        $this->cartService->subtractItem($cart, $dto);
+        if ($dto->quantity < 0)
+            $this->cartService->subtractItem($cart, $dto);
+        else if ($dto->quantity > 0)
+            $this->cartService->addItem($cart, $dto);
     }
 
     /**

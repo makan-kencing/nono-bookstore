@@ -28,8 +28,8 @@ readonly class CartItemQuantityDTO extends RequestDTO
 
         try {
             return new self(
-                $json['book_id'],
-                $json['quantity']
+                (int) $json['book_id'],
+                (int) $json['quantity']
             );
         } catch (Throwable) {
             throw new BadRequestException();
@@ -41,17 +41,6 @@ readonly class CartItemQuantityDTO extends RequestDTO
      */
     public function validate(): void
     {
-
-        $rules = [];
-        if ($this->quantity <= 0)
-            $rules[] = [
-                "field" => "quantity",
-                "type" => "amount",
-                "reason" => "Must be more than 0"
-            ];
-
-        if ($rules)
-            throw new UnprocessableEntityException($rules);
     }
 
     public function toCartItemReference(): CartItem
