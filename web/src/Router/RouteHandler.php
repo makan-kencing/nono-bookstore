@@ -6,7 +6,8 @@ namespace App\Router;
 
 use App\Controller\Api\ApiController;
 use App\Core\View;
-use App\DTO\Request\UserLoginContextDTO;
+use App\DTO\UserLoginContextDTO;
+use App\Entity\User\UserRole;
 use App\Exception\BadRequestException;
 use App\Exception\ForbiddenException;
 use App\Exception\UnauthorizedException;
@@ -44,10 +45,11 @@ readonly class RouteHandler
         session_start();
 
 
-        $_SESSION['user'] = [
-            'username' => 'admin',
-            'role' => 'ADMIN'
-        ];
+        $_SESSION['user'] = new UserLoginContextDTO(
+            1,
+            'admin',
+            UserRole::ADMIN,
+        );
         $context = $_SESSION['user'] ?? null;
         if ($context == null) {
             if ($this->authConstraint->redirect)
@@ -56,8 +58,6 @@ readonly class RouteHandler
                 throw new UnauthorizedException();
             return false;
         }
-        /** @var UserLoginContextDTO $context */
-        $context = UserLoginContextDTO::jsonDeserialize($context);
 
         if (!$this->authConstraint->check($context->role))
             throw new ForbiddenException();
