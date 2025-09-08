@@ -9,10 +9,7 @@ use App\Orm\QueryBuilder;
 use App\Orm\ResultSetMapper;
 use PDO;
 
-/**
- * @template T of Entity
- */
-abstract readonly class Repository
+readonly class Repository
 {
     protected PDO $conn;
 
@@ -22,6 +19,7 @@ abstract readonly class Repository
     }
 
     /**
+     * @template T of Entity
      * @param QueryBuilder<T> $qb
      * @return T[]
      */
@@ -37,6 +35,7 @@ abstract readonly class Repository
     }
 
     /**
+     * @template T of Entity
      * @param QueryBuilder<T> $qb
      * @return ?T
      */
@@ -52,6 +51,7 @@ abstract readonly class Repository
     }
 
     /**
+     * @template T of Entity
      * @param QueryBuilder<T> $qb
      * @return int
      */

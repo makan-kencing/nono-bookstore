@@ -5,12 +5,8 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\DTO\Response\WorkRating\RatingSummaryDTO;
-use App\Entity\Rating\Rating;
 use PDO;
 
-/**
- * @extends Repository<Rating>
- */
 readonly class RatingRepository extends Repository
 {
     public function getRatingSummary(int $workId): RatingSummaryDTO

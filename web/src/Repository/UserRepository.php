@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-
 use App\Entity\User\User;
 
-/**
- * @extends Repository<User>
- */
 readonly class UserRepository extends Repository
 {
     public function insert(User $user): void

@@ -5,11 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\User\UserProfile;
-use App\Repository\Repository;
 
-/**
- * @extends Repository<UserProfile>
- */
 readonly class UserProfileRepository extends Repository
 {
     public function insertProfile(UserProfile $userProfile): void{
