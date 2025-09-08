@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Core\View;
+use App\DTO\UserLoginContextDTO;
+use App\Service\AuthService;
 use PDO;
 
 abstract readonly class Controller
@@ -21,5 +23,10 @@ abstract readonly class Controller
     public function redirect(string $url): void
     {
         header('Location: ' . $url);
+    }
+
+    public function getSessionContext(): ?UserLoginContextDTO
+    {
+        return AuthService::getLoginContext();
     }
 }
