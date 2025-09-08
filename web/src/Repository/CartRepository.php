@@ -77,6 +77,7 @@ readonly class CartRepository extends Repository
         $stmt->bindValue(':cart_id', $item->cart->id);
         $stmt->bindValue(':book_id', $item->book->id);
         $stmt->bindValue(':quantity', $item->quantity);
+        $stmt->execute();
     }
 
     public function clear(int|Cart $cart): void
