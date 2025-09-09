@@ -43,4 +43,12 @@ readonly class UserController extends ApiController
         header('Content-Type: application/json');
         echo json_encode(['exists' => $this->userService->checkEmailExists($email)]);
     }
+
+    #[POST]
+    #[Path('/updateProfile')]
+    public function updateProfile(): void
+    {
+        header('Content-Type: application/json');
+        $this->userService->updateProfile($_POST);
+    }
 }

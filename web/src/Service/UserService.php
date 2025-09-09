@@ -16,6 +16,7 @@ use App\Repository\Query\UserQuery;
 use App\Repository\UserRepository;
 use App\Router\AuthRule;
 use PDO;
+use RuntimeException;
 
 readonly class UserService extends Service
 {
@@ -109,13 +110,63 @@ readonly class UserService extends Service
         $this->userRepository->update($user);
     }
 
-    public function delete(int $id): void
+    private function getUserIdFromSession(): int
     {
-        $this->userRepository->deleteById($id);
+        session_start();
+        if (!isset($_SESSION['user_id'])) {
+            throw new RuntimeException("User is not logged in.");
+        }
+        return (int)$_SESSION['user_id'];
     }
 
-    public function getUserProfile(int $id): void
+    public function updateProfile(array $postData): void
     {
-        // this->userRepository->;
+        $userId = $this->getUserIdFromSession();
+
+        if (isset($postData['username'])) {
+            $this->userRepository->updateUsername($userId, $postData['username']);
+        }
+
+        if (isset($postData['email'])) {
+            $this->userRepository->updateEmail($userId, $postData['email']);
+        }
+
+        if (isset($postData['contact_no'])) {
+            $this->userRepository->updateContact($userId, $postData['contact_no']);
+        }
+
+        if (isset($postData['dob'])) {
+            $this->userRepository->updateDob($userId, $postData['dob']);
+        }
+
+        if (
+            isset($postData['current_password'], $postData['new_password'], $postData['confirm_password'])
+            && $postData['current_password'] !== ''
+        ) {
+            $this->changePassword(
+                $userId,
+                $postData['current_password'],
+                $postData['new_password'],
+                $postData['confirm_password']
+            );
+        }
+    }
+
+    public function changePassword(int $userId, string $currentPassword, string $newPassword, string $confirmPassword): void
+    {
+        $stmt = $this->pdo->prepare("SELECT hashed_password FROM user WHERE id = :id");
+        $stmt->execute(['id' => $userId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row || !password_verify($currentPassword, $row['hashed_password'])) {
+            throw new RuntimeException("Current password is incorrect.");
+        }
+
+        if ($newPassword !== $confirmPassword) {
+            throw new RuntimeException("New passwords do not match.");
+        }
+
+        $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+        $this->userRepository->updatePassword($userId, $hashedPassword);
     }
 }

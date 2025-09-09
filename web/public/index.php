@@ -46,6 +46,7 @@ $controllers = [
     'App\Controller\Web\SecurityController',
     'App\Controller\Web\SeriesController',
     'App\Controller\Web\WishlistController',
+    'App\Controller\Web\UserProfileController',
 ];
 $router = new Router($pdo, $view);
 foreach ($controllers as $controller) {
