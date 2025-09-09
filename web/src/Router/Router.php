@@ -49,7 +49,7 @@ class Router
         try {
             $this->routes->register($controller);
         } catch (ReflectionException $e) {
-            throw new RuntimeException();
+            throw new RuntimeException('Error trying to register ' . $controller);
         }
     }
 
