@@ -9,7 +9,7 @@ use App\Orm\Attribute\Id;
 use App\Orm\Attribute\ManyToOne;
 use App\Orm\Entity;
 
-abstract class OrderAdjustment extends Entity
+class OrderAdjustment extends Entity
 {
     use Commentable;
 
