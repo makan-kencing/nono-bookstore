@@ -27,6 +27,7 @@ readonly class WorkController extends ApiController
     {
         $ratings = $this->bookService->getRatings((int) $workId);
 
+        header('Content-Type: application/json');
         echo json_encode($ratings);
     }
 
@@ -36,6 +37,7 @@ readonly class WorkController extends ApiController
     {
         $summary = $this->bookService->getRatingSummary((int) $workId);
 
+        header('Content-Type: application/json');
         echo json_encode($summary);
     }
 }

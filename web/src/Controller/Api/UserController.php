@@ -32,6 +32,7 @@ readonly class UserController extends ApiController
     #[Path('/username/{username}')]
     public function checkUsernameExists(string $username): void
     {
+        header('Content-Type: application/json');
         echo json_encode(['exists' => $this->userService->checkUsernameExists($username)]);
     }
 
@@ -39,6 +40,7 @@ readonly class UserController extends ApiController
     #[Path('/email/{email}')]
     public function checkEmailExists(string $email): void
     {
+        header('Content-Type: application/json');
         echo json_encode(['exists' => $this->userService->checkEmailExists($email)]);
     }
 }
