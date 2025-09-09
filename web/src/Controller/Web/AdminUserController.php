@@ -40,6 +40,36 @@ readonly class AdminUserController extends WebController
         if ($user === null)
             throw new NotFoundException();
 
-        echo $this->render('admin/user.php', ['user' => $user]);
+        echo $this->render('admin/user/user.php', ['user' => $user]);
+    }
+
+    #[GET]
+    #[Path('/{id}/addresses')]
+    public function viewUserAddresses(string $id): void
+    {
+        $qb = UserQuery::userListings()
+            ->where(UserCriteria::byId(alias: 'u'))
+            ->bind(':id', $id);
+        $user = $this->userRepository->getOne($qb);
+
+        if ($user === null)
+            throw new NotFoundException();
+
+        echo $this->render('admin/user/addresses.php', ['user' => $user]);
+    }
+
+    #[GET]
+    #[Path('/{id}/orders')]
+    public function viewUserOrders(string $id): void
+    {
+        $qb = UserQuery::userListings()
+            ->where(UserCriteria::byId(alias: 'u'))
+            ->bind(':id', $id);
+        $user = $this->userRepository->getOne($qb);
+
+        if ($user === null)
+            throw new NotFoundException();
+
+        echo $this->render('admin/user/orders.php', ['user' => $user]);
     }
 }
