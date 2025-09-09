@@ -31,6 +31,7 @@ $controllers = [
     'App\Controller\Api\ReplyController',
     'App\Controller\Api\UserController',
     'App\Controller\Api\WishlistController',
+    'App\Controller\Api\AuthController',
     'App\Controller\Web\AdminUsersController',
     'App\Controller\Web\AdminOrdersController',
     'App\Controller\Web\AdminDashboardController',
