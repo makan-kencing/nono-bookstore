@@ -27,8 +27,9 @@ class UserQuery
     {
         $qb = new QueryBuilder();
         $qb->from(User::class, 'u')
-            ->leftJoin('profile', 'up');
-
+            ->leftJoin('profile', 'up')
+            ->leftJoin('addresses', 'ad')
+            ->leftJoin('orders', 'o');
         return $qb;
     }
 }
