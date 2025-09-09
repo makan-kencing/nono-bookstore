@@ -41,49 +41,4 @@ readonly class UserController extends ApiController
     {
         echo json_encode(['exists' => $this->userService->checkEmailExists($email)]);
     }
-
-    /**
-     * @throws BadRequestException
-     * @throws UnprocessableEntityException
-     * @throws ConflictException
-     */
-    #[POST]
-    #[Path('/register')]
-    public function register(): void
-    {
-
-        $dto = UserRegisterDTO::jsonDeserialize(self::getJsonBody());
-        $dto->validate();
-
-        $this->userService->register($dto);
-
-        http_response_code(201);
-    }
-
-    /**
-     * @throws UnprocessableEntityException
-     * @throws BadRequestException
-     */
-    #[POST]
-    #[Path('/login')]
-    public function login(): void
-    {
-        $dto = UserLoginDTO::jsonDeserialize(self::getJsonBody());
-        $dto->validate();
-
-        if ($this->userService->login($dto))
-            http_response_code(200);
-        else
-            http_response_code(401);
-    }
-
-    #[POST]
-    #[Path('/logout')]
-    #[RequireAuth(redirect: false)]
-    public function logout(): void
-    {
-        $this->userService->logout();
-
-        http_response_code(204);
-    }
 }
