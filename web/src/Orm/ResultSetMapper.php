@@ -33,10 +33,6 @@ class ResultSetMapper
     public readonly Root $root;
     public readonly ?PageRequest $pageRequest;
 
-    /** @var Row */
-    private ?array $processingRow = null;
-    private int $index = 0;
-
     /**
      * @template V
      * @var array<class-string<V>, Closure(mixed): ?V >
@@ -66,24 +62,22 @@ class ResultSetMapper
      */
     public function map(PDOStatement $stmt): array
     {
-        /** @vat T[] $entities */
+        /** @var array<int, T> $entities */
         $entities = [];
-        while (true) {
-            if ($this->processingRow == null) {
-                $row = $stmt->fetch();
-                if (!$row)
+        foreach ($stmt as $row) {
+            $this->mapToMany($row, $this->root, $entities, $this->root->getRootPrefix());
+
+            if ($this->pageRequest !== null)
+                if (count($entities) - 1 > $this->pageRequest->getEndIndex())
                     break;
-                $this->processingRow = $row;
-            }
-
-            if ($this->pageRequest != null && !$this->pageRequest->indexIn($this->index++)) {
-                $this->processingRow = null;
-                continue;
-            }
-
-            $this->mapToMany($this->root, $entities, $this->root->getRootPrefix());
-            $this->processingRow = null;
         }
+
+        if ($this->pageRequest !== null)
+            $entities = array_splice(
+                $entities,
+                $this->pageRequest->getStartIndex(),
+                $this->pageRequest->pageSize
+            );
 
         return $entities;
     }
@@ -94,45 +88,38 @@ class ResultSetMapper
      */
     public function mapOne(PDOStatement $stmt): ?Entity
     {
-        // TODO: rewrite this shit to be readable
-        /** @var T[] $entities */
-        $entity = null;
+        /** @var array<int, T> $entities */
         $entities = [];
-        while (true) {
-            if ($this->processingRow == null) {
-                $row = $stmt->fetch();
-                if (!$row)
+        foreach ($stmt as $row) {
+            $this->mapToMany($row, $this->root, $entities, $this->root->getRootPrefix());
+
+            if ($this->pageRequest !== null)
+                if (count($entities) - 1 > $this->pageRequest->getStartIndex())
                     break;
-                $this->processingRow = $row;
-            }
-
-            if ($this->pageRequest != null && !$this->pageRequest->indexIn($this->index++)) {
-                $this->processingRow = null;
-                continue;
-            }
-
-            $e = $this->mapToMany($this->root, $entities, $this->root->getRootPrefix());
-
-            $entity ??= $e;
-            if ($entity !== $e)
-                return $entity;
-
-            $this->processingRow = null;
         }
-        return $entity;
+
+        if ($this->pageRequest !== null)
+            $entities = array_splice(
+                $entities,
+                $this->pageRequest->getStartIndex(),
+                1
+            );
+
+        return reset($entities) ?: null;
     }
 
     /**
      * @template E of Entity
+     * @param array<string, mixed> $row
      * @param From<Entity, E> $from
      * @param array<int, E> &$mapping
      * @param string $aliasPrefix
      * @return ?E
      * @throws ReflectionException
      */
-    private function mapToMany(From $from, array &$mapping, string $aliasPrefix): ?Entity
+    private function mapToMany(array $row, From $from, array &$mapping, string $aliasPrefix): ?Entity
     {
-        $hash = $this->getHash($from->class, $aliasPrefix);
+        $hash = $this->getHash($row, $from->class, $aliasPrefix);
         if ($hash === null)
             return null;
 
@@ -143,23 +130,24 @@ class ResultSetMapper
             $mapping[$hash] = $entity;
         }
 
-        $this->mapToOne($from, $entity, $aliasPrefix);
+        $this->mapToOne($row, $from, $entity, $aliasPrefix);
         return $entity;
     }
 
     /**
      * @template E of Entity
+     * @param array<string, mixed> $row
      * @param From<Entity, E> $from
      * @param ?E &$entity
      * @param string $aliasPrefix
      * @return ?E
      * @throws ReflectionException
      */
-    private function mapToOne(From $from, ?Entity &$entity, string $aliasPrefix): ?Entity
+    private function mapToOne(array $row, From $from, ?Entity &$entity, string $aliasPrefix): ?Entity
     {
-        assert($this->processingRow !== null);
+        assert($row !== null);
 
-        if ($this->getHash($from->class, $aliasPrefix) === null)
+        if ($this->getHash($row, $from->class, $aliasPrefix) === null)
             return null;
 
         $reflectionClass = new ReflectionClass($from->class);
@@ -193,7 +181,7 @@ class ResultSetMapper
                 $entity->$property ??= [];
 
                 assert(is_array($entity->$property));
-                $related = $this->mapToMany($join, $entity->$property, $alias . '.');
+                $related = $this->mapToMany($row, $join, $entity->$property, $alias . '.');
                 if ($related !== null)
                     $related->{$oneToMany->mappedBy} = $entity;
             } else if ($oneToOne || $manyToOne)
@@ -203,7 +191,7 @@ class ResultSetMapper
 
                     $alias .= '.id';
 
-                    $rawValue = $this->processingRow[$alias];
+                    $rawValue = $row[$alias];
                     if ($rawValue === null)
                         $entity->$property = null;
                     else {
@@ -212,7 +200,7 @@ class ResultSetMapper
                     }
                 } else {
                     $related = $entity->$property ?? null;
-                    $related = $entity->$property = $this->mapToOne($join, $related, $alias . '.');
+                    $related = $entity->$property = $this->mapToOne($row, $join, $related, $alias . '.');
                     if ($related !== null)
                         if ($oneToOne && $oneToOne->mappedBy)
                             $related->{$oneToOne->mappedBy} = $entity;
@@ -222,7 +210,7 @@ class ResultSetMapper
                 if (isset($entity->$property))
                     continue;
 
-                $rawValue = $this->processingRow[$alias];
+                $rawValue = $row[$alias];
                 if ($rawValue === null)
                     $entity->$property = null;
                 else {
@@ -237,14 +225,15 @@ class ResultSetMapper
 
     /**
      * @template E of Entity
-     * @var class-string<E> $class
-     * @var string $aliasPrefix
+     * @param array<string, mixed> $row
      * @return ?int
      * @throws ReflectionException
+     *@var class-string<E> $class
+     * @var string $aliasPrefix
      */
-    public function getHash(string $class, string $aliasPrefix): ?int
+    public function getHash(array $row, string $class, string $aliasPrefix): ?int
     {
-        assert($this->processingRow != null);
+        assert($row != null);
 
         $hash = null;
         $reflectionClass = new ReflectionClass($class);
@@ -257,7 +246,7 @@ class ResultSetMapper
                 || $reflectionProperty->getAttributes(ManyToOne::class))
                 $alias .= '.id';
 
-            $rawValue = $this->processingRow[$alias];
+            $rawValue = $row[$alias];
             if ($rawValue == null)
                 continue;
 

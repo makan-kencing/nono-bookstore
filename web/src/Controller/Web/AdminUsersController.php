@@ -6,6 +6,7 @@ namespace App\Controller\Web;
 
 use App\Core\View;
 use App\Entity\User\UserRole;
+use App\Orm\Expr\PageRequest;
 use App\Repository\Query\UserQuery;
 use App\Repository\UserRepository;
 use App\Router\AuthRule;
@@ -30,6 +31,7 @@ readonly class AdminUsersController extends WebController
     public function viewUserList(): void
     {
         $qb = UserQuery::userListings();
+        $qb->page(new PageRequest(3, 10));
 
         $users = $this->userRepository->get($qb);
 
