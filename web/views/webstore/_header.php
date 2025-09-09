@@ -30,7 +30,7 @@ declare(strict_types=1);
             </form>
         </search>
 
-        <div id="store-cart"><i class="fa-solid fa-cart-shopping"></i></div>
+        <a href="/cart" id="store-cart"><i class="fa-solid fa-cart-shopping"></i></a>
     </div>
 
     <div>
