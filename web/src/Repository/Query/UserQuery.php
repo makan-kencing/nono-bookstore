@@ -29,7 +29,8 @@ class UserQuery
         $qb->from(User::class, 'u')
             ->leftJoin('profile', 'up')
             ->leftJoin('addresses', 'ad')
-            ->leftJoin('orders', 'o');
+            ->leftJoin($qb->createJoin('orders', 'o')
+                ->leftJoin('items', 'it'));
         return $qb;
     }
 }
