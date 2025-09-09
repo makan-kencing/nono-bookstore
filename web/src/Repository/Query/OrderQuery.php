@@ -15,7 +15,9 @@ class OrderQuery
         $qb = new QueryBuilder();
         $qb->from(Order::class, 'o')
             ->leftJoin('adjustments', 'adj')
-            ->leftJoin($qb->createJoin('items', 'it')
+            ->join('user', 'u')
+            ->leftJoin('shipment', 's')
+            ->join($qb->createJoin('items', 'it')
                 ->leftJoin($qb->createJoin('book', 'b')
                     ->leftJoin($qb->createJoin('images', 'bi')
                         ->leftJoin('file', 'f'))));
