@@ -33,7 +33,7 @@ readonly class AdminUserController extends WebController
     public function viewProfile(string $id): void
     {
         $qb = UserQuery::userListings()
-            ->where(UserCriteria::byId())
+            ->where(UserCriteria::byId(alias: 'u'))
             ->bind(':id', $id);
         $user = $this->userRepository->getOne($qb);
 
