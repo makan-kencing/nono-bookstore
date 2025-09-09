@@ -31,8 +31,7 @@ readonly class AdminUsersController extends WebController
     public function viewUserList(): void
     {
         $qb = UserQuery::userListings();
-        $qb->page(new PageRequest(3, 10));
-
+        $qb->page(new PageRequest(2,10));
         $users = $this->userRepository->get($qb);
 
         // convert to dto

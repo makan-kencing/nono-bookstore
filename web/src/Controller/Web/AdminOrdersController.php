@@ -35,4 +35,10 @@ readonly class AdminOrdersController extends WebController
         );
     }
 
+    #[GET]
+    #[Path('/{id}')]
+    public function viewOrder(int $id): void
+    {}
+
+
 }
