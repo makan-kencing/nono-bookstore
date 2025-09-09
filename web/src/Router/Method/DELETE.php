@@ -9,5 +9,5 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD)]
 class DELETE extends Method
 {
-    public const HttpMethod METHOD = HttpMethod::DELETE;
+    public const METHOD = HttpMethod::DELETE;
 }

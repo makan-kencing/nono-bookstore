@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\DTO\Request;
 
-
-use App\DTO\DTO;
+use function App\Utils\array_get;
+use function App\Utils\array_all;
 use App\Entity\User\User;
 use App\Entity\User\UserRole;
 use App\Exception\BadRequestException;
 use App\Exception\UnprocessableEntityException;
 use Throwable;
-use UnexpectedValueException;
 
 readonly class UserUpdateDTO extends RequestDTO
 {
@@ -32,10 +31,10 @@ readonly class UserUpdateDTO extends RequestDTO
 
         try {
             return new self(
-                $json['id'] ?? null,
-                $json['username'] ?? null,
-                $json['email'] ?? null,
-                UserRole::{$json['role']} ?? null
+                array_get($json, 'id'),
+                array_get($json, 'username'),
+                array_get($json, 'email'),
+                array_get($json, 'role') === null ? null : UserRole::fromName($json['role'])
             );
         } catch (Throwable) {
             throw new BadRequestException();

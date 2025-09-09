@@ -16,7 +16,8 @@ class Root extends From
 {
     public function getRootPrefix(): string
     {
-        $shortname = new ReflectionClass($this->class)->getShortName();
+        $reflectionClass = new ReflectionClass($this->class);
+        $shortname = $reflectionClass->getShortName();
         return $shortname . '.';
     }
 

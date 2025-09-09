@@ -15,7 +15,7 @@ use PDO;
 
 readonly class CartService extends Service
 {
-    public const string CART = 'cart';
+    public const CART = 'cart';
 
     private CartRepository $cartRepository;
 

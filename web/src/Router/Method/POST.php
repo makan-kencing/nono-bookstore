@@ -9,5 +9,5 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD)]
 class POST extends Method
 {
-    public const HttpMethod METHOD = HttpMethod::POST;
+    public const METHOD = HttpMethod::POST;
 }

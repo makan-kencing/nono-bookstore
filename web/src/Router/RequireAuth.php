@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Router;
 
+use function App\Utils\array_any;
 use App\Entity\User\UserRole;
 use Attribute;
 

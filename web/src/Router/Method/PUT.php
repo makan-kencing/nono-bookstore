@@ -9,5 +9,5 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD)]
 class PUT extends Method
 {
-    public const HttpMethod METHOD = HttpMethod::PUT;
+    public const METHOD = HttpMethod::PUT;
 }

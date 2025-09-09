@@ -33,7 +33,7 @@ readonly class UserCreateDTO extends RequestDTO
                 $json['username'],
                 $json['email'],
                 $json['password'],
-                UserRole::{$json['role']}
+                UserRole::fromName($json['role'])
             );
         } catch (Throwable) {
             throw new BadRequestException();

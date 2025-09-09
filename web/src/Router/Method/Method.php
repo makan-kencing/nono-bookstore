@@ -6,7 +6,7 @@ namespace App\Router\Method;
 
 class Method
 {
-    public const HttpMethod METHOD = HttpMethod::NOOP;
+    public const METHOD = HttpMethod::NOOP;
 
     public function __construct()
     {
