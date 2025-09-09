@@ -38,8 +38,8 @@ ob_start();
                 </style>
 
                 <form class="form-group">
-                    <label for="Contect No">Contact No</label>
-                    <input type="tel" id="phone" name="phone" value="<?= $user->profile->phone?>">
+                    <label for="phone">Contact No</label>
+                    <input type="tel" id="phone" name="phone" value="<?= $user->profile->contactNo ?>">
 
                     <label for="birthday">Birthday</label>
                     <input type="date" id="birthday" name="birthday" value="<?= $user->profile->phone?>">
@@ -84,10 +84,14 @@ ob_start();
             $.get(
                 "/api/user/username/" + e.target.value,
                 (data) => {
-                    if (data.exists)
+                    if (data.exists) {
+                        e.target.setCustomValidity("Username is taken.");
                         e.target.dataset.usernameTaken = "1";
-                    else
+                    }
+                    else {
+                        e.target.setCustomValidity("");
                         e.target.dataset.usernameTaken = "0";
+                    }
                 }
             )
         })
