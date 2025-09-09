@@ -62,7 +62,7 @@ ob_start();
                     <div id="product-variants">
                         <?php foreach ($work->books as $otherBook): ?>
                             <?php if ($otherBook->getCurrentPrice() === null) continue; ?>
-                            <?php if ($otherBook === $book): ?>
+                            <?php if ($otherBook->id === $book->id): ?>
                                 <div class="product-variant">
                                     <p class="type"><?= $otherBook->coverType->title() ?></p>
                                     <p class="price"><?= $otherBook->getCurrentPrice()->amount / 100 ?></p>
@@ -119,8 +119,7 @@ ob_start();
                                 error: (jqXHR, textStatus, errorThrown) => {
                                     console.error(jqXHR, textStatus, errorThrown)
                                 },
-                                success: (data, textStatus, jqXHR) => {
-                                    console.log(data, textStatus, jqXHR);
+                                success: () => {
                                 }
                             }
                         );
