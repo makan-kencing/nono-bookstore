@@ -27,7 +27,7 @@ ob_start();
 
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" value="<?= $user->email?>">
-
+                    <label><?= $user->role->title() ?></label>
                     <button type="submit" class="btn">Update</button>
                 </form>
 
@@ -42,7 +42,7 @@ ob_start();
                     <input type="tel" id="phone" name="phone" value="<?= $user->profile->contactNo ?>">
 
                     <label for="birthday">Birthday</label>
-                    <input type="date" id="birthday" name="birthday" value="<?= $user->profile->phone?>">
+                    <input type="date" id="birthday" name="birthday" value="<?= $user->profile->dob ?>">
 
                     <button type="submit" class="btn">Update</button>
                 </form>
@@ -51,18 +51,18 @@ ob_start();
                     <h3>Address Information</h3>
 
                     <label for="address1">Address 1</label>
-                    <input type="text" id="address1" name="address1">
+                    <input type="text" id="address1" name="address1" value="<?=$user->profile->address1?>">
 
                     <label for="address2">Address 2</label>
-                    <input type="text" id="address2" name="address2">
+                    <input type="text" id="address2" name="address2" value="<?=$user->profile->address2?>">
 
                     <label for="state">State</label>
-                    <input type="text" id="state" name="state">
+                    <input type="text" id="state" name="state" value="<?=$user->profile->state?>">
 
                     <div class="form-row">
                         <div>
                             <label for="postcode">Postcode</label>
-                            <input type="text" id="postcode" name="postcode">
+                            <input type="text" id="postcode" name="postcode" >
                         </div>
                         <div>
                             <label for="country">Country</label>
