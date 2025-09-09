@@ -113,4 +113,9 @@ readonly class UserService extends Service
     {
         $this->userRepository->deleteById($id);
     }
+
+    public function getUserProfile(int $id): void
+    {
+        // this->userRepository->;
+    }
 }

@@ -12,7 +12,7 @@ ob_start();
         </div>
         <div class="right-section">
             <h2>Register An Account</h2>
-            <form class="form-container" id="registration" method="POST" action="/api/user/register">
+            <form class="form-container" id="registration" method="POST" action="/api/register">
                 <div class="form-group">
                     <label for="username">Username</label>
                     <input type="text" id="username" name="username" data-username-taken="0" required>
@@ -104,6 +104,7 @@ ob_start();
                 {
                     method: e.target.method,
                     contentType: "application/json",
+                    dataType: "text",
                     data: JSON.stringify(Object.fromEntries(data.entries())),
                     error: (jqXHR, textStatus, errorThrown) => {
                         console.error(jqXHR, textStatus, errorThrown)
