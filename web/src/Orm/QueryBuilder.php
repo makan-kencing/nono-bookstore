@@ -131,7 +131,6 @@ class QueryBuilder
      * @param literal-string $param
      * @param mixed $value
      * @return $this
-     * @phpstan-impure
      */
     public function bind(string $param, mixed $value): static
     {

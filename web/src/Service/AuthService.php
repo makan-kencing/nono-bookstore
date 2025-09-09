@@ -59,8 +59,8 @@ readonly class AuthService extends Service
 
     public function login(UserLoginDTO $dto): bool
     {
-        $qb = UserQuery::withMinimalDetails()
-            ->where(UserCriteria::byEmail())
+        $qb = UserQuery::withMinimalDetails();
+        $qb->where(UserCriteria::byEmail())
             ->bind(':email', $dto->email);
         $user = $this->userRepository->getOne($qb);
 
