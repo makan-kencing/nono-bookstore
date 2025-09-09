@@ -119,7 +119,7 @@ class From extends Expression
             };
 
             $reflectionClass = new ReflectionClass($join->class);
-            $clause .= self::toSnakeCase($reflectionClass->getShortName()) . ' ' . $join->alias;
+            $clause .= '`' . self::toSnakeCase($reflectionClass->getShortName()) . '` ' . $join->alias;
             $clause .= ' ON ';
 
             if ($join->mappedBy)
