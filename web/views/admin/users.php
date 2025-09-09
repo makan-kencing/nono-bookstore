@@ -21,7 +21,7 @@ ob_start();
                 <table class="user-table">
                     <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>Num</th>
                         <th>Username</th>
                         <th>Email</th>
                         <th>Role</th>

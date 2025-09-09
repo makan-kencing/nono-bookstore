@@ -13,11 +13,11 @@ ob_start();
         <div>
             <?= View::render('admin/user/_sidebar.php', ['currentMenu' => 'Addresses', 'user' => $user]) ?>
         </div>
-
+<?php foreach ($user->addresses as $addr): ?>
         <div style="width: 100%">
             <form class="form-group address-form">
                 <h3>Address Information</h3>
-                <?php foreach ($user->addresses as $addr): ?>
+
                     <label for="address1">Address 1</label>
                     <input type="text" id="address1" name="address1" value="<?=$addr->address1?>">
 
@@ -37,10 +37,11 @@ ob_start();
                             <input type="text" id="country" name="country" value="<?=$addr->country?>">
                         </div>
                     </div>
-                <?php endforeach ?>
+
                 <button type="submit" class="btn">Save Address</button>
             </form>
         </div>
+<?php endforeach ?>
     </div>
 
 <?php
