@@ -96,7 +96,8 @@ class From extends Expression
 
     public function toFromClause(): string
     {
-        $clause = self::toSnakeCase(new ReflectionClass($this->class)->getShortName());
+        $reflectionClass = new ReflectionClass($this->class);
+        $clause = '`' . self::toSnakeCase($reflectionClass->getShortName()) . '`';
         if ($this->alias)
             $clause .= ' ' . $this->alias;
         return $clause;
@@ -117,7 +118,8 @@ class From extends Expression
                 JoinType::RIGHT => 'RIGHT JOIN ',
             };
 
-            $clause .= self::toSnakeCase(new ReflectionClass($join->class)->getShortName()) . ' ' . $join->alias;
+            $reflectionClass = new ReflectionClass($join->class);
+            $clause .= '`' . self::toSnakeCase($reflectionClass->getShortName()) . '` ' . $join->alias;
             $clause .= ' ON ';
 
             if ($join->mappedBy)

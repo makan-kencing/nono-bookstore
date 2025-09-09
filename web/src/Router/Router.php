@@ -6,6 +6,7 @@ namespace App\Router;
 
 use App\Controller\Controller;
 use App\Core\View;
+use App\Exception\BadRequestException;
 use App\Exception\MethodNotAllowedException;
 use App\Exception\NotFoundException;
 use App\Exception\Wrapper\ExceptionWrapper;
@@ -14,6 +15,7 @@ use JetBrains\PhpStorm\Language;
 use PDO;
 use ReflectionException;
 use RuntimeException;
+use ValueError;
 
 class Router
 {
@@ -47,17 +49,24 @@ class Router
         try {
             $this->routes->register($controller);
         } catch (ReflectionException $e) {
-            throw new RuntimeException();
+            throw new RuntimeException('Error trying to register ' . $controller);
         }
     }
 
     /**
-     * @throws NotFoundException | MethodNotAllowedException | ExceptionWrapper
+     * @throws NotFoundException
+     * @throws MethodNotAllowedException
+     * @throws ExceptionWrapper
+     * @throws BadRequestException
      */
     public function dispatch(string $method, string $uri): void
     {
         // validate method is correct
-        $_ = HttpMethod::{$method};
+        try {
+            $_ = HttpMethod::from($method);
+        } catch (ValueError) {
+            throw new BadRequestException();
+        }
 
         $mapping = $this->routes->getMethodMapping($uri);
         if (!$mapping) {

@@ -2,16 +2,19 @@
 
 declare(strict_types=1);
 
+use App\Core\View;
 use App\Entity\User\User;
 
-$title = 'profile';
-/** @var User $user */
-assert(isset($user) && $user instanceof User );
+assert(isset($user) && $user instanceof User);
 
 ob_start();
 ?>
-    <div class="profile-container">
-        <div class="profile-card">
+    <div style="display: flex; flex-flow: row; ">
+        <div>
+            <?= View::render('admin/user/_sidebar.php', ['currentMenu' => 'User Details', 'user' => $user]) ?>
+        </div>
+
+        <div class="profile-card" style="width: 100%">
             <h2>Account Profile</h2>
 
             <div class="avatar-section">
@@ -27,7 +30,7 @@ ob_start();
 
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" value="<?= $user->email?>">
-
+                    <label><?= $user->role->title() ?></label>
                     <button type="submit" class="btn">Update</button>
                 </form>
 
@@ -38,43 +41,16 @@ ob_start();
                 </style>
 
                 <form class="form-group">
-                    <label for="Contect No">Contact No</label>
-                    <input type="tel" id="phone" name="phone" value="<?= $user->profile->phone?>">
+                    <label for="phone">Contact No</label>
+                    <input type="tel" id="phone" name="phone" value="<?= $user->profile?->contactNo ?>">
 
                     <label for="birthday">Birthday</label>
-                    <input type="date" id="birthday" name="birthday" value="<?= $user->profile->phone?>">
+                    <input type="date" id="birthday" name="birthday" value="<?= $user->profile?->dob ?>">
 
                     <button type="submit" class="btn">Update</button>
                 </form>
-
-                <form class="form-group address-form">
-                    <h3>Address Information</h3>
-
-                    <label for="address1">Address 1</label>
-                    <input type="text" id="address1" name="address1">
-
-                    <label for="address2">Address 2</label>
-                    <input type="text" id="address2" name="address2">
-
-                    <label for="state">State</label>
-                    <input type="text" id="state" name="state">
-
-                    <div class="form-row">
-                        <div>
-                            <label for="postcode">Postcode</label>
-                            <input type="text" id="postcode" name="postcode">
-                        </div>
-                        <div>
-                            <label for="country">Country</label>
-                            <input type="text" id="country" name="country">
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn">Save Address</button>
-                </form>
             </div>
         </div>
-
     </div>
 
     <script>
@@ -84,19 +60,26 @@ ob_start();
             $.get(
                 "/api/user/username/" + e.target.value,
                 (data) => {
-                    if (data.exists)
+                    if (data.exists) {
+                        e.target.setCustomValidity("Username is taken.");
                         e.target.dataset.usernameTaken = "1";
-                    else
+                    }
+                    else {
+                        e.target.setCustomValidity("");
                         e.target.dataset.usernameTaken = "0";
+                    }
                 }
             )
         })
     </script>
 
-
 <?php
+
+$title = 'User Details';
 $content = ob_get_clean();
 
-include __DIR__ . "/_base.php";
-
+echo View::render(
+    'admin/_base.php',
+    ['title' => $title, 'content' => $content]
+);
 

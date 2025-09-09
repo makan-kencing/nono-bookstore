@@ -9,5 +9,5 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD)]
 class PATCH extends Method
 {
-    public const HttpMethod METHOD = HttpMethod::PATCH;
+    public const METHOD = HttpMethod::PATCH;
 }

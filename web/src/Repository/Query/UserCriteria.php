@@ -12,17 +12,23 @@ class UserCriteria
     {
     }
 
-    public static function byId(string $param = ':id'): Predicate
+    public static function byId(string $param = ':id', ?string $alias = null): Predicate
     {
-        return new Predicate('id = ' . $param);
+        if ($alias === null) $alias = '';
+        else $alias .= '.';
+
+        return new Predicate($alias . 'id = ' . $param);
     }
 
     /**
      * @param literal-string $param
      * @return Predicate
      */
-    public static function byUsername(string $param = ':username'): Predicate
+    public static function byUsername(string $param = ':username', ?string $alias = null): Predicate
     {
+        if ($alias === null) $alias = '';
+        else $alias .= '.';
+
         return new Predicate('username = ' . $param);
     }
 
@@ -30,8 +36,11 @@ class UserCriteria
      * @param literal-string $param
      * @return Predicate
      */
-    public static function byEmail(string $param = ':email'): Predicate
+    public static function byEmail(string $param = ':email', ?string $alias = null): Predicate
     {
+        if ($alias === null) $alias = '';
+        else $alias .= '.';
+
         return new Predicate('email = ' . $param);
     }
 }

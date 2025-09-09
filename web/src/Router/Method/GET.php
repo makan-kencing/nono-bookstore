@@ -9,5 +9,5 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD)]
 class GET extends Method
 {
-    public const HttpMethod METHOD = HttpMethod::GET;
+    public const METHOD = HttpMethod::GET;
 }

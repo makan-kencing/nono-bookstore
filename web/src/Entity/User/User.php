@@ -29,7 +29,7 @@ class User extends Entity
 
     public UserRole $role;
 
-    public bool $isVerified = false;
+    public bool $isVerified;
 
     #[OneToOne]
     public ?File $image;

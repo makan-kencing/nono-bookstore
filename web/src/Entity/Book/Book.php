@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Book;
 
+use function App\Utils\array_find;
 use App\Entity\Book\Author\AuthorDefinition;
 use App\Entity\Cart\CartItem;
 use App\Entity\Order\OrderItem;
