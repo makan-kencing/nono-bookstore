@@ -41,9 +41,10 @@ readonly class CartController extends ApiController
         $cart = $this->cartService->getOrCreateCart();
 
         if ($dto->quantity < 0)
-            $this->cartService->subtractItem($cart, $dto);
+            $this->cartService->subtractItem($cart, new CartItemQuantityDTO($dto->bookId, -$dto->quantity));
         else if ($dto->quantity > 0)
             $this->cartService->addItem($cart, $dto);
+        http_response_code(204);
     }
 
     /**
@@ -58,6 +59,7 @@ readonly class CartController extends ApiController
 
         $cart = $this->cartService->getOrCreateCart();
         $this->cartService->setItem($cart, $dto);
+        http_response_code(204);
     }
 
     /**
@@ -74,5 +76,6 @@ readonly class CartController extends ApiController
 
         $cart = $this->cartService->getOrCreateCart();
         $this->cartService->removeItem($cart, $bookId);
+        http_response_code(204);
     }
 }
