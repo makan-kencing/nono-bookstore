@@ -97,7 +97,7 @@ class From extends Expression
     public function toFromClause(): string
     {
         $reflectionClass = new ReflectionClass($this->class);
-        $clause = self::toSnakeCase($reflectionClass->getShortName());
+        $clause = '`' . self::toSnakeCase($reflectionClass->getShortName()) . '`';
         if ($this->alias)
             $clause .= ' ' . $this->alias;
         return $clause;
