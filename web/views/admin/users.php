@@ -88,6 +88,10 @@ ob_start();
     </dialog>
 
     <script>
+        $("table.user-table tbody tr").click(/** @param {jQuery.Event} e */ (e) => {
+            window.location = `/admin/user/${e.currentTarget.dataset.id}`;
+        })
+
         $("button.add").click(/** @param {jQuery.Event} e */ (e) => {
             $("dialog.add-user")[0].showModal();
         });
