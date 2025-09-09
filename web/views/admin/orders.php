@@ -42,16 +42,20 @@ ob_start();
                                 <td><?= $book->isbn ?></td>
                                 <td><?= $item->quantity ?></td>
                                 <td>
-                                    <?php if (!$order->shipment->readyAt) : ?>
-                                        <span class="chip chip-ok">Preparing</span>
-                                    <?php elseif ($order->shipment->readyAt) : ?>
-                                        <span class="chip chip-ok">Ready To Ship</span>
-                                    <?php elseif ($order->shipment->shippedAt) : ?>
-                                        <span class="chip chip-ok">Ship Out</span>
-                                    <?php elseif ($order->shipment->deliveredAt) : ?>
-                                        <span class="chip chip-ok">Delivered</span>
+                                    <?php if($order->shipment==null) : ?>
+                                        <?php ?>
                                     <?php else : ?>
-                                        <span class="chip chip-no">Error</span>
+                                        <?php if (!$order->shipment->readyAt) : ?>
+                                            <span class="chip chip-ok">Preparing</span>
+                                        <?php elseif ($order->shipment->readyAt) : ?>
+                                            <span class="chip chip-ok">Ready To Ship</span>
+                                        <?php elseif ($order->shipment->shippedAt) : ?>
+                                            <span class="chip chip-ok">Ship Out</span>
+                                        <?php elseif ($order->shipment->deliveredAt) : ?>
+                                            <span class="chip chip-ok">Delivered</span>
+                                        <?php else : ?>
+                                            <span class="chip chip-no">Error</span>
+                                        <?php endif; ?>
                                     <?php endif; ?>
                                 </td>
                                 <td>
