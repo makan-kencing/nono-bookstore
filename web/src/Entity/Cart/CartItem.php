@@ -20,4 +20,9 @@ class CartItem extends Entity
     public Book $book;
 
     public int $quantity;
+
+    public function getSubtotal(): int
+    {
+        return $this->book->getCurrentPrice()?->amount * $this->quantity;
+    }
 }

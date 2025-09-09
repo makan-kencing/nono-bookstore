@@ -21,4 +21,26 @@ class Cart extends Entity
     /** @var CartItem[] */
     #[OneToMany(CartItem::class, mappedBy: 'cart')]
     public array $items;
+
+    public function getSubtotal(): int
+    {
+        return array_reduce(
+                $this->items,
+                fn(int $carry, CartItem $item) => $carry + $item->getSubtotal(),
+                0
+            );
+    }
+
+    public function getShipping(): int
+    {
+        $subtotal = $this->getSubtotal();
+        if ($subtotal > 10000) // 100 dollans
+            return 0;
+        return 800;
+    }
+
+    public function getTotal(): int
+    {
+        return $this->getSubtotal() + $this->getShipping();
+    }
 }
