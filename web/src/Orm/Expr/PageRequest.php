@@ -10,7 +10,7 @@ readonly class PageRequest
 {
     public function __construct(
         public int $page = 1,
-        public int $pageSize = 1
+        public int $pageSize = 10
     ) {
         if ($this->page < 1)
             throw new InvalidArgumentException('Page should be more than or equal to 1, not ' . $this->page);
