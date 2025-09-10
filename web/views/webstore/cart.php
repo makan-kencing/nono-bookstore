@@ -64,7 +64,7 @@ ob_start();
                                 <form action="/api/cart">
                                     <input type="hidden" name="book_id" value="<?= $book->id ?>">
 
-                                    <h3><?= $book->work->title ?></h3>
+                                    <h3><a href="/book/<?= $book->isbn ?>/<?= $book->work->slug ?>"><?= $book->work->title ?></a></h3>
                                     <p><?= $author->author->name ?></p>
                                     <p style="font-weight: bold"><?= $book->coverType->title() ?></p>
 
