@@ -164,7 +164,7 @@ section#book-listing {
             text-align: center;
 
             display: flex;
-            flex-flow: row;
+            flex-flow: row wrap;
             gap: 1rem;
 
             .product-variant {
