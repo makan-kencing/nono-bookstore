@@ -7,6 +7,7 @@ namespace App\Service;
 use App\DTO\Request\CartItemQuantityDTO;
 use App\Entity\Cart\Cart;
 use App\Entity\Cart\CartItem;
+use App\Entity\User\Address;
 use App\Exception\UnauthorizedException;
 use App\Repository\CartRepository;
 use App\Repository\Query\CartCriteria;
@@ -187,5 +188,20 @@ readonly class CartService extends Service
                 return false;
             }
         );
+    }
+
+    public function clearCart(Cart $cart): void
+    {
+        $this->cartRepository->clear($cart);
+        $cart->items = [];
+    }
+
+    public function updateCartAddress(Cart $cart, Address $address): void
+    {
+        if ($cart->address?->id === $address->id)
+            return;
+
+        $cart->address = $address;
+        $this->cartRepository->updateCart($cart);
     }
 }
