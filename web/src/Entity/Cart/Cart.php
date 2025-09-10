@@ -52,4 +52,32 @@ class Cart extends Entity
     {
         return $this->getSubtotal() + $this->getShipping();
     }
+
+    public function canCheckout(): bool
+    {
+        return !array_any(
+            $this->items,
+            fn(CartItem $item) => $item->book->getTotalInStock() <= 0
+        );
+    }
+
+
+    /**
+     * @param Order $order
+     * @return OrderAdjustment[]
+     */
+    public function toOrderAdjustments(Order $order): array
+    {
+        $adjustments = [];
+
+        $shipping = new OrderAdjustment();
+        $shipping->order = $order;
+        $shipping->type = OrderAdjustmentType::SHIPPING;
+        $shipping->amount = $this->getShipping();
+        $shipping->comment = null;
+
+        $adjustments[] = $shipping;
+
+        return $adjustments;
+    }
 }
