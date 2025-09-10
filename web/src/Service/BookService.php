@@ -95,7 +95,7 @@ readonly class BookService extends Service
             $qb->bind(':isbn', $dto->query);
         }
 
-        if ($dto->query !== null) {
+        else if ($dto->query !== null) {
             $predicates = $predicates->and(WorkCriteria::byTitleLike(alias: 'w'));
             $qb->bind(':title', '%' . $dto->query . '%');
         }
