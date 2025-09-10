@@ -18,16 +18,21 @@ class CartQuery
      */
     public static function forShoppingCart(): QueryBuilder
     {
+        /** @var QueryBuilder<Cart> $qb */
         $qb = new QueryBuilder();
         $qb->from(Cart::class, 'c')
-            ->leftJoin($qb->createJoin('items', 'i')
+            ->leftJoin($qb->createJoin('items', 'ci')
                 ->leftJoin($qb->createJoin('book', 'b')
                     ->leftJoin('work', 'w')
-                    ->leftJoin('images', 'wi')
+                    ->leftJoin($qb->createJoin('images', 'bi')
+                        ->leftJoin('file', 'bif'))
                     ->leftJoin($qb->createJoin('authors', 'bad')
                         ->leftJoin('author', 'ba'))
                     ->leftJoin('prices', 'p')
-                    ->leftJoin('inventories', 'bi')));
+                    ->leftJoin('inventories', 'i')))
+            ->join($qb->createJoin('user', 'u')
+                ->leftJoin('addresses', 'ua'))
+            ->leftJoin('address', 'a');
         return $qb;
     }
 }

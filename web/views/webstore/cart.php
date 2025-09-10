@@ -6,22 +6,16 @@ use App\Core\View;
 use App\Entity\Book\Author\AuthorDefinition;
 use App\Entity\Book\BookImage;
 use App\Entity\Cart\Cart;
-use App\Entity\Cart\CartItem;
 
 assert(isset($cart) && $cart instanceof Cart);
 
 ob_start();
 ?>
     <div style="display: flex; flex-flow: row">
-        <?php
-        $inStock = true;
-        $hasCart = count($cart->items) > 0;
-        ?>
-
         <div style="width: 100%">
             <h2>Shopping Cart</h2>
 
-            <?php if (!$hasCart): ?>
+            <?php if (count($cart->items) == 0): ?>
                 <div>
                     <h2>Your cart is empty</h2>
 
@@ -57,14 +51,9 @@ ob_start();
                         $price = $book->getCurrentPrice();
                         $author = $book->authors[0];
                         $image = $book->images[0] ?? null;
-
-                        if ($totalStocks < 0)
-                            $inStock = false;
                         ?>
                         <tr>
                             <td>
-                                <?php
-                                ?>
                                 <?php if ($image !== null): ?>
                                     <img src="<?= $image->file->filepath ?>" alt="<?= $image->file->alt ?>">
                                 <?php else: ?>
@@ -78,6 +67,14 @@ ob_start();
                                     <h3><?= $book->work->title ?></h3>
                                     <p><?= $author->author->name ?></p>
                                     <p style="font-weight: bold"><?= $book->coverType->title() ?></p>
+
+                                    <?php if ($totalStocks > 20): ?>
+                                        <p>In Stock</p>
+                                    <?php elseif ($totalStocks > 0): ?>
+                                        <p><?= $totalStocks ?> left</p>
+                                    <?php else: ?>
+                                        <p>No stock</p>
+                                    <?php endif; ?>
 
                                     <label for="quantity"></label>
                                     <div>
@@ -99,33 +96,29 @@ ob_start();
         </div>
 
         <div style="width: max-content">
-            <?php if ($hasCart): ?>
-                <h2>Summary</h2>
+            <?php if (count($cart->items) > 0): ?>
+                <form style="display: contents" action="/checkout">
 
-                <table style="width: max-content">
-                    <tbody>
-                    <tr>
-                        <td>Subtotal</td>
-                        <td><?= number_format($cart->getSubtotal() / 100, 2) ?></td>
-                    </tr>
-                    <tr>
-                        <td>Shipping & Handling</td>
-                        <td><?= number_format($cart->getShipping() / 100, 2) ?></td>
-                    </tr>
-                    <tr>
-                        <td>Total</td>
-                        <td><?= number_format($cart->getTotal() / 100, 2) ?></td>
-                    </tr>
-                    </tbody>
-                </table>
+                    <div style="width: max-content">
+                        Subtotal (<?= count($cart->items) ?> items):
+                        <span style="font-weight: bold">
+                            <?= number_format($cart->getSubtotal() / 100, 2) ?>
+                        </span>
+                    </div>
 
-                <a href="/checkout">Checkout</a>
+                    <button type="submit"
+                        <?php if (!$cart->canCheckout()): ?>
+                            disabled
+                        <?php endif; ?>
+                    >Checkout
+                    </button>
+                </form>
             <?php endif; ?>
         </div>
     </div>
 
     <script>
-        $("form").submit(/** @param {jQuery.Event} e */(e) => {
+        $("tr form").submit(/** @param {jQuery.Event} e */(e) => {
             e.preventDefault();
 
             const quantityInput = e.target.querySelector("input[type=number][name=quantity]");
