@@ -100,34 +100,6 @@ class QueryBuilder
     }
 
     /**
-     * @template Y of Entity
-     * @param literal-string $property
-     * @param QueryBuilder $qb
-     * @param JoinType $joinType
-     * @return $this
-     */
-    private function joinFromQueryBuilder(string $property, QueryBuilder $qb, JoinType $joinType = JoinType::INNER): static
-    {
-        $this->root->joinFrom($property, $qb->root, $joinType);
-        return $this;
-    }
-
-
-    /**
-     * @template Y of Entity
-     * @param literal-string|JoinBuilder<X, Y> $property
-     * @param string|QueryBuilder|null $alias
-     * @param JoinType $joinType
-     * @return $this
-     */
-    public function join(string|JoinBuilder $property, string|QueryBuilder|null $alias = null, JoinType $joinType = JoinType::INNER): static
-    {
-        if ($alias instanceof QueryBuilder)
-            return $this->joinFromQueryBuilder($property, $alias, $joinType);
-        return $this->joinFromProperty($property, $alias, $joinType);
-    }
-
-    /**
      * @param string|Predicate $predicate
      * @return $this
      */
