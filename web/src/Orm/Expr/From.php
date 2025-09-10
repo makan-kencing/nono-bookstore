@@ -26,24 +26,75 @@ class From extends Expression
 
     /**
      * @template Y of Entity
-     * @param literal-string|ReflectionProperty $property
-     * @param ?string $alias
+     * @param literal-string $property
+     * @param string|From<X, Y>|Join<X, Y>|null $alias
      * @param JoinType $joinType
      * @return Join<X, Y>
      */
     public function join(
-        string|ReflectionProperty $property,
-        ?string                   $alias = null,
-        JoinType                  $joinType = JoinType::INNER
-    ): Join
-    {
-        if ($property instanceof ReflectionProperty) {
-            $join = Join::fromProperty($property, $alias, $joinType);
-            $property = $property->getName();
-        } else
-            $join = Join::fromClass($this->class, $property, $alias, $joinType);
+        string $property,
+        string|From|Join|null $alias = null,
+        JoinType $joinType = JoinType::INNER
+    ): Join {
+        if ($alias instanceof Join)
+            return $this->joinFromJoin($property, $alias);
+        else if ($alias instanceof From)
+            return $this->joinFrom($property, $alias, $joinType);
+        else
+            return $this->joinFromProperty($property, $alias, $joinType);
+    }
+
+    /**
+     * @template Y of Entity
+     * @param literal-string $property
+     * @param Join<X, Y> $join
+     * @return Join<X, Y>
+     */
+    public function joinFromJoin(
+        string $property,
+        Join $join
+    ): Join {
         $this->joins[$property] = $join;
         return $join;
+    }
+
+    /**
+     * @template Y of Entity
+     * @param literal-string $property
+     * @param ?string $alias
+     * @param JoinType $joinType
+     * @return Join<X, Y>
+     */
+    public function joinFromProperty(
+        string $property,
+        ?string $alias = null,
+        JoinType $joinType = JoinType::INNER
+    ): Join {
+        return $this->joinFromJoin(
+            $property,
+            Join::fromClass($this->class, $property, $alias, $joinType)
+        );
+    }
+
+    /**
+     * @template Y of Entity
+     * @param literal-string $property
+     * @param From<X, Y> $from
+     * @param JoinType $joinType
+     * @return Join<X, Y>
+     */
+    public function joinFrom(
+        string $property,
+        From $from,
+        JoinType $joinType = JoinType::INNER
+    ): Join {
+        $join = $this->joinFromProperty($property, $from->alias, $joinType);
+        $join->joins = $from->joins;
+
+        return $this->joinFromJoin(
+            $property,
+            $join
+        );
     }
 
     /**

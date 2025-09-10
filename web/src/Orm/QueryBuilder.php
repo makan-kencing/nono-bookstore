@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Orm;
 
+use App\Orm\Expr\Join;
 use App\Orm\Expr\JoinType;
 use App\Orm\Expr\OrderBy;
 use App\Orm\Expr\OrderDirection;
@@ -18,7 +19,9 @@ use App\Orm\Expr\Root;
 class QueryBuilder
 {
     /** @use JoinBuildable<X> */
-    use JoinBuildable;
+    use JoinBuildable {
+        join as private joinFromProperty;
+    }
 
     /** @var ?Root<X> */
     private ?Root $root = null;
@@ -94,6 +97,34 @@ class QueryBuilder
         $builder->joinType = $joinType;
         $builder->build($this->root);
         return $this;
+    }
+
+    /**
+     * @template Y of Entity
+     * @param literal-string $property
+     * @param QueryBuilder $qb
+     * @param JoinType $joinType
+     * @return $this
+     */
+    private function joinFromQueryBuilder(string $property, QueryBuilder $qb, JoinType $joinType = JoinType::INNER): static
+    {
+        $this->root->joinFrom($property, $qb->root, $joinType);
+        return $this;
+    }
+
+
+    /**
+     * @template Y of Entity
+     * @param literal-string|JoinBuilder<X, Y> $property
+     * @param string|QueryBuilder|null $alias
+     * @param JoinType $joinType
+     * @return $this
+     */
+    public function join(string|JoinBuilder $property, string|QueryBuilder|null $alias = null, JoinType $joinType = JoinType::INNER): static
+    {
+        if ($alias instanceof QueryBuilder)
+            return $this->joinFromQueryBuilder($property, $alias, $joinType);
+        return $this->joinFromProperty($property, $alias, $joinType);
     }
 
     /**
