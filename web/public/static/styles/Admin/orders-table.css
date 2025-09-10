@@ -1,63 +1,185 @@
-/* 你原本就有的容器样式 */
-main.table{
-    width:82vw;
-    height:90vh;
-    background-color:#fff5;
-    backdrop-filter:blur(7px);
-    box-shadow:0.4rem .8rem #0005;
-    border-radius:.8rem;
+.order-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr; /* adjust ratio as needed */
+    gap: 24px;
+    align-items: flex-start;
 }
 
-/* —— 作用域从这里开始 —— */
-#orderTable .table_header{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:18px 16px;
+/* left image area */
+.order-left {
+    min-height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
 }
-#orderTable .table_header h1{
-    font-size:1.25rem; font-weight:700; margin:0;
-}
-
-#orderTable .table_body{
-    border:1px solid #222834;
-    border-radius:14px;
-    overflow:hidden;
-}
-
-#orderTable .table_body table{
-    width:100%;
-    border-collapse:separate;
-    border-spacing:0;
+.vendor-img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    padding: 24px;
 }
 
-#orderTable .table_body thead th{
-    background:#1a2030;
-    color:#cfd6e6;
-    font-weight:600;
-    padding:14px 16px;
-    border-bottom:1px solid #222834;
+/* right column: stacked cards */
+.order-right {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
-#orderTable .table_body tbody tr:nth-child(odd){ background:#141a26; }
-#orderTable .table_body tbody tr:nth-child(even){ background:#121722; }
-#orderTable .table_body tbody tr:hover{ background:#182034; }
-
-#orderTable .table_body td{
-    padding:14px 16px;
-    color:#d9e1f2;
-    border-bottom:1px solid #222834;
+/* card wrapper */
+.card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    overflow: hidden;
 }
 
-/* 状态 chip */
-#orderTable .chip{
-    display:inline-flex; align-items:center;
-    height:28px; padding:0 10px;
-    border-radius:999px;
-    font-size:.78rem; font-weight:600;
-    border:1px solid transparent;
+/* card header */
+.card-title {
+    font-weight: 700;
+    padding: 12px 16px;
+    background: #fff;
+    border-bottom: 1px solid #eee;
 }
-#user-table .chip-preparing{ background:#f59e0b33; color:#b45309; border-color:#f59e0b; }
-#user-table .chip-ready{      background:#06b6d433; color:#0e7490; border-color:#06b6d4; }
-#orderTable .chip-shipped{    background:#6366f133; color:#4338ca; border-color:#6366f1; }
-#orderTable .chip-delivered{  background:#22c55e33; color:#166534; border-color:#22c55e; }
-#orderTable .chip-error{      background:#ef444433; color:#991b1b; border-color:#ef4444; }
-/* —— 作用域到此结束 —— */
+
+/* card table */
+.card-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.card-table th,
+.card-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: top;
+}
+.card-table tr:last-child th,
+.card-table tr:last-child td {
+    border-bottom: none;
+}
+.card-table th {
+    color: #666;
+    font-weight: 600;
+    background: #fafafa;
+}
+
+/* monospace for numbers */
+.mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* chips for status */
+.chip {
+    display: inline-block;
+    padding: .2rem .6rem;
+    border-radius: 999px;
+    font-size: .85rem;
+    line-height: 1;
+}
+.chip-preparing { background: #fff3cd; color: #8a6d3b; }
+.chip-ready     { background: #e7f1ff; color: #0b5ed7; }
+.chip-shipped   { background: #d1e7dd; color: #0f5132; }
+.chip-delivered { background: #d1e7dd; color: #0f5132; }
+.chip-error     { background: #f8d7da; color: #842029; }
+
+/* responsive: stack columns on small screens */
+@media (max-width: 992px) {
+    .order-layout { grid-template-columns: 1fr; }
+    .order-left { order: 2; }
+    .order-right { order: 1; }
+}
+
+/* 1) Center the whole section */
+#order-stage {
+    max-width: 1100px;     /* overall width */
+    margin: 24px auto;     /* center horizontally */
+    padding: 8px 12px;
+}
+
+/* If your layout is already grid/flex, keep it; this only tweaks spacing */
+#order-stage > * { width: 100%; }
+
+/* 2) Left image: fixed square, smaller */
+#vendor-box {
+    width: clamp(180px, 26vw, 300px);   /* responsive but never too big */
+    aspect-ratio: 1 / 1;                /* perfect square */
+    border-radius: 12px;
+    border: 1px solid #e6e8ef;
+    box-shadow: 0 10px 30px rgba(31, 38, 135, 0.15);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Make the image fit nicely inside the square */
+#vendor-box img {
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+}
+
+/* 3) Right column wrapper: give it a tint + raised feel */
+#cards-wrap {
+    background: #f6f8ff;               /* subtle tinted background */
+    border: 1px solid #e0e5f2;
+    border-radius: 14px;
+    box-shadow: 0 18px 40px rgba(31, 38, 135, 0.18);  /* make it pop */
+    padding: 12px;
+}
+
+/* Space between the four inner blocks (whatever they are) */
+#cards-wrap > * + * {
+    margin-top: 14px;
+}
+
+/* 4) Enlarge table text inside the right column */
+#cards-wrap table {
+    width: 100%;
+    border-collapse: collapse;
+    background: transparent;
+    font-size: 15.5px;       /* bump body font size */
+    line-height: 1.45;
+}
+
+#cards-wrap th,
+#cards-wrap td {
+    padding: 13px 16px;
+    border-bottom: 1px solid #eef1f6;
+    vertical-align: middle;
+}
+
+#cards-wrap th {
+    width: 40%;
+    background: #f3f5fb;
+    color: #333;
+    font-weight: 600;
+    font-size: 16px;         /* slightly larger for header cell */
+}
+
+#cards-wrap tr:last-child th,
+#cards-wrap tr:last-child td {
+    border-bottom: none;
+}
+
+/* Optional: a bit of hover polish on rows */
+#cards-wrap tbody tr:hover td {
+    background: #f7f9ff;
+}
+
+/* If you use chips/badges inside the tables */
+#cards-wrap .chip {
+    display: inline-block;
+    padding: 0.24rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
