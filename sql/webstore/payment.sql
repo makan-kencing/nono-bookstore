@@ -6,7 +6,6 @@ create or replace table payment
     ref_no     varchar(255)                          not null,
     method     varchar(31)                           not null,
     amount     bigint unsigned                       not null,
-    comment    varchar(255)                          null,
     paid_at    timestamp default current_timestamp() not null,
     constraint payment_ibfk_1
         foreign key (invoice_id) references invoice (id)
