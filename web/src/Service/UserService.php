@@ -110,6 +110,38 @@ readonly class UserService extends Service
         $this->userRepository->update($user);
     }
 
+    /**
+     * @throws ForbiddenException
+     * @throws NotFoundException
+     * @throws UnauthorizedException
+     * @throws ConflictException
+     */
+    public function delete(int $id): void
+    {
+        $context = $this->getSessionContext();
+        if ($context === null)
+            throw new UnauthorizedException();
+
+        $qb = UserQuery::withMinimalDetails();
+        $qb->where(UserCriteria::byId())
+            ->bind(':id', $id);
+
+        $user = $this->userRepository->getOne($qb);
+        if ($user == null)
+            throw new NotFoundException();
+
+        if (!AuthRule::HIGHER->check($context->role, $user->role))
+            throw new ForbiddenException();
+
+        try {
+            $this->userRepository->deleteById($id);
+        } catch (PDOException $e) {
+            if ($e->getCode() == 23000)  // integrity constraint violation
+                throw new ConflictException([]);
+            throw $e;
+        }
+    }
+
     private function getUserIdFromSession(): int
     {
         session_start();
