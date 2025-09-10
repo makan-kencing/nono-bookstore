@@ -28,7 +28,7 @@ ob_start();
                     <tbody>
                     <?php $num = 1; ?>
                     <?php foreach ($orders as $order) : ?>
-                        <tr>
+                        <tr data-id="<?=$order->id?>">
                             <td><?= $num ?></td>
                             <td><?= $order->user->username ?></td>
                             <td><?= $order->refNo ?></td>
@@ -45,9 +45,9 @@ ob_start();
                                     <span class="chip chip-preparing">Preparing</span>
                                 <?php elseif ($order->shipment->readyAt && !$order->shipment->shippedAt) : ?>
                                     <span class="chip chip-ready">Ready To Ship</span>
-                                <?php elseif ($order->shipment->shippedAt && !$order->shipment->deliveredAt) : ?>
+                                <?php elseif ($order->shipment->shippedAt && !$order->shipment->arrivedAt) : ?>
                                     <span class="chip chip-shipped">Shipped</span>
-                                <?php elseif ($order->shipment->deliveredAt) : ?>
+                                <?php elseif ($order->shipment->arrivedAt) : ?>
                                     <span class="chip chip-delivered">Delivered</span>
                                 <?php else : ?>
                                     <span class="chip chip-error">Error</span>
