@@ -2,43 +2,61 @@
 
 declare(strict_types=1);
 
-use App\Entity\User\User;
+use App\Core\View;
 
-assert(isset($user) && $user instanceof User );
-$title = 'Order History';
+assert(isset($orders) && is_array($orders));
 
 ob_start();
 ?>
+<main style="display: flex; flex-flow: column; align-items: center; width: 100%;">
+    <div style="max-width: 1280px; width: 100%">
+        <div>
+            <h2>Your Orders</h2>
 
-    <div class="table-wrapper">
-        <h1>Order Detail List</h1>
-        <table class="user-table">
-            <thead>
-            <tr>
-                <th>Num</th>
-                <th>Ref No</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Shipment Status</th>
-            </tr>
-            </thead>
-            <tbody><?php $num=1;?>
+            <!-- TODO: searching (eta: never) -->
+        </div>
 
-            <?php foreach ($user->orders as $order): ?>
-                <tr data-id="<?= $order->id ?>">
-                    <td><?= $num?></td>
-                    <td><?=$order->refNo?></td>
-                    <?php foreach ($order->items as $item): ?>
-                        <td><?= $item->quantity?></td>
-                    <?php endforeach; ?>
-                </tr>
-                <?php $num++;?>
+        <div style="display: flex; flex-flow: column; align-items: stretch; gap: 1rem">
+            <?php foreach ($orders as $order): ?>
+                <div style="border: 1px solid lightgray; border-radius: 2rem">
+                    <div style="display: flex; gap: 2rem; padding: 1rem;">
+                        <div>
+                            <div>ORDER PLACED</div>
+                            <div><?= $order->orderedAt->format('F j, Y') ?></div>
+                        </div>
+
+                        <div>
+                            <div>TOTAL</div>
+                            <div>RM <?= number_format($order->getTotal() / 100, 2) ?></div>
+                        </div>
+
+                        <div>
+                            <div>SHIP TO</div>
+                            <div><?= $order->address->name ?></div>
+                        </div>
+
+                        <div style="text-align: right; margin-left: auto;">
+                            <div>ORDER #<?= $order->id ?></div>
+                            <div><a href="/order/<?= $order->id ?>">View order details</a></div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-flow: column; gap: 0.5rem;">
+                        <?php foreach ($order->items as $item): ?>
+                            <?= View::render('webstore/_component/_order_history_item.php', ['item' => $item]) ?>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
             <?php endforeach; ?>
-            </tbody>
-        </table>
+        </div>
     </div>
-
+</main>
 <?php
+
+$title = 'Order History';
 $content = ob_get_clean();
 
-include __DIR__ . "/_base.php";
+echo View::render(
+    'webstore/_base.php',
+    ['title' => $title, 'content' => $content]
+);

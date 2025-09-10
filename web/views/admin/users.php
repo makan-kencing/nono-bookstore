@@ -120,7 +120,7 @@ ob_start();
         })
 
         $("dialog.add-user > form").submit(/** @param {jQuery.Event} e */ (e) => {
-            console.log(e);
+            e.stopPropagation();
 
             const data = new FormData(e.target);
 
@@ -145,6 +145,8 @@ ob_start();
 
 
         $("button.delete").click(/** @param {jQuery.Event} e */ (e) => {
+            e.stopPropagation();
+
             const row = e.target.closest("tr");
 
             const id = row.dataset.id;
@@ -157,7 +159,20 @@ ob_start();
                     method: "DELETE",
                     error: (jqXHR, textStatus, errorThrown) => {
                         console.error(jqXHR, textStatus, errorThrown);
-                        alert("Delete failed");
+
+                        switch (jqXHR.status) {
+                            case 401:
+                                alert("You are not logged. ");
+                                break;
+                            case 403:
+                                alert("You do not have permission to delete this user.");
+                                break;
+                            case 409:
+                                alert("You cannot delete the user as it is referenced in other places.");
+                                break;
+                            default:
+                                alert("Delete failed.");
+                        }
                     },
                     success: (data, textStatus, jqXHR) => {
                         row.remove();

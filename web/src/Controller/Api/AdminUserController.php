@@ -12,6 +12,7 @@ use App\Exception\BadRequestException;
 use App\Exception\ConflictException;
 use App\Exception\ForbiddenException;
 use App\Exception\NotFoundException;
+use App\Exception\UnauthorizedException;
 use App\Exception\UnprocessableEntityException;
 use App\Router\AuthRule;
 use App\Router\Method\DELETE;
@@ -68,6 +69,12 @@ readonly class AdminUserController extends ApiController
         http_response_code(204);
     }
 
+    /**
+     * @throws UnauthorizedException
+     * @throws ForbiddenException
+     * @throws NotFoundException
+     * @throws ConflictException
+     */
     #[DELETE]
     #[Path('/{id}')]
     public function delUser(string $id): void

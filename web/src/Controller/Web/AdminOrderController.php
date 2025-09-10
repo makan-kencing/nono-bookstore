@@ -24,6 +24,10 @@ readonly class AdminOrderController extends WebController
         parent::__construct($pdo, $view);
         $this->orderRepository = new OrderRepository($this->pdo);
     }
+
+    /**
+     * @throws NotFoundException
+     */
     #[GET]
     #[Path('/{id}')]
     public function viewOrder(string $id): void
@@ -33,9 +37,9 @@ readonly class AdminOrderController extends WebController
             ->bind(':id', $id);
         $order = $this->orderRepository->getOne($qb);
 
-        if ($order===null) {
+        if ($order === null)
             throw new NotFoundException();
-        }
+
         echo $this->render('admin/order/order.php', ['order' => $order]);
     }
 

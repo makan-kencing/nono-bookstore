@@ -25,6 +25,9 @@ Content-Type: application/json
 }
 
 ###
+DELETE https://localhost/api/user/1
+
+###
 # note
 POST https://localhost/address/new
 Content-Type: application/x-www-form-urlencoded

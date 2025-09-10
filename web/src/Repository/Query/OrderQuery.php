@@ -14,13 +14,19 @@ class OrderQuery
     {
         $qb = new QueryBuilder();
         $qb->from(Order::class, 'o')
-            ->leftJoin('adjustments', 'adj')
+            ->join('address', 'oa')
             ->join('user', 'u')
+            ->leftJoin('adjustments', 'adj')
             ->leftJoin('shipment', 's')
-            ->join($qb->createJoin('items', 'it')
+            ->join($qb->createJoin('items', 'oi')
                 ->leftJoin($qb->createJoin('book', 'b')
+                    ->leftJoin('work', 'w')
                     ->leftJoin($qb->createJoin('images', 'bi')
-                        ->leftJoin('file', 'f'))));
+                        ->leftJoin('file', 'bif'))
+                    ->leftJoin($qb->createJoin('authors', 'bad')
+                        ->leftJoin('author', 'ba'))
+                    ->leftJoin('prices', 'p')
+                    ->leftJoin('inventories', 'i')));
         return $qb;
     }
 

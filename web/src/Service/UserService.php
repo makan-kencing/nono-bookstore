@@ -11,11 +11,13 @@ use App\Entity\User\User;
 use App\Exception\ConflictException;
 use App\Exception\ForbiddenException;
 use App\Exception\NotFoundException;
+use App\Exception\UnauthorizedException;
 use App\Repository\Query\UserCriteria;
 use App\Repository\Query\UserQuery;
 use App\Repository\UserRepository;
 use App\Router\AuthRule;
 use PDO;
+use PDOException;
 use RuntimeException;
 
 readonly class UserService extends Service
@@ -81,8 +83,7 @@ readonly class UserService extends Service
      */
     public function update(UserUpdateDTO $dto): void
     {
-        /** @var UserLoginContextDTO $context */
-        $context = $_SESSION['user'];
+        $context = $this->getSessionContext();
 
         $qb = UserQuery::withMinimalDetails();
         if ($dto->id != null)

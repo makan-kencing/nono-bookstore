@@ -25,4 +25,9 @@ class OrderItem extends Entity
     public int $quantity;
 
     public int $unitPrice;
+
+    public function getSubtotal(): int
+    {
+        return $this->unitPrice * $this->quantity;
+    }
 }

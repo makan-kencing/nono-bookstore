@@ -41,4 +41,29 @@ class Order extends Entity
     /** @var OrderAdjustment[] */
     #[OneToMany(OrderAdjustment::class, mappedBy: 'order')]
     public array $adjustments;
+
+    public function getSubtotal(): int
+    {
+        return array_reduce(
+            $this->items,
+            fn(int $carry, OrderItem $item) => $carry + $item->getSubtotal(),
+            0
+        );
+    }
+
+    public function getShipping(): int
+    {
+        return array_reduce(
+            $this->adjustments,
+            fn(int $carry, OrderAdjustment $adjustment) => $carry + ($adjustment->type === OrderAdjustmentType::SHIPPING
+                ? $adjustment->amount
+                : 0),
+            0
+        );
+    }
+
+    public function getTotal(): int
+    {
+        return $this->getSubtotal() + $this->getShipping();
+    }
 }
