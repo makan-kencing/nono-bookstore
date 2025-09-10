@@ -33,10 +33,26 @@ class BookQuery
         return $jb;
     }
 
+    public static function asBookListing(): QueryBuilder
+    {
+        $qb = new QueryBuilder();
+        $qb->from(Book::class, 'b')
+            ->join($qb->createJoin('work', 'w')
+                ->leftJoin($qb->createJoin('categories', 'cd')
+                    ->join('category', 'c')))
+            ->leftJoin($qb->createJoin('images', 'bi')
+                ->join('file', 'bif'))
+            ->join($qb->createJoin('authors', 'bad')
+                ->join('author', 'ba'))
+            ->leftJoin('prices', 'p')
+            ->leftJoin('inventories', 'i');
+        return $qb;
+    }
+
     /**
      * @return QueryBuilder<Book>
      */
-    public static function asBookListing(): QueryBuilder
+    public static function asBookDetails(): QueryBuilder
     {
         $qb = new QueryBuilder();
         $qb->from(Book::class, 'b')
