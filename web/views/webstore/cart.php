@@ -55,7 +55,7 @@ ob_start();
                         <tr>
                             <td>
                                 <?php if ($image !== null): ?>
-                                    <img src="<?= $image->file->filepath ?>" alt="<?= $image->file->alt ?>">
+                                    <img style="height: 200px;" src="<?= $image->file->filepath ?>" alt="<?= $image->file->alt ?>">
                                 <?php else: ?>
                                     <img src="" alt="">
                                 <?php endif; ?>
