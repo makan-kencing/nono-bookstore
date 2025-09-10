@@ -33,4 +33,14 @@ readonly class PageRequest
         return $this->getStartIndex() <= $index
             && $index <= $this->getEndIndex();
     }
+
+    public function getPrevious(): PageRequest
+    {
+        return new PageRequest(max($this->page - 1, 1), $this->pageSize);
+    }
+
+    public function getNext(): PageRequest
+    {
+        return new PageRequest($this->page + 1, $this->pageSize);
+    }
 }
