@@ -21,8 +21,8 @@ use RuntimeException;
  */
 class Join extends From
 {
-    public readonly JoinType $joinType;
-    public readonly ?string $mappedBy;
+    public JoinType $joinType;
+    public ?string $mappedBy;
 
     /**
      * @param class-string<X> $class

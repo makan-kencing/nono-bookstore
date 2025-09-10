@@ -12,7 +12,6 @@ use App\Orm\Attribute\Transient;
 use App\Orm\Entity;
 use ReflectionClass;
 use ReflectionException;
-use ReflectionProperty;
 
 /**
  * @template Z of Entity The source type
@@ -44,6 +43,15 @@ class From extends Expression
             return $this->joinFromProperty($property, $alias, $joinType);
     }
 
+    // This is only used to set all nested joins type as left join for joining optional properties
+    private function setAllJoins(JoinType $type): void
+    {
+        foreach ($this->joins as $join) {
+            $join->joinType = $type;
+            $join->setAllJoins($type);
+        }
+    }
+
     /**
      * @template Y of Entity
      * @param literal-string $property
@@ -55,6 +63,11 @@ class From extends Expression
         Join $join
     ): Join {
         $this->joins[$property] = $join;
+
+        // if this is left, make all nested joins left
+        if ($join->joinType == JoinType::LEFT)
+            $this->setAllJoins(JoinType::LEFT);
+
         return $join;
     }
 

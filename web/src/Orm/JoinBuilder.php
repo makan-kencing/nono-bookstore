@@ -61,7 +61,12 @@ class JoinBuilder
     {
         assert($this->joinType != null);
         $join = $from->join($this->property, $this->alias, $this->joinType);
-        foreach ($this->joins as $builder)
+        foreach ($this->joins as $builder) {
+            // if this is left, make all nested joins left
+            if ($this->joinType == JoinType::LEFT)
+                $builder->joinType = JoinType::LEFT;
+
             $builder->build($join);
+        }
     }
 }
