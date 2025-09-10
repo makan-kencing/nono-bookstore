@@ -47,7 +47,7 @@ readonly class CheckoutController extends WebController
         }
 
         echo $this->render(
-            'webstore/checkout/checkout.php',
+            'webstore/checkout.php',
             ['cart' => $cart]
         );
     }
@@ -93,9 +93,7 @@ readonly class CheckoutController extends WebController
             return;
         }
 
-        echo $this->render(
-            'webstore/checkout/success.php',
-            ['order' => $order]
-        );
+        http_response_code(303);
+        $this->redirect('/order/' . $order->id);
     }
 }
