@@ -1,0 +1,10 @@
+.book-cover {
+    width: 60px;
+    height: auto;
+    object-fit: cover;
+}
+
+.book-info p {
+    margin: 0;
+    line-height: 1.4;
+}

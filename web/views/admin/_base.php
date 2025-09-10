@@ -8,6 +8,7 @@ ob_start();
     <link rel="stylesheet" href="/static/styles/Admin/adminPage.css">
     <link rel="stylesheet" href="/static/styles/Admin/users-table.css">
     <link rel="stylesheet" href="/static/styles/Admin/orders-table.css">
+    <link rel="stylesheet" href="/static/styles/Admin/book-styles.css">
 
 <?php
 $extraHead = ob_get_clean();
