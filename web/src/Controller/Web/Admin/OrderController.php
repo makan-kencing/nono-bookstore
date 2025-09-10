@@ -4,17 +4,20 @@ namespace App\Controller\Web\Admin;
 
 use App\Controller\Web\WebController;
 use App\Core\View;
+use App\Entity\User\UserRole;
 use App\Exception\NotFoundException;
 use App\Repository\OrderRepository;
 use App\Repository\Query\OrderCriteria;
 use App\Repository\Query\OrderQuery;
+use App\Router\AuthRule;
 use App\Router\Method\GET;
 use App\Router\Path;
+use App\Router\RequireAuth;
 use PDO;
 
 
 #[Path('/admin/order')]
-//#[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL)]
+#[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL)]
 readonly class OrderController extends WebController
 {
     private OrderRepository $orderRepository;

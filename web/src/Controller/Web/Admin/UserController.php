@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Controller\Web\Admin;
 
-use App\Controller\Web\AuthRule;
-use App\Controller\Web\RequireAuth;
-use App\Controller\Web\UserRole;
 use App\Controller\Web\WebController;
 use App\Core\View;
+use App\Entity\User\UserRole;
 use App\Exception\NotFoundException;
 use App\Repository\Query\UserCriteria;
 use App\Repository\Query\UserQuery;
 use App\Repository\UserRepository;
+use App\Router\AuthRule;
 use App\Router\Method\GET;
 use App\Router\Path;
+use App\Router\RequireAuth;
 use PDO;
 
 #[Path('/admin/user')]
