@@ -19,7 +19,7 @@ class Payment extends Entity
 
     public string $refNo;
 
-    public PaymentMethod $method;
+    public string $method;
 
     public int $amount;
 
