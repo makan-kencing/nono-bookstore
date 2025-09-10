@@ -32,4 +32,30 @@ class BookCriteria
 
         return new Predicate($alias . 'deleted_at IS NULL');
     }
+
+    /**
+     * @param literal-string $param
+     * @param ?string $alias
+     * @return Predicate
+     */
+    public static function byPublisher(string $param = ':publisher', ?string $alias = null): Predicate
+    {
+        if ($alias === null) $alias = '';
+        else $alias .= '.';
+
+        return new Predicate($alias . 'publisher = ' . $param);
+    }
+
+    /**
+     * @param literal-string $param
+     * @param ?string $alias
+     * @return Predicate
+     */
+    public static function byLanguage(string $param = ':language', ?string $alias = null): Predicate
+    {
+        if ($alias === null) $alias = '';
+        else $alias .= '.';
+
+        return new Predicate($alias . 'language = ' . $param);
+    }
 }
