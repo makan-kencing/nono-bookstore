@@ -23,9 +23,9 @@ declare(strict_types=1);
         <h1 id="store-logo"><a href="/">Novelty N' Nonsense</a></h1>
 
         <search>
-            <form action="/search" method="get">
+            <form action="/books/search" method="get">
                 <label for="search"></label>
-                <input type="search" name="q" id="search" placeholder="Search by Title, Author, Keyword, or ISBN">
+                <input type="search" name="query" id="search" placeholder="Search by Title, Author, Keyword, or ISBN">
                 <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
             </form>
         </search>
