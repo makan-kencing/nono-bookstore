@@ -62,7 +62,8 @@ ob_start();
                 </table>
 
                 <div>
-                    Page <?= $page->page ?> Showing <?= min($page->pageSize, count($users)) ?> of <?= $count ?>
+                    Page <?= $page->page ?> of <?= (int) (($count - 1) / $page->pageSize) + 1 ?>
+                    Showing <?= min($page->pageSize, count($users)) ?> of <?= $count ?>
                 </div>
 
                 <div>
