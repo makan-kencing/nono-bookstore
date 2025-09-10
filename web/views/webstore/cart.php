@@ -86,7 +86,7 @@ ob_start();
                                 </form>
                             </td>
                             <td>
-                                <span style="font-weight: bold"><?= $price?->amount / 100 ?></span>
+                                <span style="font-weight: bold">RM <?= number_format($price?->amount / 100, 2) ?></span>
                             </td>
                         </tr>
                     <?php endforeach; ?>

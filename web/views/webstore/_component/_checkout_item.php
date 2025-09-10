@@ -52,6 +52,6 @@ $image = $book->images[0] ?? null;
             <p>No stock</p>
         <?php endif; ?>
 
-        <span style="font-weight: bold"><?= $price?->amount / 100 ?></span>
+        <span style="font-weight: bold">RM <?= number_format($price?->amount / 100, 2) ?></span>
     </div>
 </div>

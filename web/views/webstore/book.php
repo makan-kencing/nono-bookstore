@@ -16,7 +16,7 @@ ob_start();
             <div id="book-preview" class="carousel">
                 <div class="carousel-images">
                     <?php foreach ($book->images as $image) : ?>
-                        <div style="order: <?= $image->imageOrder ?>">
+                        <div style="order: <?= $image->imageOrder ?>; display: flex;">
                             <img src="<?= $image->file->filepath ?>" alt="<?= $image->file->alt ?>">
                         </div>
                     <?php endforeach; ?>
@@ -65,13 +65,15 @@ ob_start();
                             <?php if ($otherBook->id === $book->id): ?>
                                 <div class="product-variant">
                                     <p class="type"><?= $otherBook->coverType->title() ?></p>
-                                    <p class="price"><?= $otherBook->getCurrentPrice()->amount / 100 ?></p>
+                                    <p><?= $otherBook->language ?></p>
+                                    <p class="price">RM <?= number_format($otherBook->getCurrentPrice()->amount / 100, 2) ?></p>
                                 </div>
                             <?php else: ?>
                                 <a href="/book/<?= $otherBook->isbn ?>/<?= $work->slug ?>"
                                    class="product-variant">
                                     <p class="type"><?= $otherBook->coverType->title() ?></p>
-                                    <p class="price"><?= $otherBook->getCurrentPrice()->amount / 100 ?></p>
+                                    <p><?= $otherBook->language ?></p>
+                                    <p class="price">RM <?= number_format($otherBook->getCurrentPrice()->amount / 100, 2) ?></p>
                                 </a>
                             <?php endif; ?>
                         <?php endforeach; ?>
