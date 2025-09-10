@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Orm\Expr;
 
+use App\Orm\Attribute\Id;
 use App\Orm\Attribute\ManyToOne;
 use App\Orm\Attribute\OneToMany;
 use App\Orm\Attribute\OneToOne;
@@ -89,6 +90,32 @@ class From extends Expression
                     $clauses[] = $clause;
             else
                 $clauses[] = $select . ' `' . $alias . '`';
+        }
+
+        return $clauses;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function toDistinctCountClauses(): array
+    {
+
+        /** @var string[] $clauses */
+        $clauses = [];
+
+        $reflectionClass = new ReflectionClass($this->class);
+        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
+            if (!$reflectionProperty->getAttributes(Id::class))
+                continue;
+
+            $clause = $this->alias . '.' . self::toSnakeCase($reflectionProperty->getName());
+
+            if ($reflectionProperty->getAttributes(ManyToOne::class)
+                || $reflectionProperty->getAttributes(OneToOne::class))
+                $clause .= '_id';
+
+            $clauses[] = $clause;
         }
 
         return $clauses;

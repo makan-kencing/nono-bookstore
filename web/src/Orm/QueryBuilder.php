@@ -203,10 +203,15 @@ class QueryBuilder
         return $query . ';';
     }
 
+    public function getSqlCountClause(): string
+    {
+        return 'COUNT(DISTINCT ' . implode(', ', $this->root->toDistinctCountClauses()) . ')';
+    }
+
     public function getCount(): string
     {
         $query = "SELECT\n"
-            . "COUNT(*)\n"
+            . $this->getSqlCountClause() . "\n"
             . 'FROM ' . $this->getSqlFromClause() . "\n"
             . implode("\n", $this->getSqlJoinClauses()) . "\n";
 
