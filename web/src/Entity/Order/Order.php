@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Entity\Order;
 
+use App\Entity\User\Address;
 use App\Entity\User\User;
 use App\Orm\Attribute\Id;
+use App\Orm\Attribute\ManyToOne;
 use App\Orm\Attribute\OneToMany;
 use App\Orm\Attribute\OneToOne;
 use App\Orm\Entity;
@@ -18,6 +20,9 @@ class Order extends Entity
 
     #[OneToOne]
     public User $user;
+
+    #[ManyToOne]
+    public Address $address;
 
     public string $refNo;
 
@@ -35,5 +40,5 @@ class Order extends Entity
 
     /** @var OrderAdjustment[] */
     #[OneToMany(OrderAdjustment::class, mappedBy: 'order')]
-    public ?array $adjustments;
+    public array $adjustments;
 }
