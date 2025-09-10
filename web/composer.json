@@ -29,10 +29,7 @@
             "src/"
         ],
         "files": [
-            "src/Utils/array_all.php",
-            "src/Utils/array_any.php",
-            "src/Utils/array_find.php",
-            "src/Utils/array_get.php"
+            "src/Utils/array.php"
         ]
     },
     "autoload-dev": {
