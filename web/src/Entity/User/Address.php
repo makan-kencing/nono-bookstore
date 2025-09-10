@@ -16,6 +16,8 @@ class Address extends Entity
     #[ManyToOne]
     public User $user;
 
+    public string $name;
+
     public string $address1;
 
     public ?string $address2;
@@ -27,4 +29,6 @@ class Address extends Entity
     public string $postcode;
 
     public string $country;
+
+    public string $phoneNumber;
 }
