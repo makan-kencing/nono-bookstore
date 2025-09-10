@@ -4,8 +4,14 @@ declare(strict_types=1);
 
 namespace App\Entity\Cart;
 
+use function App\Utils\array_any;
+use App\Entity\Order\Order;
+use App\Entity\Order\OrderAdjustment;
+use App\Entity\Order\OrderAdjustmentType;
+use App\Entity\User\Address;
 use App\Entity\User\User;
 use App\Orm\Attribute\Id;
+use App\Orm\Attribute\ManyToOne;
 use App\Orm\Attribute\OneToMany;
 use App\Orm\Attribute\OneToOne;
 use App\Orm\Entity;
@@ -21,6 +27,9 @@ class Cart extends Entity
     /** @var CartItem[] */
     #[OneToMany(CartItem::class, mappedBy: 'cart')]
     public array $items;
+
+    #[ManyToOne]
+    public ?Address $address;
 
     public function getSubtotal(): int
     {
