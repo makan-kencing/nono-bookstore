@@ -22,14 +22,7 @@ class CartQuery
         $qb = new QueryBuilder();
         $qb->from(Cart::class, 'c')
             ->leftJoin($qb->createJoin('items', 'ci')
-                ->leftJoin($qb->createJoin('book', 'b')
-                    ->leftJoin('work', 'w')
-                    ->leftJoin($qb->createJoin('images', 'bi')
-                        ->leftJoin('file', 'bif'))
-                    ->leftJoin($qb->createJoin('authors', 'bad')
-                        ->leftJoin('author', 'ba'))
-                    ->leftJoin('prices', 'p')
-                    ->leftJoin('inventories', 'i')))
+                ->leftJoin(BookQuery::bookDetailsPart('book', 'b')))
             ->join($qb->createJoin('user', 'u')
                 ->leftJoin('addresses', 'ua'))
             ->leftJoin('address', 'a');
