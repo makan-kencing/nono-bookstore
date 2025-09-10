@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Web;
+namespace App\Controller\Web\Admin;
 
 use App\Controller\Web\WebController;
 use App\Core\View;
@@ -15,7 +15,7 @@ use PDO;
 
 #[Path('/admin/order')]
 //#[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL)]
-readonly class AdminOrderController extends WebController
+readonly class OrderController extends WebController
 {
     private OrderRepository $orderRepository;
 

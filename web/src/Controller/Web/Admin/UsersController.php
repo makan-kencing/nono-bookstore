@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Web;
+namespace App\Controller\Web\Admin;
 
+use App\Controller\Web\WebController;
 use App\Core\View;
 use App\DTO\Request\PaginationDTO;
 use App\Entity\User\UserRole;
 use App\Exception\BadRequestException;
 use App\Exception\UnprocessableEntityException;
-use App\Orm\Expr\PageRequest;
 use App\Repository\Query\UserQuery;
 use App\Repository\UserRepository;
 use App\Router\AuthRule;
@@ -20,7 +20,7 @@ use PDO;
 
 #[Path('/admin/users')]
 #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL)]
-readonly class AdminUsersController extends WebController
+readonly class UsersController extends WebController
 {
     private UserRepository $userRepository;
 

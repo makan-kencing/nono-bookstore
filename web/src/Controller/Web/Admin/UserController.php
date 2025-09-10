@@ -2,8 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Web;
+namespace App\Controller\Web\Admin;
 
+use App\Controller\Web\AuthRule;
+use App\Controller\Web\RequireAuth;
+use App\Controller\Web\UserRole;
+use App\Controller\Web\WebController;
 use App\Core\View;
 use App\Exception\NotFoundException;
 use App\Repository\Query\UserCriteria;
@@ -14,8 +18,8 @@ use App\Router\Path;
 use PDO;
 
 #[Path('/admin/user')]
-//#[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL)]
-readonly class AdminUserController extends WebController
+#[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL)]
+readonly class UserController extends WebController
 {
     private UserRepository $userRepository;
 
