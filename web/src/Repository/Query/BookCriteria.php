@@ -14,15 +14,22 @@ class BookCriteria
 
     /**
      * @param literal-string $param
+     * @param ?string $alias
      * @return Predicate
      */
-    public static function byIsbn(string $param = ':isbn'): Predicate
+    public static function byIsbn(string $param = ':isbn', ?string $alias = null): Predicate
     {
-        return new Predicate('b.isbn = ' . $param);
+        if ($alias === null) $alias = '';
+        else $alias .= '.';
+
+        return new Predicate($alias . 'isbn = ' . $param);
     }
 
-    public static function notSoftDeleted(): Predicate
+    public static function notSoftDeleted(?string $alias = null): Predicate
     {
-        return new Predicate('b.deleted_at IS NULL');
+        if ($alias === null) $alias = '';
+        else $alias .= '.';
+
+        return new Predicate($alias . 'deleted_at IS NULL');
     }
 }
