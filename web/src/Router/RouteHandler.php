@@ -36,7 +36,6 @@ readonly class RouteHandler
     /**
      * @throws UnauthorizedException
      * @throws ForbiddenException
-     * @throws BadRequestException
      */
     public function handleAuthMiddleware(): bool
     {
@@ -44,12 +43,6 @@ readonly class RouteHandler
 
         session_start();
 
-
-        $_SESSION['user'] = new UserLoginContextDTO(
-            1,
-            'admin',
-            UserRole::ADMIN,
-        );
         $context = $_SESSION['user'] ?? null;
         if ($context == null) {
             if ($this->authConstraint->redirect)
