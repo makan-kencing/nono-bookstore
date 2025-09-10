@@ -1,6 +1,5 @@
 create or replace table order_item
 (
-    id         bigint unsigned not null,
     order_id   bigint unsigned not null,
     book_id    bigint unsigned not null,
     quantity   int unsigned    not null,
