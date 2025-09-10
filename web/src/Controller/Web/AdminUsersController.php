@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Controller\Web;
 
 use App\Core\View;
+use App\DTO\Request\PaginationDTO;
 use App\Entity\User\UserRole;
+use App\Exception\BadRequestException;
+use App\Exception\UnprocessableEntityException;
 use App\Orm\Expr\PageRequest;
 use App\Repository\Query\UserQuery;
 use App\Repository\UserRepository;
@@ -27,16 +30,29 @@ readonly class AdminUsersController extends WebController
         $this->userRepository = new UserRepository($this->pdo);
     }
 
+    /**
+     * @throws BadRequestException
+     * @throws UnprocessableEntityException
+     */
     #[GET] //This is for database using
     public function viewUserList(): void
     {
+        $dto = PaginationDTO::jsonDeserialize($_GET);
+        $dto->validate();
+
+        $pageRequest = $dto->toPageRequest();
+
         $qb = UserQuery::userListings();
-        $qb->page(new PageRequest(2,10));
+        $qb->page($pageRequest);
         $users = $this->userRepository->get($qb);
+        $count = $this->userRepository->count($qb);
 
         // convert to dto
 
-        echo $this->render('admin/users.php', ['users' => $users]);
+        echo $this->render(
+            'admin/users.php',
+            ['users' => $users, 'page' => $pageRequest, 'count' => $count]
+        );
     }
 
 //    #[GET]

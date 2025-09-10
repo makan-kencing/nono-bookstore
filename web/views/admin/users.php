@@ -3,9 +3,12 @@ declare(strict_types=1);
 
 use App\Entity\User\User;
 use App\Entity\User\UserRole;
+use App\Orm\Expr\PageRequest;
 
 /** @var User[] $users */
 assert(isset($users) && is_array($users));
+assert(isset($page) && $page instanceof PageRequest);
+assert(isset($count) && is_int($count));
 
 $title = 'Users';
 ob_start();
@@ -29,7 +32,8 @@ ob_start();
                         <th>Actions</th>
                     </tr>
                     </thead>
-                    <tbody><?php $num=1;?>
+                    <tbody>
+                    <?php $num = $page->getStartIndex() + 1 ?>
                     <?php foreach ($users as $user): ?>
                         <tr data-id="<?= $user->id ?>">
                             <td class="mono"><?= $num ?></td>
@@ -52,10 +56,24 @@ ob_start();
                                 </div>
                             </td>
                         </tr>
-                        <?php $num++;?>
+                        <?php $num++ ?>
                     <?php endforeach; ?>
                     </tbody>
                 </table>
+
+                <div>
+                    Page <?= $page->page ?> Showing <?= min($page->pageSize, count($users)) ?> of <?= $count ?>
+                </div>
+
+                <div>
+                    <?php if ($page->page > 1 ): ?>
+                        <a style="float: left" href="/admin/users?page=<?= $page->page - 1 ?>&page_size=<?= $page->pageSize ?>">Previous</a>
+                    <?php endif; ?>
+
+                    <?php if ($count > $page->page * $page->pageSize): ?>
+                        <a style="float: right" href="/admin/users?page=<?= $page->page + 1 ?>&page_size=<?= $page->pageSize ?>">Next</a>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
     </section>
