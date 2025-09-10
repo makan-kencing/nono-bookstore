@@ -6,6 +6,7 @@ ob_start();
 ?>
 
 <link rel="stylesheet" href="/static/styles/webstore.css">
+<link rel="stylesheet" href="/static/styles/user-table.css">
 
 <?php
 $extraHead = ob_get_clean();
