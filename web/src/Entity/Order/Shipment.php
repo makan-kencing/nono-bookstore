@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Entity\Order;
 
+use AllowDynamicProperties;
 use App\Entity\Trait\Updatable;
 use App\Orm\Attribute\Id;
 use App\Orm\Attribute\ManyToOne;
 use App\Orm\Entity;
 use DateTime;
 
-class Shipment extends Entity
+#[AllowDynamicProperties] class Shipment extends Entity
 {
     use Updatable;
 
