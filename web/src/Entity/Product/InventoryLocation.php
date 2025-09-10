@@ -22,9 +22,4 @@ enum InventoryLocation: int
             InventoryLocation::OFFSITE => 'Ship within 2 weeks'
         };
     }
-
-    public function compareTo(InventoryLocation $other): int
-    {
-        return $this->value - $other->value;
-    }
 }

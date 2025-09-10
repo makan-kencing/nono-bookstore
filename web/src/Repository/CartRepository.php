@@ -7,7 +7,6 @@ namespace App\Repository;
 use App\Entity\Cart\Cart;
 use App\Entity\Cart\CartItem;
 use App\Entity\User\User;
-use PDOException;
 
 readonly class CartRepository extends Repository
 {
@@ -40,6 +39,18 @@ readonly class CartRepository extends Repository
         $cart->user = $user;
         $cart->items = [];
         return $cart;
+    }
+
+    public function updateCart(Cart $cart): void
+    {
+        $stmt = $this->conn->prepare('
+            UPDATE cart
+            SET address_id = :address_id
+            WHERE id = :id
+        ');
+        $stmt->bindValue(':id', $cart->id);
+        $stmt->bindValue(':address_id', $cart->address?->id);
+        $stmt->execute();
     }
 
     public function insertItem(CartItem $item): void
