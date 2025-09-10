@@ -7,7 +7,7 @@ namespace App\Entity\Order;
 enum OrderAdjustmentType
 {
     case TAX;
-    case DELIVERY;
+    case SHIPPING;
     case DISCOUNT;
     case SURCHARGE;
 }
