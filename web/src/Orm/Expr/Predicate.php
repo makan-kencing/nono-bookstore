@@ -58,7 +58,12 @@ class Predicate
     {
         /** @var string[] $clauses */
         $clauses = [];
-        $clauses[] = $this->left;
+
+        if ($this->left instanceof Predicate)
+            foreach ($this->left->toClauses() as $clause)
+                $clauses[] = $clause;
+        else
+            $clauses[] = $this->left;
 
         if ($this->isCombined()) {
             $clauses[] = $this->operator->name;
