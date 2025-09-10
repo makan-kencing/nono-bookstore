@@ -18,6 +18,8 @@ class OrderQuery
             ->join('user', 'u')
             ->leftJoin('adjustments', 'adj')
             ->leftJoin('shipment', 's')
+            ->join($qb->createJoin('invoice','inv')
+                ->join('payment','py'))
             ->join($qb->createJoin('items', 'oi')
                 ->leftJoin($qb->createJoin('book', 'b')
                     ->leftJoin('work', 'w')

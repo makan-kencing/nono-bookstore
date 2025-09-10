@@ -90,28 +90,59 @@ ob_start();
                             <td class="mono"><?= $order->shipment?->arrivedAt?->format('Y-m-d H:i:s') ?? '-' ?></td>
                         </tr>
 
-                        </tbody>
-                    </table>
-                </div>
+                    </tbody>
+                </table>
+            </div>
 
-
-
-                <div class="card" id="totals-card">
-                    <div class="card-title">Totals</div>
-                    <table class="card-table">
-                        <tbody>
-                        <tr>
-                            <th>Total Cost</th>
-                            <?php foreach ($order->adjustments as $adj)  ?>
-                                <td class="mono"><?= $adj->amount?></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-
+            <div class="card" id="totals-card">
+                <div class="card-title">Totals</div>
+                <table class="card-table">
+                    <tbody>
+                    <tr>
+                        <th>Total Cost</th>
+                        <td class="mono">RM <?= number_format($order->getTotal() / 100, 2) ?></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
+        <div>
+            <div>
+                <button style="float: right">Update Shipment to Ready</button>
+<!--                <button>Update Shipment to Shipped</button>-->
+<!--                <button>Update Shipment to Arrived</button>-->
+            </div>
+
+            <div class="table-wrapper">
+                <table class="user-table" id="user-table">
+                    <thead>
+                    <tr>
+                        <th>Num</th>
+                        <th>Book</th>
+
+                        <th>Quantity</th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php $num = 1; ?>
+                    <tr>
+                        <td><?=$num?></td>
+                        <?php foreach ($order->items as $item) : ?>
+                            <td><?= View::render('admin/_component/_line_item.php', ['item' => $item]) ?></td>
+
+                            <td>
+                                <?=$item->quantity?>
+                            </td>
+                            <?php $num++; ?>
+                        <?php endforeach; ?>
+                    </tr>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
 
     </div>
 
