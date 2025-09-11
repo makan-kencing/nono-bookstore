@@ -20,4 +20,16 @@ abstract readonly class Service
     {
         return AuthService::getLoginContext();
     }
+
+    public function getProtocol(): string
+    {
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1)
+            return 'https://';
+        return 'http://';
+    }
+
+    public function getSiteUrl(): string
+    {
+        return $this->getProtocol() . $_SERVER['HTTP_HOST'];
+    }
 }

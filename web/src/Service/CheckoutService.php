@@ -97,8 +97,8 @@ readonly class CheckoutService extends Service
                 ]
             ],
             'mode' => 'payment',
-            'success_url' => 'https://' . $_SERVER['HTTP_HOST'] . '/checkout/success?id={CHECKOUT_SESSION_ID}',
-            'cancel_url' => 'https://' . $_SERVER['HTTP_HOST'] . '/checkout',
+            'success_url' => $this->getSiteUrl() . '/checkout/success?id={CHECKOUT_SESSION_ID}',
+            'cancel_url' => $this->getSiteUrl() . '/checkout',
         ]);
     }
 
