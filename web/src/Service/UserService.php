@@ -16,6 +16,7 @@ use App\Exception\NotFoundException;
 use App\Exception\UnauthorizedException;
 use App\Repository\FileRepository;
 use App\Repository\Query\UserCriteria;
+use App\Repository\Query\UserProfileCriteria;
 use App\Repository\Query\UserQuery;
 use App\Repository\UserProfileRepository;
 use App\Repository\UserRepository;
@@ -159,44 +160,28 @@ readonly class UserService extends Service
      * @return User
      * @throws NotFoundException
      */
-    public function updateUserProfile(int $id, UserProfileUpdateDTO $dto): void
+    public function updateUserProfile(UserProfileUpdateDTO $dto): void
     {
         $context = $this->getSessionContext();
         if ($context === null)
             throw new UnauthorizedException();
 
         $qb = UserQuery::withMinimalDetails();
-            if ($dto->id != null){
-                $qb->where(UserCriteria::byId())
-                    ->bind(':id', $dto->id);
-            }
+        if($dto->id != null)
+            $qb->where(UserProfileCriteria::byId())->bind(':id', $context->id);
+        else if($dto->contactNo != null)
+            $qb->where(UserProfileCriteria::byContactNo())
+                ->bind(':contact_no', $dto->contactNo);
+        else if($dto->dob != null)
+            $qb->where(UserProfileCriteria::byDateOfBirth())
+                ->bind('date_of_birth', $dto->dob);
 
-        $user = $this->userProfileRepository->getOne($qb);
-        if ($user === null) {
+        $userProfile = $this->userProfileRepository->getOne($qb);
+        if ($userProfile === null) {
             throw new NotFoundException;
         }
-        $dto->updateProfile($user);
-
-//        if (isset($_POST['password']) || isset(json_decode(file_get_contents('php://input'), true)['password'])) {
-//            $password = $_POST['password'] ?? json_decode(file_get_contents('php://input'), true)['password'];
-//            if ($password) {
-//                $user->hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-//            }
-//        }
-//
-//        $this->userRepository->update($user);
-//
-//        $profile = new UserProfile();
-//        $profile->user = $user;
-//        $profile->contactNo = $_POST['contact_no'] ?? (json_decode(file_get_contents('php://input'), true)['contact_no'] ?? null);
-//        $dob = $_POST['dob'] ?? (json_decode(file_get_contents('php://input'), true)['dob'] ?? null);
-//        $profile->dob = $dob ? new DateTime($dob) : null;
-//
-//        if ($this->userProfileRepository->exists($user->id)) {
-//            $this->userProfileRepository->updateProfile($profile);
-//        } else {
-//            $this->userProfileRepository->insertProfile($profile);
-//        }
+        $dto->updateProfile($userProfile);
+        $this->userProfileRepository->updateProfile($userProfile);;
     }
 
     public function getUserProfile(int $id): UserProfile

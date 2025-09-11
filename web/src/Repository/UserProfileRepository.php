@@ -29,6 +29,4 @@ readonly class UserProfileRepository extends Repository
         $stmt->bindValue(':contact_no', $userProfile->contactNo);
         $stmt->bindValue(':dob', $userProfile->dob);
     }
-
-
 }

@@ -2,33 +2,43 @@
 
 namespace App\DTO\Request;
 
-use App\DTO\Request\RequestDTO;
+use App\Entity\User\UserProfile;
 use App\Exception\BadRequestException;
 use App\Exception\UnprocessableEntityException;
+use DateTime;
 use Throwable;
+use function App\Utils\array_get;
 
 readonly class UserProfileUpdateDTO extends RequestDTO
 {
     public function __construct(
-        public ?string $username = null,
-        public ?string $email = null,
-        public ?string $password = null,
-        public ?string $contactNo = null,
-        public ?string $dob = null,
-    ) {}
+        public ?string   $contactNo = null,
+        public ?DateTime $dob = null,
+    )
+    {
+    }
+
     /**
      * @inheritDoc
      */
     public static function jsonDeserialize(mixed $json): self
     {
-        if (!is_array($json)) throw new BadRequestException();
+        assert(is_array($json));
         try {
+            $contactNo = array_get($json, 'contact_no');
+            $dobString = array_get($json, 'dob');
+            $dob = null;
+
+            if ($dobString) {
+                $dob = DateTime::createFromFormat('Y-m-d', $dobString);
+                if (!$dob) {
+                    throw new BadRequestException(); // invalid date format
+                }
+            }
+
             return new self(
-                $json['username'] ?? null,
-                $json['email'] ?? null,
-                $json['password'] ?? null,
-                $json['contact_no'] ?? null,
-                $json['dob'] ?? null,
+                $contactNo,
+                $dob
             );
         } catch (Throwable) {
             throw new BadRequestException();
@@ -41,13 +51,36 @@ readonly class UserProfileUpdateDTO extends RequestDTO
     public function validate(): void
     {
         $rules = [];
-        if ($this->email && !filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+
+        if ($this->contactNo !== null && !preg_match('/^[0-9+\-\s]{7,20}$/', $this->contactNo)) {
             $rules[] = [
-                "field" => "email",
-                "type" => "email",
-                "reason" => "Invalid email format"
+                "field" => "contact_no",
+                "type" => "format",
+                "reason" => "Invalid contact number format"
             ];
         }
-        if ($rules) throw new UnprocessableEntityException($rules);
+
+        if ($this->dob !== null && $this->dob > new DateTime()) {
+            $rules[] = [
+                "field" => "dob",
+                "type" => "invalid",
+                "reason" => "Date of birth cannot be in the future"
+            ];
+        }
+
+        if ($rules) {
+            throw new UnprocessableEntityException($rules);
+        }
+    }
+
+    public function updateProfile(UserProfile $userProfile): void
+    {
+        if ($this->contactNo) {
+            $userProfile->contactNo = $this->contactNo;
+        }
+
+        if ($this->dob) {
+            $userProfile->dob = $this->dob;
+        }
     }
 }

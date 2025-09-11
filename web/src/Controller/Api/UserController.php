@@ -6,11 +6,13 @@ namespace App\Controller\Api;
 
 use App\Core\View;
 use App\DTO\Request\UserProfileUpdateDTO;
+use App\DTO\Request\UserUpdateDTO;
 use App\Exception\BadRequestException;
 use App\Exception\NotFoundException;
 use App\Exception\UnprocessableEntityException;
 use App\Router\Method\GET;
 use App\Router\Method\POST;
+use App\Router\Method\PUT;
 use App\Router\Path;
 use App\Service\UserService;
 use PDO;
@@ -43,19 +45,38 @@ readonly class UserController extends ApiController
     }
 
     /**
+     * @return void
+     * @throws BadRequestException
+     * @throws NotFoundException
+     * @throws UnprocessableEntityException
+     * @throws \App\Exception\ForbiddenException
+     */
+    #[PUT]
+    #[Path('/updateUser')]
+    public function updateUser(): void
+    {
+        $dto = UserUpdateDTO::jsonDeserialize(self::getJsonBody());
+        $dto->validate();
+
+        $this->userService->update($dto);
+
+        http_response_code(204);
+    }
+
+    /**
      * @throws UnprocessableEntityException
      * @throws BadRequestException
      * @throws NotFoundException
      */
     #[PUT]
-    #[Path('/update/{id}')]
-    public function update(int $id): void
+    #[Path('/updateUserProfile')]
+    public function updateUserProfile(): void
     {
         $dto = UserProfileUpdateDTO::jsonDeserialize(self::getJsonBody());
         $dto->validate();
 
-        $user = $this->userService->updateUserProfile($id, $dto);
+        $this->userService->updateUserProfile($dto);
 
-        http_response_code(201);
+        http_response_code(204);
     }
 }
