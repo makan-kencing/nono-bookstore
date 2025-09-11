@@ -14,7 +14,7 @@ RUN rm -rf /var/lib/apt/lists/*
 
 WORKDIR /var/www/webapp
 
-COPY . .
+COPY --chown=www-data:www-data . .
 
 RUN pecl install xdebug
 RUN docker-php-ext-configure gd --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype
