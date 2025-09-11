@@ -2,17 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Api\Admin;
+namespace App\Controller\Api;
 
-use App\Controller\Api\ApiController;
 use App\Core\View;
 use App\DTO\Request\BookSearchDTO;
 use App\Exception\BadRequestException;
 use App\Exception\UnprocessableEntityException;
-use App\Router\Method\DELETE;
 use App\Router\Method\GET;
-use App\Router\Method\POST;
-use App\Router\Method\PUT;
 use App\Router\Path;
 use App\Service\BookService;
 use PDO;
