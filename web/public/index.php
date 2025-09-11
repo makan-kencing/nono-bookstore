@@ -34,6 +34,7 @@ $controllers = [
     'App\Controller\Api\UserController',
     'App\Controller\Api\WishlistController',
     'App\Controller\Api\AuthController',
+    'App\Controller\Api\FileController',
     'App\Controller\Web\Admin\UsersController',
     'App\Controller\Web\Admin\OrdersController',
     'App\Controller\Web\Admin\OrderController',
