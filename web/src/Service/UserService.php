@@ -5,29 +5,37 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\DTO\Request\UserCreateDTO;
+use App\DTO\Request\UserProfileUpdateDTO;
 use App\DTO\Request\UserUpdateDTO;
 use App\DTO\UserLoginContextDTO;
 use App\Entity\User\User;
+use App\Entity\User\UserProfile;
 use App\Exception\ConflictException;
 use App\Exception\ForbiddenException;
 use App\Exception\NotFoundException;
 use App\Exception\UnauthorizedException;
+use App\Repository\FileRepository;
 use App\Repository\Query\UserCriteria;
 use App\Repository\Query\UserQuery;
+use App\Repository\UserProfileRepository;
 use App\Repository\UserRepository;
 use App\Router\AuthRule;
+use DateTime;
 use PDO;
 use PDOException;
-use RuntimeException;
 
 readonly class UserService extends Service
 {
     private UserRepository $userRepository;
+    private UserProfileRepository $userProfileRepository;
+    private FileRepository $fileRepository;
 
     public function __construct(PDO $pdo)
     {
         parent::__construct($pdo);
         $this->userRepository = new UserRepository($this->pdo);
+        $this->userProfileRepository = new UserProfileRepository($pdo);
+        $this->fileRepository = new FileRepository($pdo);
     }
 
     public function checkUsernameExists(string $username): bool
@@ -41,7 +49,6 @@ readonly class UserService extends Service
 
     public function checkEmailExists(string $email): bool
     {
-
         $qb = UserQuery::withMinimalDetails()
             ->where(UserCriteria::byEmail())
             ->bind(':email', $email);
@@ -143,63 +150,61 @@ readonly class UserService extends Service
         }
     }
 
-    private function getUserIdFromSession(): int
+    /**
+     * Update user details
+     *
+     * @param int $id
+     * @param UserUpdateDTO $dto
+     * @param array|null $avatarFile
+     * @return User
+     * @throws NotFoundException
+     */
+    public function updateUserProfile(int $id, UserProfileUpdateDTO $dto): void
     {
-        session_start();
-        if (!isset($_SESSION['user_id'])) {
-            throw new RuntimeException("User is not logged in.");
+        $context = $this->getSessionContext();
+        if ($context === null)
+            throw new UnauthorizedException();
+
+        $qb = UserQuery::withMinimalDetails();
+            if ($dto->id != null){
+                $qb->where(UserCriteria::byId())
+                    ->bind(':id', $dto->id);
+            }
+
+        $user = $this->userProfileRepository->getOne($qb);
+        if ($user === null) {
+            throw new NotFoundException;
         }
-        return (int)$_SESSION['user_id'];
+        $dto->updateProfile($user);
+
+//        if (isset($_POST['password']) || isset(json_decode(file_get_contents('php://input'), true)['password'])) {
+//            $password = $_POST['password'] ?? json_decode(file_get_contents('php://input'), true)['password'];
+//            if ($password) {
+//                $user->hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+//            }
+//        }
+//
+//        $this->userRepository->update($user);
+//
+//        $profile = new UserProfile();
+//        $profile->user = $user;
+//        $profile->contactNo = $_POST['contact_no'] ?? (json_decode(file_get_contents('php://input'), true)['contact_no'] ?? null);
+//        $dob = $_POST['dob'] ?? (json_decode(file_get_contents('php://input'), true)['dob'] ?? null);
+//        $profile->dob = $dob ? new DateTime($dob) : null;
+//
+//        if ($this->userProfileRepository->exists($user->id)) {
+//            $this->userProfileRepository->updateProfile($profile);
+//        } else {
+//            $this->userProfileRepository->insertProfile($profile);
+//        }
     }
 
-    public function updateProfile(array $postData): void
+    public function getUserProfile(int $id): UserProfile
     {
-        $userId = $this->getUserIdFromSession();
+        $qb = UserQuery::withMinimalDetails()
+            ->where(UserCriteria::byId())
+            ->bind(':id', $id);
 
-        if (isset($postData['username'])) {
-            $this->userRepository->updateUsername($userId, $postData['username']);
-        }
-
-        if (isset($postData['email'])) {
-            $this->userRepository->updateEmail($userId, $postData['email']);
-        }
-
-        if (isset($postData['contact_no'])) {
-            $this->userRepository->updateContact($userId, $postData['contact_no']);
-        }
-
-        if (isset($postData['dob'])) {
-            $this->userRepository->updateDob($userId, $postData['dob']);
-        }
-
-        if (
-            isset($postData['current_password'], $postData['new_password'], $postData['confirm_password'])
-            && $postData['current_password'] !== ''
-        ) {
-            $this->changePassword(
-                $userId,
-                $postData['current_password'],
-                $postData['new_password'],
-                $postData['confirm_password']
-            );
-        }
-    }
-
-    public function changePassword(int $userId, string $currentPassword, string $newPassword, string $confirmPassword): void
-    {
-        $stmt = $this->pdo->prepare("SELECT hashed_password FROM user WHERE id = :id");
-        $stmt->execute(['id' => $userId]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$row || !password_verify($currentPassword, $row['hashed_password'])) {
-            throw new RuntimeException("Current password is incorrect.");
-        }
-
-        if ($newPassword !== $confirmPassword) {
-            throw new RuntimeException("New passwords do not match.");
-        }
-
-        $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
-        $this->userRepository->updatePassword($userId, $hashedPassword);
+        return $this->userProfileRepository->getOne($qb);
     }
 }

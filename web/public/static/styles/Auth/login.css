@@ -1,7 +1,7 @@
-.login-container {
+.login-form {
     font-family: 'Inter', sans-serif;
     /* center content */
-    display: flex;
+    /*display: flex;*/
     justify-content: center;
     align-items: center;
 }
@@ -15,85 +15,7 @@
     justify-content: center;
 }
 
-.phone-mockup {
-    width: 200px;
-    height: 400px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 30px;
-    position: relative;
-    transform: rotate(-10deg);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-}
-
-.phone-screen {
-    position: absolute;
-    top: 20px;
-    left: 15px;
-    right: 15px;
-    bottom: 20px;
-    background: white;
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-.security-icon {
-    width: 60px;
-    height: 60px;
-    background: #4CAF50;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-.security-icon i {
-    color: white;
-    font-size: 24px;
-}
-
-.user-avatar {
-    width: 50px;
-    height: 50px;
-    background: #E8F5E8;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 15px;
-}
-
-.user-avatar i {
-    color: #4CAF50;
-    font-size: 20px;
-}
-
-.rating-stars {
-    display: flex;
-    gap: 3px;
-}
-
-.rating-stars i {
-    color: #FFD700;
-    font-size: 12px;
-}
-
-.hand {
-    position: absolute;
-    bottom: -50px;
-    right: -30px;
-    width: 120px;
-    height: 200px;
-    background: linear-gradient(135deg, #4A90E2, #357ABD);
-    border-radius: 60px 60px 30px 30px;
-    transform: rotate(15deg);
-}
-
-h1 {
+h2 {
     font-size: 32px;
     font-weight: 700;
     color: #333;
@@ -213,27 +135,31 @@ input[type="password"]:focus {
     text-decoration: underline;
 }
 
-@media (max-width: 768px) {
-    .left-section {
-        flex-direction: column;
-        margin: 20px;
-    }
+/*@media (max-width: 768px) {*/
+/*    .left-section {*/
+/*        flex-direction: column;*/
+/*        margin: 20px;*/
+/*    }*/
 
-    .right-section {
-        min-height: 200px;
-    }
+/*    .right-section {*/
+/*        flex:1;*/
+/*        padding: 32px;*/
+/*        position: relative;*/
+/*        flex-direction: column;*/
+/*        justify-content: center;*/
+/*    }*/
 
-    .login-form {
-        padding: 40px 30px;
-    }
+/*    .login-form {*/
+/*        padding: 40px 30px;*/
+/*    }*/
 
-    .phone-mockup {
-        width: 120px;
-        height: 240px;
-    }
+/*    .phone-mockup {*/
+/*        width: 120px;*/
+/*        height: 240px;*/
+/*    }*/
 
-    .hand {
-        width: 80px;
-        height: 120px;
-    }
-}
+/*    .hand {*/
+/*        width: 80px;*/
+/*        height: 120px;*/
+/*    }*/
+/*}*/

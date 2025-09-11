@@ -5,15 +5,13 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Core\View;
-use App\DTO\Request\UserLoginDTO;
-use App\DTO\Request\UserRegisterDTO;
+use App\DTO\Request\UserProfileUpdateDTO;
 use App\Exception\BadRequestException;
-use App\Exception\ConflictException;
+use App\Exception\NotFoundException;
 use App\Exception\UnprocessableEntityException;
 use App\Router\Method\GET;
 use App\Router\Method\POST;
 use App\Router\Path;
-use App\Router\RequireAuth;
 use App\Service\UserService;
 use PDO;
 
@@ -44,11 +42,20 @@ readonly class UserController extends ApiController
         echo json_encode(['exists' => $this->userService->checkEmailExists($email)]);
     }
 
-    #[POST]
-    #[Path('/updateProfile')]
-    public function updateProfile(): void
+    /**
+     * @throws UnprocessableEntityException
+     * @throws BadRequestException
+     * @throws NotFoundException
+     */
+    #[PUT]
+    #[Path('/update/{id}')]
+    public function update(int $id): void
     {
-        header('Content-Type: application/json');
-        $this->userService->updateProfile($_POST);
+        $dto = UserProfileUpdateDTO::jsonDeserialize(self::getJsonBody());
+        $dto->validate();
+
+        $user = $this->userService->updateUserProfile($id, $dto);
+
+        http_response_code(201);
     }
 }

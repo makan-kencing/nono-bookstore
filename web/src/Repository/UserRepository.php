@@ -52,63 +52,13 @@ readonly class UserRepository extends Repository
         $stmt->execute();
     }
 
-    /**
-     * Dynamic update for user or user_profile table
-     */
-    public function updateUser(int $userId, array $fields, string $table = 'user'): void
-    {
-        if (empty($fields)) {
-            return;
-        }
-
-        // Build SET part dynamically
-        $setParts = [];
-        $params = ['id' => $userId];
-        foreach ($fields as $column => $value) {
-            $setParts[] = "$column = :$column";
-            $params[$column] = $value;
-        }
-
-        $setClause = implode(", ", $setParts);
-
-        // Choose correct ID column
-        $idColumn = ($table === 'user') ? 'id' : 'user_id';
-
-        $sql = "UPDATE $table SET $setClause WHERE $idColumn = :id";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($params);
-    }
-
-    /**
-     * Convenience wrappers
-     */
     public function updateAvatar(int $userId, string $avatarPath): void
     {
-        $this->updateUser($userId, ['image_id' => $avatarPath], 'user');
-    }
-
-    public function updateUsername(int $userId, string $username): void
-    {
-        $this->updateUser($userId, ['username' => $username], 'user');
-    }
-
-    public function updateEmail(int $userId, string $email): void
-    {
-        $this->updateUser($userId, ['email' => $email], 'user');
-    }
-
-    public function updateContact(int $userId, string $contact): void
-    {
-        $this->updateUser($userId, ['contact_no' => $contact], 'user_profile');
-    }
-
-    public function updateDob(int $userId, string $dob): void
-    {
-        $this->updateUser($userId, ['dob' => $dob], 'user_profile');
-    }
-
-    public function updatePassword(int $userId, string $hashedPassword): void
-    {
-        $this->updateUser($userId, ['hashed_password' => $hashedPassword], 'user');
+        $stmt = $this->conn->prepare('
+        UPDATE user SET image_id = :avatar WHERE id = :id;
+    ');
+        $stmt->bindValue(':avatar', $avatarPath);
+        $stmt->bindValue(':id', $userId);
+        $stmt->execute();
     }
 }
