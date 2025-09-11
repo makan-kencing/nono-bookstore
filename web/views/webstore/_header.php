@@ -13,7 +13,7 @@ declare(strict_types=1);
             </ul>
 
             <ul id="store-account" class="bar-list">
-                <li><a href="/account"><i class="fa-solid fa-circle-user"></i>Account</a></li>
+                <li><a href="/register"><i class="fa-solid fa-circle-user"></i>Account</a></li>
                 <li><a href="/wishlist"><i class="fa-regular fa-heart show"></i>Wishlist</a></li>
             </ul>
         </nav>
