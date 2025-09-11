@@ -27,9 +27,15 @@ readonly class AccountController extends WebController
         $this->userRepository = new UserRepository($this->pdo);
     }
 
+    #[GET]
+    public function viewAccount(): void
+    {
+        echo $this->render('webstore/account/account.php');
+    }
 
     /**
      * @throws NotFoundException
+     * @throws UnauthorizedException
      */
     #[GET]
     #[Path('/profile')]
