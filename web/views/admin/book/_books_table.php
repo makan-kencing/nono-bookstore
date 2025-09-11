@@ -98,7 +98,7 @@ assert(isset($search) && $search instanceof BookSearchDTO);
     <tfoot>
     <tr>
        <td colspan="11">
-           <div style="display: flex">
+           <div style="display: flex; align-items: center; gap: 1rem">
                <div style="margin-right: auto;">
                    <?= $page->getStartIndex() + 1 ?> - <?= $page->getEndIndex() + 1 ?>
                    / <?= $page->total ?>
@@ -121,14 +121,16 @@ assert(isset($search) && $search instanceof BookSearchDTO);
 
                <input type="hidden" name="page" value="<?= $page->pageRequest->page ?>">
 
-               <button onclick="gotoPreviousPage()" type="button" <?= !$page->hasPreviousPage() ? 'disabled' : '' ?>><</button>
-               <?php foreach ($page->getSlidingPageWindow() as $pageRequest): ?>
-                   <button onclick="gotoPage(<?= $pageRequest->page ?>)" type="button"
-                       <?= $pageRequest->page === $page->pageRequest->page ? 'disabled' : '' ?>>
-                       <?= $pageRequest->page ?>
-                   </button>
-               <?php endforeach; ?>
-               <button onclick="gotoNextPage()" type="button" <?= !$page->hasNextPage() ? 'disabled' : '' ?>>></button>
+               <div>
+                   <button onclick="gotoPreviousPage()" type="button" <?= !$page->hasPreviousPage() ? 'disabled' : '' ?>><</button>
+                   <?php foreach ($page->getSlidingPageWindow() as $pageRequest): ?>
+                       <button onclick="gotoPage(<?= $pageRequest->page ?>)" type="button"
+                           <?= $pageRequest->page === $page->pageRequest->page ? 'disabled' : '' ?>>
+                           <?= $pageRequest->page ?>
+                       </button>
+                   <?php endforeach; ?>
+                   <button onclick="gotoNextPage()" type="button" <?= !$page->hasNextPage() ? 'disabled' : '' ?>>></button>
+               </div>
            </div>
        </td>
     </tr>
