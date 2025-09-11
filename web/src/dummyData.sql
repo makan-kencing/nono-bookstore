@@ -1,92 +1,222 @@
 -- Generated on 2025-09-09T21:32:42.765893
 SET foreign_key_checks = 0;
-TRUNCATE user;
+TRUNCATE  user;
 TRUNCATE user_profile;
 TRUNCATE membership;
 TRUNCATE address;
 TRUNCATE user_security_event;
 TRUNCATE user_token;
+TRUNCATE price;
+TRUNCATE inventory;
 SET foreign_key_checks = 1;
 
-INSERT INTO user (username, email, hashed_password, role, is_verified) VALUES
-                                                                           ('vikramabdul1', 'vikramabdul1@example.test', 'e11ca16d3f77dbba1738278b5c91921e31f9a2d9b63780b4c0d9be14a30803ea', 'USER', 0),
-                                                                           ('omarismail2', 'omarismail2@example.test', 'e11ca16d3f77dbba1738278b5c91921e31f9a2d9b63780b4c0d9be14a30803ea', 'OWNER', 1),
-                                                                           ('yenwong3', 'yenwong3@example.test', 'e11ca16d3f77dbba1738278b5c91921e31f9a2d9b63780b4c0d9be14a30803ea', 'OWNER', 0),
-                                                                           ('zulyap4', 'zulyap4@example.test', 'e11ca16d3f77dbba1738278b5c91921e31f9a2d9b63780b4c0d9be14a30803ea', 'USER', 1),
-                                                                           ('mingyap5', 'mingyap5@example.test', 'e11ca16d3f77dbba1738278b5c91921e31f9a2d9b63780b4c0d9be14a30803ea', 'ADMIN', 0),
-                                                                           ('sitibakar6', 'sitibakar6@example.test', 'e11ca16d3f77dbba1738278b5c91921e31f9a2d9b63780b4c0d9be14a30803ea', 'STAFF', 0),
-                                                                           ('nadiabakar7', 'nadiabakar7@example.test', 'e11ca16d3f77dbba1738278b5c91921e31f9a2d9b63780b4c0d9be14a30803ea', 'OWNER', 0),
-                                                                           ('qinsubramaniam8', 'qinsubramaniam8@example.test', 'e11ca16d3f77dbba1738278b5c91921e31f9a2d9b63780b4c0d9be14a30803ea', 'USER', 1),
-                                                                           ('lilyhassan9', 'lilyhassan9@example.test', 'e11ca16d3f77dbba1738278b5c91921e31f9a2d9b63780b4c0d9be14a30803ea', 'OWNER', 1),
-                                                                           ('putriyap10', 'putriyap10@example.test', 'e11ca16d3f77dbba1738278b5c91921e31f9a2d9b63780b4c0d9be14a30803ea', 'ADMIN', 1),
-                                                                           ('haziqjohari11', 'haziqjohari11@example.test', 'e11ca16d3f77dbba1738278b5c91921e31f9a2d9b63780b4c0d9be14a30803ea', 'OWNER', 0),
-                                                                           ('lilymok12', 'lilymok12@example.test', 'e11ca16d3f77dbba1738278b5c91921e31f9a2d9b63780b4c0d9be14a30803ea', 'ADMIN', 1),
-                                                                           ('omarkamil13', 'omarkamil13@example.test', 'e11ca16d3f77dbba1738278b5c91921e31f9a2d9b63780b4c0d9be14a30803ea', 'USER', 1),
-                                                                           ('vikramsubramaniam14', 'vikramsubramaniam14@example.test', 'e11ca16d3f77dbba1738278b5c91921e31f9a2d9b63780b4c0d9be14a30803ea', 'ADMIN', 0),
-                                                                           ('vikramjohari15', 'vikramjohari15@example.test', 'e11ca16d3f77dbba1738278b5c91921e31f9a2d9b63780b4c0d9be14a30803ea', 'OWNER', 1),
-                                                                           ('nadiahassan16', 'nadiahassan16@example.test', 'e11ca16d3f77dbba1738278b5c91921e31f9a2d9b63780b4c0d9be14a30803ea', 'OWNER', 1),
-                                                                           ('haziqusman17', 'haziqusman17@example.test', 'e11ca16d3f77dbba1738278b5c91921e31f9a2d9b63780b4c0d9be14a30803ea', 'USER', 0),
-                                                                           ('aliciaismail18', 'aliciaismail18@example.test', 'e11ca16d3f77dbba1738278b5c91921e31f9a2d9b63780b4c0d9be14a30803ea', 'STAFF', 0),
-                                                                           ('omarusman19', 'omarusman19@example.test', 'e11ca16d3f77dbba1738278b5c91921e31f9a2d9b63780b4c0d9be14a30803ea', 'USER', 1),
-                                                                           ('adamwong20', 'adamwong20@example.test', 'e11ca16d3f77dbba1738278b5c91921e31f9a2d9b63780b4c0d9be14a30803ea', 'ADMIN', 1);
-INSERT INTO user_profile (user_id, contact_no, dob) SELECT id, '+60 10-7370 8295', '1973-07-24' FROM user WHERE username='vikramabdul1';
-INSERT INTO user_profile (user_id, contact_no, dob) SELECT id, '+60 15-2506 4169', '1974-07-27' FROM user WHERE username='omarismail2';
-INSERT INTO user_profile (user_id, contact_no, dob) SELECT id, '+60 19-1839 6883', '1997-09-15' FROM user WHERE username='yenwong3';
-INSERT INTO user_profile (user_id, contact_no, dob) SELECT id, '+60 14-6061 9487', '1976-05-11' FROM user WHERE username='zulyap4';
-INSERT INTO user_profile (user_id, contact_no, dob) SELECT id, '+60 11-6323 8326', '1976-10-24' FROM user WHERE username='mingyap5';
-INSERT INTO user_profile (user_id, contact_no, dob) SELECT id, '+60 19-8452 1628', '1990-11-17' FROM user WHERE username='sitibakar6';
-INSERT INTO user_profile (user_id, contact_no, dob) SELECT id, '+60 10-3234 4125', '1976-10-16' FROM user WHERE username='nadiabakar7';
-INSERT INTO user_profile (user_id, contact_no, dob) SELECT id, '+60 13-5226 1161', '1990-01-16' FROM user WHERE username='qinsubramaniam8';
-INSERT INTO user_profile (user_id, contact_no, dob) SELECT id, '+60 12-4585 4886', '1998-06-17' FROM user WHERE username='lilyhassan9';
-INSERT INTO user_profile (user_id, contact_no, dob) SELECT id, '+60 12-3241 8130', '1998-04-24' FROM user WHERE username='putriyap10';
-INSERT INTO user_profile (user_id, contact_no, dob) SELECT id, '+60 14-7032 5797', '1965-07-06' FROM user WHERE username='haziqjohari11';
-INSERT INTO user_profile (user_id, contact_no, dob) SELECT id, '+60 13-4819 1133', '1990-05-12' FROM user WHERE username='lilymok12';
-INSERT INTO user_profile (user_id, contact_no, dob) SELECT id, '+60 12-9846 9606', '2003-04-06' FROM user WHERE username='omarkamil13';
-INSERT INTO user_profile (user_id, contact_no, dob) SELECT id, '+60 18-8669 6044', '1992-05-06' FROM user WHERE username='vikramsubramaniam14';
-INSERT INTO user_profile (user_id, contact_no, dob) SELECT id, '+60 14-1930 5866', '1989-05-10' FROM user WHERE username='vikramjohari15';
-INSERT INTO user_profile (user_id, contact_no, dob) SELECT id, '+60 16-1397 8883', '2001-08-24' FROM user WHERE username='nadiahassan16';
-INSERT INTO user_profile (user_id, contact_no, dob) SELECT id, '+60 14-6103 8161', '1995-08-12' FROM user WHERE username='haziqusman17';
-INSERT INTO user_profile (user_id, contact_no, dob) SELECT id, '+60 12-2507 1029', '1981-07-16' FROM user WHERE username='aliciaismail18';
-INSERT INTO user_profile (user_id, contact_no, dob) SELECT id, '+60 12-5349 1747', '2007-07-15' FROM user WHERE username='omarusman19';
-INSERT INTO user_profile (user_id, contact_no, dob) SELECT id, '+60 19-7923 5079', '1981-10-17' FROM user WHERE username='adamwong20';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '113 Lebuh', NULL, NULL, 'Kuala Lumpur', '07260', 'Malaysia' FROM user WHERE username='vikramabdul1';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '64 Taman', 'Blok 12', 'Unit 13', 'Kedah', '59973', 'Malaysia' FROM user WHERE username='omarismail2';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '64 Taman', NULL, NULL, 'Pahang', '37713', 'Malaysia' FROM user WHERE username='omarismail2';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '164 Lebuh', 'Blok 19', 'Unit 17', 'Labuan', '09507', 'Malaysia' FROM user WHERE username='omarismail2';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '154 Lebuh', 'Blok 5', NULL, 'Negeri Sembilan', '81960', 'Malaysia' FROM user WHERE username='yenwong3';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '166 Lebuh', 'Blok 21', 'Unit 45', 'Johor', '68060', 'Malaysia' FROM user WHERE username='yenwong3';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '17 Lebuh', 'Blok 2', 'Unit 11', 'Putrajaya', '77739', 'Malaysia' FROM user WHERE username='zulyap4';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '59 Jalan', 'Blok 6', NULL, 'Selangor', '36359', 'Malaysia' FROM user WHERE username='zulyap4';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '22 Taman', 'Blok 17', 'Unit 23', 'Johor', '92358', 'Malaysia' FROM user WHERE username='mingyap5';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '58 Taman', 'Blok 20', NULL, 'Kedah', '87555', 'Malaysia' FROM user WHERE username='mingyap5';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '109 Jalan', 'Blok 17', NULL, 'Negeri Sembilan', '67686', 'Malaysia' FROM user WHERE username='sitibakar6';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '131 Taman', NULL, NULL, 'Pahang', '82477', 'Malaysia' FROM user WHERE username='sitibakar6';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '85 Lebuh', 'Blok 22', 'Unit 10', 'Pahang', '18041', 'Malaysia' FROM user WHERE username='nadiabakar7';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '161 Lebuh', NULL, NULL, 'Putrajaya', '24880', 'Malaysia' FROM user WHERE username='qinsubramaniam8';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '192 Lorong', NULL, NULL, 'Kelantan', '82913', 'Malaysia' FROM user WHERE username='lilyhassan9';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '179 Lebuh', 'Blok 2', NULL, 'Kelantan', '72871', 'Malaysia' FROM user WHERE username='lilyhassan9';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '88 Lorong', 'Blok 13', NULL, 'Kuala Lumpur', '22133', 'Malaysia' FROM user WHERE username='putriyap10';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '172 Lorong', NULL, NULL, 'Kuala Lumpur', '82359', 'Malaysia' FROM user WHERE username='putriyap10';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '77 Lebuh', NULL, 'Unit 49', 'Putrajaya', '60305', 'Malaysia' FROM user WHERE username='haziqjohari11';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '183 Persiaran', NULL, 'Unit 2', 'Putrajaya', '25004', 'Malaysia' FROM user WHERE username='haziqjohari11';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '168 Lorong', NULL, 'Unit 44', 'Penang', '50224', 'Malaysia' FROM user WHERE username='lilymok12';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '129 Lebuh', 'Blok 23', NULL, 'Selangor', '73995', 'Malaysia' FROM user WHERE username='lilymok12';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '13 Taman', 'Blok 4', NULL, 'Putrajaya', '80708', 'Malaysia' FROM user WHERE username='lilymok12';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '170 Lorong', 'Blok 1', 'Unit 4', 'Kedah', '74776', 'Malaysia' FROM user WHERE username='omarkamil13';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '68 Lebuh', NULL, 'Unit 45', 'Perak', '87449', 'Malaysia' FROM user WHERE username='vikramsubramaniam14';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '67 Jalan', NULL, NULL, 'Negeri Sembilan', '34575', 'Malaysia' FROM user WHERE username='vikramsubramaniam14';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '129 Lebuh', 'Blok 27', 'Unit 1', 'Labuan', '73023', 'Malaysia' FROM user WHERE username='vikramsubramaniam14';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '136 Jalan', NULL, 'Unit 33', 'Negeri Sembilan', '97062', 'Malaysia' FROM user WHERE username='vikramjohari15';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '95 Jalan', NULL, 'Unit 30', 'Negeri Sembilan', '41055', 'Malaysia' FROM user WHERE username='vikramjohari15';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '107 Taman', 'Blok 30', NULL, 'Selangor', '89366', 'Malaysia' FROM user WHERE username='vikramjohari15';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '46 Jalan', 'Blok 30', NULL, 'Selangor', '53968', 'Malaysia' FROM user WHERE username='nadiahassan16';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '171 Lorong', 'Blok 19', 'Unit 25', 'Perlis', '53135', 'Malaysia' FROM user WHERE username='nadiahassan16';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '67 Lebuh', NULL, NULL, 'Malacca', '20870', 'Malaysia' FROM user WHERE username='haziqusman17';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '128 Persiaran', 'Blok 24', 'Unit 17', 'Labuan', '36612', 'Malaysia' FROM user WHERE username='haziqusman17';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '179 Jalan', 'Blok 20', 'Unit 44', 'Pahang', '21539', 'Malaysia' FROM user WHERE username='haziqusman17';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '46 Jalan', 'Blok 9', NULL, 'Sabah', '37330', 'Malaysia' FROM user WHERE username='aliciaismail18';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '127 Lebuh', 'Blok 14', 'Unit 23', 'Kuala Lumpur', '86212', 'Malaysia' FROM user WHERE username='aliciaismail18';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '110 Lebuh', 'Blok 24', 'Unit 49', 'Penang', '51824', 'Malaysia' FROM user WHERE username='omarusman19';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '161 Lebuh', NULL, NULL, 'Labuan', '14774', 'Malaysia' FROM user WHERE username='adamwong20';
-INSERT INTO address (user_id, address1, address2, address3, state, postcode, country) SELECT id, '60 Persiaran', 'Blok 13', NULL, 'Sabah', '37868', 'Malaysia' FROM user WHERE username='adamwong20';
--- Done.
+
+
+INSERT INTO user (username, email, hashed_password, role, is_verified, image_id, default_address_id) VALUES
+                                                                                                         ('mohd_ling', 'mohd.ling@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'OWNER', 1, NULL, NULL),
+                                                                                                         ('zain_prabu', 'zain.prabu@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'STAFF', 1, NULL, NULL),
+                                                                                                         ('chong_ng', 'chong.ng@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 0, NULL, NULL),
+                                                                                                         ('tan_ismail', 'tan.ismail@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 0, NULL, NULL),
+                                                                                                         ('nurul_rahmat', 'nurul.rahmat@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'ADMIN', 1, NULL, NULL),
+                                                                                                         ('sham_teo', 'sham.teo@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 0, NULL, NULL),
+                                                                                                         ('prabu_teo', 'prabu.teo@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 0, NULL, NULL),
+                                                                                                         ('subramaniam_omar', 'subramaniam.omar@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 1, NULL, NULL),
+                                                                                                         ('aina_sham', 'aina.sham@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 0, NULL, NULL),
+                                                                                                         ('nurul_raj', 'nurul.raj@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 1, NULL, NULL),
+                                                                                                         ('mei_prabu', 'mei.prabu@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 1, NULL, NULL),
+                                                                                                         ('lee_wong', 'lee.wong@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 1, NULL, NULL),
+                                                                                                         ('zain_kumar', 'zain.kumar@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 1, NULL, NULL),
+                                                                                                         ('sham_aina', 'sham.aina@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 1, NULL, NULL),
+                                                                                                         ('lim_prabu', 'lim.prabu@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 1, NULL, NULL),
+                                                                                                         ('devi_sim', 'devi.sim@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'STAFF', 1, NULL, NULL),
+                                                                                                         ('ahmad_sham', 'ahmad.sham@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 1, NULL, NULL),
+                                                                                                         ('aina_teo', 'aina.teo@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'STAFF', 1, NULL, NULL),
+                                                                                                         ('zain_chen', 'zain.chen@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'OWNER', 0, NULL, NULL),
+                                                                                                         ('teh_ibrahim', 'teh.ibrahim@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'STAFF', 1, NULL, NULL),
+                                                                                                         ('ravi_anand', 'ravi.anand@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'STAFF', 1, NULL, NULL),
+                                                                                                         ('fatimah_tan', 'fatimah.tan@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 1, NULL, NULL),
+                                                                                                         ('wei_mohamed', 'wei.mohamed@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'STAFF', 0, NULL, NULL),
+                                                                                                         ('lee_zul', 'lee.zul@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 1, NULL, NULL),
+                                                                                                         ('anand_ng', 'anand.ng@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'OWNER', 1, NULL, NULL),
+                                                                                                         ('wong_ismail', 'wong.ismail@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'ADMIN', 1, NULL, NULL),
+                                                                                                         ('nurul_aina', 'nurul.aina@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'STAFF', 1, NULL, NULL),
+                                                                                                         ('rahman_teo', 'rahman.teo@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'ADMIN', 1, NULL, NULL),
+                                                                                                         ('nor_ali', 'nor.ali@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'ADMIN', 1, NULL, NULL),
+                                                                                                         ('rahman_krishnan', 'rahman.krishnan@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 0, NULL, NULL),
+                                                                                                         ('raja_heng', 'raja.heng@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'OWNER', 0, NULL, NULL),
+                                                                                                         ('fong_prabu', 'fong.prabu@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'STAFF', 1, NULL, NULL),
+                                                                                                         ('subramaniam_omarm', 'subramaniam2.omar@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 1, NULL, NULL),
+                                                                                                         ('izzati_lim', 'izzati.lim@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 0, NULL, NULL),
+                                                                                                         ('ooi_heng', 'ooi.heng@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 1, NULL, NULL),
+                                                                                                         ('izzati_rahman', 'izzati.rahman@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'ADMIN', 1, NULL, NULL),
+                                                                                                         ('zain_omar', 'zain.omar@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 0, NULL, NULL),
+                                                                                                         ('rahman_subramaniam', 'rahman.subramaniam@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 1, NULL, NULL),
+                                                                                                         ('teh_rahmat', 'teh.rahmat@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 1, NULL, NULL),
+                                                                                                         ('hassan_mohamed', 'hassan.mohamed@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 0, NULL, NULL),
+                                                                                                         ('ismail_rahmat', 'ismail.rahmat@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 1, NULL, NULL),
+                                                                                                         ('tan_raj', 'tan.raj@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'OWNER', 1, NULL, NULL),
+                                                                                                         ('ahmad_ravi', 'ahmad.ravi@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'STAFF', 1, NULL, NULL),
+                                                                                                         ('mei_wong', 'mei.wong@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'OWNER', 1, NULL, NULL),
+                                                                                                         ('zain_chene', 'zain2.chen@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 1, NULL, NULL),
+                                                                                                         ('subramaniam_rahman', 'subramaniam.rahman@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'ADMIN', 1, NULL, NULL),
+                                                                                                         ('raja_hakim', 'raja.hakim@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 1, NULL, NULL),
+                                                                                                         ('prabu_lee', 'prabu.lee@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 1, NULL, NULL),
+                                                                                                         ('aziz_aina', 'aziz.aina@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 1, NULL, NULL),
+                                                                                                         ('mei_subramaniam', 'mei.subramaniam@email.com', 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270', 'USER', 1, NULL, NULL);
+
+INSERT INTO user_profile (user_id, contact_no, dob) VALUES
+                                                        (1, '+60182093090', '1977-06-29'),
+                                                        (2, '+60171010439', '1973-01-05'),
+                                                        (3, '+60184235342', '1981-01-04'),
+                                                        (4, '+60134453789', '1984-02-11'),
+                                                        (5, '+60185805297', '2001-08-24'),
+                                                        (6, '+60188940311', '1973-04-04'),
+                                                        (7, '+60155115963', '1978-01-10'),
+                                                        (8, '+60177836511', '1994-06-12'),
+                                                        (9, '+60101285321', '1997-08-21'),
+                                                        (10, '+60182724374', '1964-06-23'),
+                                                        (11, '+60161071834', '2004-03-10'),
+                                                        (12, '+60153694362', '1979-05-07'),
+                                                        (13, '+60172117182', '1990-10-29'),
+                                                        (14, '+60148425105', '1965-06-07'),
+                                                        (15, '+60116854322', '1987-09-10'),
+                                                        (16, '+60135016563', '1997-04-03'),
+                                                        (17, '+60171254136', '1963-09-08'),
+                                                        (18, '+60138181497', '1991-05-19'),
+                                                        (19, '+60162967784', '1981-08-08'),
+                                                        (20, '+60162118551', '1963-09-02'),
+                                                        (21, '+60133138865', '1984-07-28'),
+                                                        (22, '+60109779003', '2003-06-14'),
+                                                        (23, '+60131395696', '1963-08-23'),
+                                                        (24, '+60153207275', '1967-08-29'),
+                                                        (25, '+60167241161', '1962-10-20'),
+                                                        (26, '+60117252269', '1967-02-09'),
+                                                        (27, '+60176232551', '1970-01-10'),
+                                                        (28, '+60119585443', '1997-01-02'),
+                                                        (29, '+60165352059', '1972-10-17'),
+                                                        (30, '+60111097637', '2001-01-11'),
+                                                        (31, '+60176359328', '1994-03-16'),
+                                                        (32, '+60166161688', '1980-08-22'),
+                                                        (33, '+60115546916', '1975-11-09'),
+                                                        (34, '+60189091215', '1970-02-12'),
+                                                        (35, '+60139077600', '2002-10-03'),
+                                                        (36, '+60164696001', '2001-11-01'),
+                                                        (37, '+60103233473', '1975-01-04'),
+                                                        (38, '+60142253056', '2001-11-09'),
+                                                        (39, '+60108718327', '1992-09-05'),
+                                                        (40, '+60143420929', '1981-05-24'),
+                                                        (41, '+60182860602', '1977-06-18'),
+                                                        (42, '+60126884928', '1992-01-10'),
+                                                        (43, '+60139360472', '1979-01-09'),
+                                                        (44, '+60148821122', '1979-11-22'),
+                                                        (45, '+60162733071', '1992-08-10'),
+                                                        (46, '+60155773054', '1976-10-17'),
+                                                        (47, '+60157581832', '1971-04-16'),
+                                                        (48, '+60163655778', '1988-06-24'),
+                                                        (49, '+60133785469', '1976-04-14'),
+                                                        (50, '+60133967979', '1971-02-10');
+
+INSERT INTO address (user_id, name, address1, address2, address3, state, postcode, country, phone_number) VALUES
+                                                                                                              (1, 'Mohd Ling', '450 Jalan Klang Lama', 'Desa Indah', 'Home - Tanah Merah', 'Kelantan', '55491', 'Malaysia', '+60124376194'),
+                                                                                                              (2, 'Zain Prabu', '252 Jalan Petaling', 'Taman Permai', 'Home - Labuan', 'Labuan', '46194', 'Malaysia', '+60122185108'),
+                                                                                                              (3, 'Chong Ng', '922 Jalan Pudu', 'Desa Sentosa', 'Home - Alor Gajah', 'Melaka', '98327', 'Malaysia', '+60134340154'),
+                                                                                                              (3, 'Chong Ng', '243 Jalan Tun Perak', 'Taman Permai', 'Office - Kota Kinabalu', 'Sabah', '31951', 'Malaysia', '+60193787268'),
+                                                                                                              (3, 'Chong Ng', '261 Jalan Cheras', 'Desa Bahagia', 'Vacation Home - Putrajaya', 'Putrajaya', '54425', 'Malaysia', '+60115494224'),
+                                                                                                              (4, 'Tan Ismail', '174 Jalan Kuching', 'Kampung Sentosa', 'Home - Port Dickson', 'Negeri Sembilan', '30517', 'Malaysia', '+60108362184'),
+                                                                                                              (4, 'Tan Ismail', '744 Jalan Masjid India', 'Kampung Indah', 'Office - Putrajaya', 'Putrajaya', '90748', 'Malaysia', '+60166103127'),
+                                                                                                              (5, 'Nurul Rahmat', '550 Jalan Ampang', 'Kampung Jaya', 'Home - Labuan', 'Labuan', '21031', 'Malaysia', '+60172009051'),
+                                                                                                              (5, 'Nurul Rahmat', '631 Jalan Raja Laut', 'Desa Bahagia', 'Office - Sungai Petani', 'Kedah', '54963', 'Malaysia', '+60176975462'),
+                                                                                                              (5, 'Nurul Rahmat', '953 Jalan Merdeka', 'Taman Sentosa', 'Vacation Home - George Town', 'Pulau Pinang', '26168', 'Malaysia', '+60155566795'),
+                                                                                                              (6, 'Sham Teo', '15 Jalan Kuching', 'Kampung Bahagia', 'Home - Taiping', 'Perak', '89363', 'Malaysia', '+60152641239'),
+                                                                                                              (6, 'Sham Teo', '220 Jalan Raja Laut', 'Desa Indah', 'Office - Kuala Lumpur', 'Kuala Lumpur', '42675', 'Malaysia', '+60199140424'),
+                                                                                                              (6, 'Sham Teo', '130 Jalan Pudu', 'Taman Jaya', 'Vacation Home - Arau', 'Perlis', '74686', 'Malaysia', '+60181499716'),
+                                                                                                              (7, 'Prabu Teo', '731 Jalan Bukit Bintang', 'Kampung Bahagia', 'Home - Labuan', 'Labuan', '45525', 'Malaysia', '+60138588750'),
+                                                                                                              (7, 'Prabu Teo', '153 Jalan Hang Tuah', 'Taman Bahagia', 'Office - Putrajaya', 'Putrajaya', '36114', 'Malaysia', '+60181847439'),
+                                                                                                              (8, 'Subramaniam Omar', '405 Jalan Tun Perak', 'Taman Permai', 'Home - Segamat', 'Johor', '77275', 'Malaysia', '+60104927993'),
+                                                                                                              (8, 'Subramaniam Omar', '173 Jalan Raja Chulan', 'Desa Jaya', 'Office - Arau', 'Perlis', '88688', 'Malaysia', '+60162453798'),
+                                                                                                              (9, 'Aina Sham', '138 Jalan Bukit Bintang', 'Taman Bahagia', 'Home - Jasin', 'Melaka', '11452', 'Malaysia', '+60115938327'),
+                                                                                                              (9, 'Aina Sham', '475 Jalan Tun Perak', 'Taman Indah', 'Office - Dungun', 'Terengganu', '14096', 'Malaysia', '+60192481726'),
+                                                                                                              (10, 'Nurul Raj', '134 Jalan Raja Laut', 'Kampung Permai', 'Home - Miri', 'Sarawak', '75221', 'Malaysia', '+60116562390'),
+                                                                                                              (11, 'Mei Prabu', '127 Jalan Sultan Ismail', 'Kampung Indah', 'Home - Ipoh', 'Perak', '57887', 'Malaysia', '+60189804205'),
+                                                                                                              (11, 'Mei Prabu', '640 Jalan Ipoh', 'Desa Permai', 'Office - Arau', 'Perlis', '30628', 'Malaysia', '+60133375307'),
+                                                                                                              (12, 'Lee Wong', '357 Jalan Alor', 'Kampung Permai', 'Home - Dungun', 'Terengganu', '34950', 'Malaysia', '+60166636644'),
+                                                                                                              (13, 'Zain Kumar', '421 Jalan Bukit Bintang', 'Kampung Jaya', 'Home - Sandakan', 'Sabah', '79632', 'Malaysia', '+60194465823'),
+                                                                                                              (13, 'Zain Kumar', '391 Jalan Raja Laut', 'Kampung Sentosa', 'Office - Dungun', 'Terengganu', '98747', 'Malaysia', '+60161084736'),
+                                                                                                              (14, 'Sham Aina', '211 Jalan Masjid India', 'Desa Indah', 'Home - Seremban', 'Negeri Sembilan', '96699', 'Malaysia', '+60175568187'),
+                                                                                                              (14, 'Sham Aina', '915 Jalan Tun Razak', 'Kampung Sentosa', 'Office - Petaling Jaya', 'Selangor', '13717', 'Malaysia', '+60152684152'),
+                                                                                                              (14, 'Sham Aina', '334 Jalan Kuching', 'Desa Jaya', 'Vacation Home - Taiping', 'Perak', '80736', 'Malaysia', '+60182193876'),
+                                                                                                              (15, 'Lim Prabu', '232 Jalan Raja Laut', 'Desa Permai', 'Home - Labuan', 'Labuan', '52427', 'Malaysia', '+60155248695'),
+                                                                                                              (16, 'Devi Sim', '92 Jalan Raja Laut', 'Taman Jaya', 'Home - Kuala Lumpur', 'Kuala Lumpur', '87212', 'Malaysia', '+60116584991'),
+                                                                                                              (17, 'Ahmad Sham', '252 Jalan Merdeka', 'Taman Bahagia', 'Home - Labuan', 'Labuan', '53238', 'Malaysia', '+60177840888'),
+                                                                                                              (17, 'Ahmad Sham', '140 Jalan Raja Laut', 'Kampung Permai', 'Office - Segamat', 'Johor', '65388', 'Malaysia', '+60173889698'),
+                                                                                                              (18, 'Aina Teo', '190 Jalan Pudu', 'Desa Indah', 'Home - Sandakan', 'Sabah', '82169', 'Malaysia', '+60134555753'),
+                                                                                                              (18, 'Aina Teo', '777 Jalan Cheras', 'Desa Sentosa', 'Office - Port Dickson', 'Negeri Sembilan', '57571', 'Malaysia', '+60152621323'),
+                                                                                                              (19, 'Zain Chen', '357 Jalan Tun Perak', 'Taman Bahagia', 'Home - Labuan', 'Labuan', '52694', 'Malaysia', '+60125874808'),
+                                                                                                              (19, 'Zain Chen', '215 Jalan Bukit Bintang', 'Taman Sentosa', 'Office - George Town', 'Pulau Pinang', '78593', 'Malaysia', '+60112734030'),
+                                                                                                              (19, 'Zain Chen', '872 Jalan Petaling', 'Taman Bahagia', 'Vacation Home - Kuala Lumpur', 'Kuala Lumpur', '14313', 'Malaysia', '+60159552139'),
+                                                                                                              (20, 'Teh Ibrahim', '350 Jalan Ipoh', 'Desa Indah', 'Home - Putrajaya', 'Putrajaya', '77252', 'Malaysia', '+60189638747'),
+                                                                                                              (21, 'Ravi Anand', '289 Jalan Kuching', 'Kampung Sentosa', 'Home - Kota Kinabalu', 'Sabah', '51478', 'Malaysia', '+60184640826'),
+                                                                                                              (21, 'Ravi Anand', '567 Jalan Tun Perak', 'Desa Permai', 'Office - Kuala Lumpur', 'Kuala Lumpur', '94010', 'Malaysia', '+60169004287'),
+                                                                                                              (22, 'Fatimah Tan', '25 Jalan Cheras', 'Desa Bahagia', 'Home - Port Dickson', 'Negeri Sembilan', '24236', 'Malaysia', '+60195458670'),
+                                                                                                              (22, 'Fatimah Tan', '746 Jalan Sultan', 'Kampung Jaya', 'Office - Kemaman', 'Terengganu', '15221', 'Malaysia', '+60138183687'),
+                                                                                                              (23, 'Wei Mohamed', '419 Jalan Alor', 'Taman Indah', 'Home - Arau', 'Perlis', '98991', 'Malaysia', '+60198586014'),
+                                                                                                              (24, 'Lee Zul', '394 Jalan Raja Chulan', 'Desa Jaya', 'Home - Petaling Jaya', 'Selangor', '88669', 'Malaysia', '+60122382972'),
+                                                                                                              (25, 'Anand Ng', '86 Jalan Masjid India', 'Taman Sentosa', 'Home - Batu Pahat', 'Johor', '66219', 'Malaysia', '+60197899608'),
+                                                                                                              (26, 'Wong Ismail', '783 Jalan Klang Lama', 'Desa Bahagia', 'Home - Raub', 'Pahang', '40240', 'Malaysia', '+60169948293'),
+                                                                                                              (26, 'Wong Ismail', '698 Jalan Ampang', 'Desa Jaya', 'Office - Kuala Lumpur', 'Kuala Lumpur', '80551', 'Malaysia', '+60162914143'),
+                                                                                                              (27, 'Nurul Aina', '11 Jalan Kuching', 'Kampung Indah', 'Home - Lahad Datu', 'Sabah', '71482', 'Malaysia', '+60116796075'),
+                                                                                                              (27, 'Nurul Aina', '458 Jalan Ampang', 'Taman Jaya', 'Office - Melaka City', 'Melaka', '15954', 'Malaysia', '+60112531853'),
+                                                                                                              (27, 'Nurul Aina', '490 Jalan Sultan', 'Taman Jaya', 'Vacation Home - Taiping', 'Perak', '96766', 'Malaysia', '+60188616879'),
+                                                                                                              (28, 'Rahman Teo', '357 Jalan Raja Chulan', 'Taman Jaya', 'Home - Labuan', 'Labuan', '92097', 'Malaysia', '+60164227136'),
+                                                                                                              (28, 'Rahman Teo', '113 Jalan Tun Perak', 'Kampung Bahagia', 'Office - Arau', 'Perlis', '15430', 'Malaysia', '+60135477509'),
+                                                                                                              (29, 'Nor Ali', '84 Jalan Masjid India', 'Kampung Permai', 'Home - Putrajaya', 'Putrajaya', '49312', 'Malaysia', '+60102403400'),
+                                                                                                              (29, 'Nor Ali', '523 Jalan Bukit Bintang', 'Desa Jaya', 'Office - Kuala Lumpur', 'Kuala Lumpur', '91535', 'Malaysia', '+60174099746'),
+                                                                                                              (29, 'Nor Ali', '509 Jalan Tun Razak', 'Taman Sentosa', 'Vacation Home - Sungai Petani', 'Kedah', '71516', 'Malaysia', '+60116493109'),
+                                                                                                              (30, 'Rahman Krishnan', '877 Jalan Alor', 'Taman Sentosa', 'Home - Taiping', 'Perak', '88831', 'Malaysia', '+60109368858'),
+                                                                                                              (30, 'Rahman Krishnan', '126 Jalan Petaling', 'Desa Permai', 'Office - Labuan', 'Labuan', '76207', 'Malaysia', '+60112837228'),
+                                                                                                              (30, 'Rahman Krishnan', '668 Jalan Kuching', 'Kampung Permai', 'Vacation Home - Pasir Mas', 'Kelantan', '26214', 'Malaysia', '+60126566384'),
+                                                                                                              (31, 'Raja Heng', '692 Jalan Raja Laut', 'Taman Bahagia', 'Home - Kuala Terengganu', 'Terengganu', '85887', 'Malaysia', '+60199382912'),
+                                                                                                              (31, 'Raja Heng', '709 Jalan Sultan Ismail', 'Kampung Sentosa', 'Office - Sitiawan', 'Perak', '92192', 'Malaysia', '+60162662829'),
+                                                                                                              (32, 'Fong Prabu', '735 Jalan Klang Lama', 'Desa Bahagia', 'Home - Kuala Terengganu', 'Terengganu', '72976', 'Malaysia', '+60107659005'),
+                                                                                                              (32, 'Fong Prabu', '178 Jalan Raja Laut', 'Kampung Jaya', 'Office - Kangar', 'Perlis', '51490', 'Malaysia', '+60121011616'),
+                                                                                                              (33, 'Subramaniam Omar', '687 Jalan Raja Chulan', 'Desa Bahagia', 'Home - Putrajaya', 'Putrajaya', '34878', 'Malaysia', '+60158182288'),
+                                                                                                              (34, 'Izzati Lim', '540 Jalan Kuching', 'Taman Sentosa', 'Home - Alor Setar', 'Kedah', '30984', 'Malaysia', '+60116153389'),
+                                                                                                              (34, 'Izzati Lim', '396 Jalan Ipoh', 'Desa Indah', 'Office - Melaka City', 'Melaka', '85729', 'Malaysia', '+60142857089'),
+                                                                                                              (35, 'Ooi Heng', '800 Jalan Klang Lama', 'Desa Permai', 'Home - Bentong', 'Pahang', '64416', 'Malaysia', '+60181774189'),
+                                                                                                              (35, 'Ooi Heng', '864 Jalan Klang Lama', 'Taman Bahagia', 'Office - Kangar', 'Perlis', '30551', 'Malaysia', '+60107209271'),
+                                                                                                              (35, 'Ooi Heng', '262 Jalan Raja Chulan', 'Kampung Sentosa', 'Vacation Home - Labuan', 'Labuan', '18279', 'Malaysia', '+60135499574'),
+                                                                                                              (36, 'Izzati Rahman', '846 Jalan Masjid India', 'Desa Indah', 'Home - Bayan Lepas', 'Pulau Pinang', '46121', 'Malaysia', '+60172671973'),
+                                                                                                              (36, 'Izzati Rahman', '974 Jalan Hang Tuah', 'Taman Permai', 'Office - Sungai Petani', 'Kedah', '48205', 'Malaysia', '+60161322916'),
+                                                                                                              (37, 'Zain Omar', '574 Jalan Tun Perak', 'Desa Bahagia', 'Home - Kangar', 'Perlis', '57408', 'Malaysia', '+60157630541'),
+                                                                                                              (37, 'Zain Omar', '313 Jalan Pudu', 'Desa Jaya', 'Office - Melaka City', 'Melaka', '55584', 'Malaysia', '+60112426777'),
+                                                                                                              (37, 'Zain Omar', '610 Jalan Raja Chulan', 'Kampung Sentosa', 'Vacation Home - Bentong', 'Pahang', '38357', 'Malaysia', '+60149184286'),
+                                                                                                              (38, 'Rahman Subramaniam', '981 Jalan Kuching', 'Desa Bahagia', 'Home - Nilai', 'Negeri Sembilan', '66782', 'Malaysia', '+60114022845'),
+                                                                                                              (39, 'Teh Rahmat', '692 Jalan Merdeka', 'Kampung Bahagia', 'Home - Bayan Lepas', 'Pulau Pinang', '92124', 'Malaysia', '+60164665478'),
+                                                                                                              (40, 'Hassan Mohamed', '398 Jalan Sultan', 'Desa Bahagia', 'Home - Raub', 'Pahang', '56390', 'Malaysia', '+60156774664'),
+                                                                                                              (41, 'Ismail Rahmat', '402 Jalan Tun Perak', 'Desa Indah', 'Home - Dungun', 'Terengganu', '92228', 'Malaysia', '+60132061307'),
+                                                                                                              (41, 'Ismail Rahmat', '171 Jalan Bukit Bintang', 'Kampung Jaya', 'Office - Johor Bahru', 'Johor', '72427', 'Malaysia', '+60102086590'),
+                                                                                                              (42, 'Tan Raj', '400 Jalan Alor', 'Desa Bahagia', 'Home - Batu Pahat', 'Johor', '37308', 'Malaysia', '+60157371977'),
+                                                                                                              (42, 'Tan Raj', '219 Jalan Hang Tuah', 'Desa Indah', 'Office - Kuala Lumpur', 'Kuala Lumpur', '75883', 'Malaysia', '+60112337785'),
+                                                                                                              (43, 'Ahmad Ravi', '438 Jalan Cheras', 'Kampung Sentosa', 'Home - Dungun', 'Terengganu', '31821', 'Malaysia', '+60185335901'),
+                                                                                                              (43, 'Ahmad Ravi', '6 Jalan Cheras', 'Taman Jaya', 'Office - Nilai', 'Negeri Sembilan', '15349', 'Malaysia', '+60198176233'),
+                                                                                                              (43, 'Ahmad Ravi', '72 Jalan Sultan', 'Kampung Permai', 'Vacation Home - Kuching', 'Sarawak', '36293', 'Malaysia', '+60186032388'),
+                                                                                                              (44, 'Mei Wong', '855 Jalan Sultan Ismail', 'Taman Bahagia', 'Home - Subang Jaya', 'Selangor', '65562', 'Malaysia', '+60151650499'),
+                                                                                                              (45, 'Zain Chen', '124 Jalan Cheras', 'Kampung Bahagia', 'Home - Labuan', 'Labuan', '83503', 'Malaysia', '+60159755044'),
+                                                                                                              (45, 'Zain Chen', '851 Jalan Raja Chulan', 'Taman Bahagia', 'Office - Kuala Lumpur', 'Kuala Lumpur', '56769', 'Malaysia', '+60174832618'),
+                                                                                                              (46, 'Subramaniam Rahman', '245 Jalan Cheras', 'Kampung Indah', 'Home - Putrajaya', 'Putrajaya', '77806', 'Malaysia', '+60122964873'),
+                                                                                                              (46, 'Subramaniam Rahman', '203 Jalan Sultan', 'Kampung Jaya', 'Office - Sandakan', 'Sabah', '66273', 'Malaysia', '+60101788905'),
+                                                                                                              (47, 'Raja Hakim', '43 Jalan Petaling', 'Desa Sentosa', 'Home - Jasin', 'Melaka', '52401', 'Malaysia', '+60133099337'),
+                                                                                                              (47, 'Raja Hakim', '270 Jalan Raja Chulan', 'Taman Permai', 'Office - Kuala Lumpur', 'Kuala Lumpur', '81352', 'Malaysia', '+60117701488'),
+                                                                                                              (48, 'Prabu Lee', '794 Jalan Petaling', 'Kampung Sentosa', 'Home - Butterworth', 'Pulau Pinang', '26480', 'Malaysia', '+60124449026'),
+                                                                                                              (48, 'Prabu Lee', '11 Jalan Tun Perak', 'Kampung Bahagia', 'Office - George Town', 'Pulau Pinang', '69315', 'Malaysia', '+60101479977'),
+                                                                                                              (48, 'Prabu Lee', '232 Jalan Hang Tuah', 'Desa Permai', 'Vacation Home - Kuantan', 'Pahang', '85141', 'Malaysia', '+60142769975'),
+                                                                                                              (49, 'Aziz Aina', '817 Jalan Sultan Ismail', 'Kampung Jaya', 'Home - Sandakan', 'Sabah', '54128', 'Malaysia', '+60111000726'),
+                                                                                                              (50, 'Mei Subramaniam', '395 Jalan Tuanku Abdul Rahman', 'Kampung Permai', 'Home - Pasir Mas', 'Kelantan', '57283', 'Malaysia', '+60186224204');
+
+INSERT INTO price (book_id, from_date, amount)
+SELECT id `book_id`, CURRENT_TIMESTAMP `from_date`, number_of_pages * 30 + IF(cover_type = 'HARDCOVER', 1000, 0) `amount`
+FROM book;
+
+INSERT INTO inventory (book_id, location, quantity)
+SELECT id, WAREHOUSE, FLOOR(RAND() * 50)
+FROM book, (VALUES ('WAREHOUSE'), ('OFFSITE'), ('STORE')) as t;
