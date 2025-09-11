@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Core\View;
+use App\DTO\Request\SearchDTO;
 use App\Router\Method\GET;
 use App\Router\Path;
 use App\Service\BookService;
@@ -39,5 +40,18 @@ readonly class WorkController extends ApiController
 
         header('Content-Type: application/json');
         echo json_encode($summary);
+    }
+
+    #[GET]
+    #[Path('/options/{query}')]
+    public function getOptions(string $query): void
+    {
+        $dto = new SearchDTO($query);
+
+        $page = $this->bookService->searchWork($dto);
+
+        header('Content-Type: text/html');
+        foreach ($page->items as $item)
+            echo "<option value='$item->id'>$item->title</option>";
     }
 }

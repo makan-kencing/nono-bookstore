@@ -6,14 +6,16 @@ namespace App\Service;
 
 use App\DTO\Request\BookSearchDTO;
 use App\DTO\Request\BookSearchSortOption;
+use App\DTO\Request\SearchDTO;
 use App\DTO\Response\PageResultDTO;
 use App\DTO\Response\WorkRating\RatingDTO;
 use App\DTO\Response\WorkRating\RatingSummaryDTO;
+use App\Entity\Book\Author\Author;
 use App\Entity\Book\Book;
 use App\Entity\Book\Work;
-use App\Orm\QueryBuilder;
 use App\Repository\BookRepository;
 use App\Repository\Query\AuthorCriteria;
+use App\Repository\Query\AuthorQuery;
 use App\Repository\Query\BookCriteria;
 use App\Repository\Query\BookQuery;
 use App\Repository\Query\CategoryCriteria;
@@ -21,6 +23,7 @@ use App\Repository\Query\PriceCriteria;
 use App\Repository\Query\RatingCriteria;
 use App\Repository\Query\RatingQuery;
 use App\Repository\Query\WorkCriteria;
+use App\Repository\Query\WorkQuery;
 use App\Repository\RatingRepository;
 use PDO;
 
@@ -140,6 +143,54 @@ readonly class BookService extends Service
         }
 
         $qb->where($predicates);
+        $qb->page($dto->toPageRequest());
+
+        $this->pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
+        try {
+            return new PageResultDTO(
+                $this->bookRepository->get($qb),
+                $this->bookRepository->count($qb),
+                $dto->toPageRequest()
+            );
+        } finally {
+            $this->pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+        }
+    }
+
+    /**
+     * @param SearchDTO $dto
+     * @return PageResultDTO<Work>
+     */
+    public function searchWork(SearchDTO $dto): PageResultDTO
+    {
+        $qb = WorkQuery::minimal();
+        $qb->where(WorkCriteria::byTitleLike(alias: 'w'))
+            ->bind(':title', '%' . $dto->query . '%');
+        $qb->page($dto->toPageRequest());
+
+
+        $this->pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
+        try {
+            return new PageResultDTO(
+                $this->bookRepository->get($qb),
+                $this->bookRepository->count($qb),
+                $dto->toPageRequest()
+            );
+        } finally {
+            $this->pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+        }
+    }
+
+
+    /**
+     * @param SearchDTO $dto
+     * @return PageResultDTO<Author>
+     */
+    public function searchAuthor(SearchDTO $dto): PageResultDTO
+    {
+        $qb = AuthorQuery::minimal();
+        $qb->where(AuthorCriteria::byNameMatch(alias: 'a'))
+            ->bind(':name', '%' . $dto->query . '%');
         $qb->page($dto->toPageRequest());
 
         $this->pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
