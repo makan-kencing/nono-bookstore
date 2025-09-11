@@ -30,7 +30,8 @@ readonly class AccountController extends WebController
     #[GET]
     public function viewAccount(): void
     {
-        echo $this->render('webstore/account/account.php');
+        $this->redirect('/account/profile');
+//        echo $this->render('webstore/account/account.php');
     }
 
     /**
