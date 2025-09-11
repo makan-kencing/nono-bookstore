@@ -88,10 +88,13 @@ readonly class UserService extends Service
     /**
      * @throws ForbiddenException
      * @throws NotFoundException
+     * @throws UnauthorizedException
      */
     public function update(UserUpdateDTO $dto): void
     {
         $context = $this->getSessionContext();
+        if ($context === null)
+            throw new UnauthorizedException();
 
         $qb = UserQuery::withMinimalDetails();
         if ($dto->id != null)
@@ -111,8 +114,9 @@ readonly class UserService extends Service
         if ($user == null)
             throw new NotFoundException();
 
-        if (!AuthRule::HIGHER->check($context->role, $user->role))
-            throw new ForbiddenException();
+        if ($user->id !== $context->id)
+            if (!AuthRule::HIGHER->check($context->role, $user->role))
+                throw new ForbiddenException();
 
         $dto->update($user);
 
