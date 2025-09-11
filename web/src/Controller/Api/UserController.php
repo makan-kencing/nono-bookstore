@@ -14,10 +14,12 @@ use App\Router\Method\GET;
 use App\Router\Method\POST;
 use App\Router\Method\PUT;
 use App\Router\Path;
+use App\Router\RequireAuth;
 use App\Service\UserService;
 use PDO;
 
 #[Path('/api/user')]
+#[RequireAuth(redirect: false)]
 readonly class UserController extends ApiController
 {
     private UserService $userService;
@@ -52,24 +54,26 @@ readonly class UserController extends ApiController
      * @throws \App\Exception\ForbiddenException
      */
     #[PUT]
-    #[Path('/updateUser')]
-    public function updateUser(): void
+    #[Path('/update/{id}')]
+    public function updateUser(String $id): void
     {
         $dto = UserUpdateDTO::jsonDeserialize(self::getJsonBody());
         $dto->validate();
 
-        $this->userService->update($dto);
+        $this->userService->update($dto, (int) $id);
 
-        http_response_code(204);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'message' => 'User updated successfully']);
     }
 
     /**
-     * @throws UnprocessableEntityException
+     * @return void
      * @throws BadRequestException
      * @throws NotFoundException
+     * @throws UnprocessableEntityException
      */
     #[PUT]
-    #[Path('/updateUserProfile')]
+    #[Path('/update-profile/{id}')]
     public function updateUserProfile(): void
     {
         $dto = UserProfileUpdateDTO::jsonDeserialize(self::getJsonBody());
@@ -77,6 +81,7 @@ readonly class UserController extends ApiController
 
         $this->userService->updateUserProfile($dto);
 
-        http_response_code(204);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'message' => 'User profile updated successfully']);
     }
 }

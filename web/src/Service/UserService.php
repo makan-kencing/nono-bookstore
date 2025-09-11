@@ -85,41 +85,77 @@ readonly class UserService extends Service
         $this->userRepository->insert($user);
     }
 
+//    /**
+//     * @throws ForbiddenException
+//     * @throws NotFoundException
+//     * @throws UnauthorizedException
+//     */
+//    public function update(UserUpdateDTO $dto, string $id): void
+//    {
+//        $context = $this->getSessionContext();
+//        if ($context === null)
+//            throw new UnauthorizedException();
+//
+//        $qb = UserQuery::withMinimalDetails();
+//        if ($dto->id != null)
+//            $qb->where(UserCriteria::byId())
+//                ->bind(':id', $dto->id);
+//        else if ($dto->username != null)
+//            $qb->where(UserCriteria::byUsername())
+//                ->bind(':username', $dto->username);
+//        else if ($dto->email != null)
+//            $qb->where(UserCriteria::byEmail())
+//                ->bind(':email', $dto->email);
+//        else if ($dto->role != null)
+//            if (!AuthRule::HIGHER->check($context->role, $dto->role))
+//                throw new ForbiddenException();
+//
+//        $user = $this->userRepository->getOne($qb);
+//        if ($user == null)
+//            throw new NotFoundException();
+//
+//        if ($user->id !== $context->id)
+//            if (!AuthRule::HIGHER->check($context->role, $user->role))
+//                throw new ForbiddenException();
+//
+//        $dto->update($user);
+//
+//        $this->userRepository->update($user);
+//    }
+
     /**
      * @throws ForbiddenException
      * @throws NotFoundException
      * @throws UnauthorizedException
      */
-    public function update(UserUpdateDTO $dto): void
+    public function update(UserUpdateDTO $dto, int $userId): void
     {
         $context = $this->getSessionContext();
-        if ($context === null)
+        if ($context === null) {
             throw new UnauthorizedException();
+        }
 
         $qb = UserQuery::withMinimalDetails();
-        if ($dto->id != null)
             $qb->where(UserCriteria::byId())
-                ->bind(':id', $dto->id);
-        else if ($dto->username != null)
-            $qb->where(UserCriteria::byUsername())
-                ->bind(':username', $dto->username);
-        else if ($dto->email != null)
-            $qb->where(UserCriteria::byEmail())
-                ->bind(':email', $dto->email);
-        else if ($dto->role != null)
-            if (!AuthRule::HIGHER->check($context->role, $dto->role))
-                throw new ForbiddenException();
+                ->bind(':id', $userId);
 
         $user = $this->userRepository->getOne($qb);
-        if ($user == null)
+        if ($user === null) {
             throw new NotFoundException();
+        }
 
-        if ($user->id !== $context->id)
-            if (!AuthRule::HIGHER->check($context->role, $user->role))
-                throw new ForbiddenException();
+        if ($user->id !== (int) $context->id) {
+            if (!AuthRule::HIGHER->check($context->role, $user->role)) {
+                throw new ForbiddenException([
+                    "userId" => $user->id,
+                    "contextId" => $context->id,
+                    "contextRole" => $context->role,
+                    "userRole" => $user->role,
+                ]);
+            }
+        }
 
         $dto->update($user);
-
         $this->userRepository->update($user);
     }
 
@@ -156,44 +192,20 @@ readonly class UserService extends Service
     }
 
     /**
-     * Update user details
-     *
-     * @param int $id
-     * @param UserUpdateDTO $dto
-     * @param array|null $avatarFile
-     * @return User
-     * @throws NotFoundException
+     * @param UserProfileUpdateDTO $dto
+     * @return void
+     * @throws UnauthorizedException
      */
     public function updateUserProfile(UserProfileUpdateDTO $dto): void
     {
         $context = $this->getSessionContext();
-        if ($context === null)
+        if ($context === null) {
             throw new UnauthorizedException();
-
-        $qb = UserQuery::withMinimalDetails();
-        if($dto->id != null)
-            $qb->where(UserProfileCriteria::byId())->bind(':id', $context->id);
-        else if($dto->contactNo != null)
-            $qb->where(UserProfileCriteria::byContactNo())
-                ->bind(':contact_no', $dto->contactNo);
-        else if($dto->dob != null)
-            $qb->where(UserProfileCriteria::byDateOfBirth())
-                ->bind('date_of_birth', $dto->dob);
-
-        $userProfile = $this->userProfileRepository->getOne($qb);
-        if ($userProfile === null) {
-            throw new NotFoundException;
         }
+
+        $userProfile = new UserProfile();
+        $userProfile->id = $context->id;
         $dto->updateProfile($userProfile);
-        $this->userProfileRepository->updateProfile($userProfile);;
-    }
-
-    public function getUserProfile(int $id): UserProfile
-    {
-        $qb = UserQuery::withMinimalDetails()
-            ->where(UserCriteria::byId())
-            ->bind(':id', $id);
-
-        return $this->userProfileRepository->getOne($qb);
+        $this->userProfileRepository->updateProfile($userProfile);
     }
 }

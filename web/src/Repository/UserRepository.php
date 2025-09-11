@@ -24,16 +24,17 @@ readonly class UserRepository extends Repository
 
     public function update(User $user): void
     {
-
         $stmt = $this->conn->prepare('
         UPDATE user
         SET
+            username = :username,
             email = :email,
             hashed_password = :hashed_password,
             role = :role,
             is_verified = :is_verified
-        WHERE username = :username;
-        ');
+        WHERE id = :id;
+    ');
+        $stmt->bindValue(':id', $user->id, \PDO::PARAM_INT);
         $stmt->bindValue(':username', $user->username);
         $stmt->bindValue(':email', $user->email);
         $stmt->bindValue(':hashed_password', $user->hashedPassword);
@@ -41,6 +42,7 @@ readonly class UserRepository extends Repository
         $stmt->bindValue(':is_verified', $user->isVerified);
         $stmt->execute();
     }
+
 
     public function deleteById(int $id): void
     {
