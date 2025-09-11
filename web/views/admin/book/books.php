@@ -10,10 +10,16 @@ ob_start();
     <main>
 
         <form id="search">
-            <div>
-                <button>+ Add</button>
+            <div style="display: flex;">
+                <button id="add-book" type="button">+ Add</button>
 
                 <button type="submit">Refresh</button>
+
+                <search style="margin-left: auto">
+                    <label>
+                        Searching: <input type="text" name="query">
+                    </label>
+                </search>
             </div>
 
             <div id="output-table">
@@ -23,6 +29,16 @@ ob_start();
 
     </main>
 
+    <dialog id="add-book">
+        <form method="dialog">
+
+            <div>
+                <button type="reset">Cancel</button>
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+    </dialog>
+
     <script>
         let $searchForm = $("form#search");
 
@@ -30,6 +46,14 @@ ob_start();
             e.preventDefault();
 
             reloadTable();
+        });
+
+        $("search input[name=query]").change(/** @param {jQuery.Event} e */ (e) => {
+            reloadTable();
+        })
+
+        $("button#add-book").click(/** @param {jQuery.Event} e */ (e) => {
+            $("dialog#add-book")[0].showModal();
         });
 
         function reloadTable() {
