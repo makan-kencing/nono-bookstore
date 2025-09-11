@@ -26,5 +26,7 @@ class File extends Entity
 
     public string $filepath;
 
+    public string $localFilepath;
+
     public DateTime $createdAt;
 }
