@@ -17,3 +17,6 @@ create or replace table author
 create or replace index image_id
     on author (image_id);
 
+create or replace fulltext index name
+    on author (name);
+
