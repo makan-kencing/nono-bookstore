@@ -17,9 +17,9 @@ declare(strict_types=1);
                 </a>
             </li>
             <li>
-                <a href="/admin/products">
+                <a href="/admin/books">
                     <i class="fa-solid fa-book"></i>
-                    View Products
+                    View Books
                 </a>
             </li>
             <li>
