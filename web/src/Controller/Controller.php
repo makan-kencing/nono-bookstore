@@ -20,6 +20,16 @@ abstract readonly class Controller
         $this->view = $view;
     }
 
+    /**
+     * @param string $file
+     * @param array<string, mixed> $data
+     * @return string
+     */
+    public function render(string $file, array $data = []): string
+    {
+        return $this->view->render($file, $data);
+    }
+
     public function redirect(string $url): void
     {
         header('Location: ' . $url);
