@@ -129,14 +129,11 @@ readonly class BookService extends Service
         if ($dto->option) {
             $direction = $dto->option->getDirection();
 
-            $property = match ($this) {
+            $property = match ($dto->option) {
                 BookSearchSortOption::RELEVANCE => 'b.id',
-                BookSearchSortOption::PRICE_ASC,
-                BookSearchSortOption::PRICE_DESC => 'p.amount',
-                BookSearchSortOption::TITLE_ASC,
-                BookSearchSortOption::TITLE_DESC => 'w.title',
-                BookSearchSortOption::PUBLISHED_ASC,
-                BookSearchSortOption::PUBLISHED_DESC => 'b.published_at',
+                BookSearchSortOption::PRICE_ASC, BookSearchSortOption::PRICE_DESC => 'p.amount',
+                BookSearchSortOption::TITLE_ASC, BookSearchSortOption::TITLE_DESC => 'w.title',
+                BookSearchSortOption::PUBLISHED_ASC, BookSearchSortOption::PUBLISHED_DESC => 'b.publication_date',
             };
 
             $qb->orderBy($property, $direction);
