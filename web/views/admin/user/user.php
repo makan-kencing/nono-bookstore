@@ -40,7 +40,7 @@ ob_start();
                     }
                 </style>
 
-                <form id="profileFormContect" class="form-group" >
+                <form id="profileFormContact" class="form-group" >
                     <label for="phone">Contact No</label>
                     <input type="tel" id="phone" name="phone" value="<?= $user->profile?->contactNo ?>">
 
@@ -99,9 +99,32 @@ ob_start();
             );
         });
 
+        $("form#profileFormContact").submit(/** @param {jQuery.Event} e */ (e) =>{
+            e.preventDefault();
+            console.log(e)
 
+            const data =new FormData(e.target);
 
-
+            $.ajax(
+                "/api/user/update-profile/<?= $user->id ?>",
+                {
+                    method:'PUT',
+                    contentType:"application/json",
+                    data:(JSON.stringify(Object.fromEntries(data.entries()))),
+                    error:(jqXHR, textStatus, errorThrown)=>{
+                        console.error(jqXHR, textStatus, errorThrown)
+                        switch (jqXHR){
+                            case 500:
+                                alert("Error")
+                        }
+                    },
+                    success:(data, textStatus, jqXHR)=>{
+                        console.log(data, textStatus, jqXHR)
+                        prompt("Done update");
+                    }
+                }
+            );
+        });
     </script>
 
 <?php
