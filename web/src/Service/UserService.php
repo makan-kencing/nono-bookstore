@@ -208,11 +208,12 @@ readonly class UserService extends Service
         }
 
         // ensure user exists
-        $userQb = UserQuery::withMinimalDetails()
+        $qb = UserQuery::withMinimalDetails()
+            ->leftJoin('profile', 'up')
             ->where(UserCriteria::byId())
             ->bind(':id', $id);
 
-        $user = $this->userRepository->getOne($userQb);
+        $user = $this->userRepository->getOne($qb);
         if ($user === null) {
             throw new NotFoundException;
         }
@@ -223,21 +224,11 @@ readonly class UserService extends Service
             }
         }
 
-        // check profile since it may or may not exist
-        $profileQb = UserProfileQuery::withMinimalDetails()
-            ->where(UserProfileCriteria::byUserId())
-            ->bind(':user_id', $id);
-
-        $userProfile = $this->userProfileRepository->getOne($profileQb);
-
-        if ($userProfile === null) {
-            // no profile yet, then create one
-            $userProfile = $dto->toEntity($id); // convert DTO → UserProfile entity
-            $this->userProfileRepository->insertProfile($userProfile);
+        $dto->updateProfile($user->profile);
+        if ($user->profile === null) {
+            $this->userProfileRepository->insert($user->profile);
         } else {
-            // profile exists then update
-            $dto->updateProfile($userProfile);
-            $this->userProfileRepository->updateProfile($userProfile);
+            $this->userProfileRepository->update($user->profile);
         }
     }
 
