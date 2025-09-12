@@ -66,7 +66,7 @@ ob_start();
             <!-- Date of Birth -->
             <div class="form-group">
                 <label for="dob">Date of Birth</label>
-                <input type="date" name="dob" id="dob" value="<?= htmlspecialchars($user->profile->dob ?? '') ?>">
+                <input type="date" name="dob" id="dob" value="<?= $user->profile?->dob?->format('Y-m-d')?>">
             </div>
 
             <!-- Password -->
