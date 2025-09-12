@@ -23,7 +23,7 @@ trait EnumUtils
         return constant("self::$name");
     }
 
-    public static function tryFromName(string $name): ?self
+    public static function tryFromName(?string $name): ?self
     {
         try {
             return self::fromName($name);
