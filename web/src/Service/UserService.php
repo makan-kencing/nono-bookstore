@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\DTO\Request\AddressCreateDTO;
+use App\DTO\Request\UserAddressDTO;
 use App\DTO\Request\UserCreateDTO;
 use App\DTO\Request\UserPasswordUpdateDTO;
 use App\DTO\Request\UserProfileUpdateDTO;
 use App\DTO\Request\UserUpdateDTO;
 use App\DTO\UserLoginContextDTO;
+use App\Entity\User\Address;
 use App\Entity\User\User;
 use App\Entity\User\UserProfile;
 use App\Exception\ConflictException;
@@ -17,8 +20,11 @@ use App\Exception\NotFoundException;
 use App\Exception\UnauthorizedException;
 use App\Exception\UnprocessableEntityException;
 use App\Repository\FileRepository;
+use App\Repository\Query\AddressCriteria;
+use App\Repository\Query\AddressQuery;
 use App\Repository\Query\UserCriteria;
 use App\Repository\Query\UserQuery;
+use App\Repository\UserAddressRepository;
 use App\Repository\UserProfileRepository;
 use App\Repository\UserRepository;
 use App\Router\AuthRule;
@@ -30,6 +36,8 @@ readonly class UserService extends Service
 {
     private UserRepository $userRepository;
     private UserProfileRepository $userProfileRepository;
+
+    private UserAddressRepository $userAddressRepository;
     private FileRepository $fileRepository;
 
     public function __construct(PDO $pdo)
@@ -37,6 +45,7 @@ readonly class UserService extends Service
         parent::__construct($pdo);
         $this->userRepository = new UserRepository($this->pdo);
         $this->userProfileRepository = new UserProfileRepository($pdo);
+        $this->userAddressRepository = new UserAddressRepository($pdo);
         $this->fileRepository = new FileRepository($pdo);
     }
 
@@ -207,6 +216,7 @@ readonly class UserService extends Service
             throw new UnauthorizedException();
         }
 
+        // ensure user exists
         $qb = UserQuery::withMinimalDetails()
             ->leftJoin('profile', 'up')
             ->where(UserCriteria::byId())
@@ -235,6 +245,77 @@ readonly class UserService extends Service
         }
     }
 
+    /**
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     * @throws ForbiddenException
+     */
+    public function updateUserAddress(UserAddressDTO $dto, int $id): void
+    {
+        $context = $this->getSessionContext();
+        if ($context === null)
+            throw new UnauthorizedException();
+
+        $qb = AddressQuery::minimal();
+        $qb->join('user', 'u')
+            ->where(AddressCriteria::byId(alias: 'a'))
+            ->bind(':id', $id);
+
+        $address = $this->userRepository->getOne($qb);
+        if ($address === null)
+            throw new NotFoundException;
+
+        if ($address->user->id !== $context->id)
+            if (!AuthRule::HIGHER->check($context->role, $address->user->role))
+                throw new ForbiddenException();
+
+        $dto->update($address);
+        $this->userAddressRepository->update($address);
+    }
+
+    /**
+     * @throws UnauthorizedException
+     */
+    public function createAddress(AddressCreateDTO $dto): void
+    {
+        $context = $this->getSessionContext();
+        if ($context === null)
+            throw new UnauthorizedException();
+
+        $address = $dto->toAddress();
+        $address->user = $context->toUserReference();
+
+        $this->userAddressRepository->insert($address);
+
+        if ($dto->default)
+            $this->userAddressRepository->setDefault($address);
+    }
+
+    public function deleteAddress(int $id): void{
+        $context = $this->getSessionContext();
+        if ($context === null)
+            throw new UnauthorizedException();
+
+        if ($id != $context->toUserReference()){
+            throw new ForbiddenException([]);
+        }
+
+        $this->userAddressRepository->deleteAddress($id);
+
+    }
+
+    public function setAddressDefault(int $addressId): void
+    {
+        $context = $this->getSessionContext();
+        if ($context === null)
+            throw new UnauthorizedException();
+
+        $address = new Address();
+        $address->id = $addressId;
+        $address->user = $context->toUserReference();
+
+        $this->userAddressRepository->setDefault($address);
+    }
     /**
      * @throws UnauthorizedException
      * @throws NotFoundException

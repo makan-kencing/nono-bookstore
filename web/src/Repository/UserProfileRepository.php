@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\User\Address;
 use App\Entity\User\UserProfile;
 
 readonly class UserProfileRepository extends Repository

@@ -29,7 +29,7 @@ assert(isset($body) && is_string($body));
             <button type="reset" style="margin-left: auto">X</button>
         </div>
 
-        <div style="overflow-y: auto; height: 80vh;">
+        <div class="content" style="display:flex; flex-flow: column; align-items: stretch; overflow-y: auto; max-height: 80vh;">
             <?= $body ?>
         </div>
 

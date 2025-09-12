@@ -1,3 +1,7 @@
+:root {
+    --content-width: 1280px
+}
+
 header, footer {
     a {
         text-decoration: none;
