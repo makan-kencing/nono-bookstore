@@ -83,4 +83,29 @@ class BookQuery
 
         return $qb;
     }
+
+    /**
+     * @return QueryBuilder<Book>
+     */
+    public static function asBookAdminDetails(): QueryBuilder
+    {
+        $qb = new QueryBuilder();
+        $qb->from(Book::class, 'b')
+            ->leftJoin($qb->createJoin('images', 'bi')
+                ->join('file', 'f'))
+            ->join($qb->createJoin('authors', 'ad')
+                ->join('author', 'a'))
+            ->join($qb->createJoin('work', 'w')
+                ->leftJoin($qb->createJoin('categories', 'cd')
+                    ->join('category', 'c'))
+                ->leftJoin($qb->createJoin('series', 'sd')
+                    ->join('series', 's'))
+                ->join($qb->createJoin('books', 'wb')
+                    ->leftJoin('prices', 'wbp')))
+            ->leftJoin('prices', 'p')
+            ->leftJoin('costs', 'cp')
+            ->leftJoin('inventories', 'i');
+
+        return $qb;
+    }
 }

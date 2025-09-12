@@ -17,6 +17,19 @@ class BookCriteria
      * @param ?string $alias
      * @return Predicate
      */
+    public static function byId(string $param = ':id', ?string $alias = null): Predicate
+    {
+        if ($alias === null) $alias = '';
+        else $alias .= '.';
+
+        return new Predicate($alias . 'id = ' . $param);
+    }
+
+    /**
+     * @param literal-string $param
+     * @param ?string $alias
+     * @return Predicate
+     */
     public static function byIsbn(string $param = ':isbn', ?string $alias = null): Predicate
     {
         if ($alias === null) $alias = '';

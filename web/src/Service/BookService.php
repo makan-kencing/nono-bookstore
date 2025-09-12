@@ -50,16 +50,26 @@ readonly class BookService extends Service
         return $this->bookRepository->count($qb) !== 0;
     }
 
-    /**
-     * @param string $isbn
-     * @return ?Book
-     */
     public function getBookProductDetails(string $isbn): ?Book
     {
         $qb = BookQuery::asBookDetails();
         $qb->where(BookCriteria::byIsbn(alias: 'b')
                 ->and(BookCriteria::notSoftDeleted(alias: 'b')))
             ->bind(':isbn', $isbn);
+
+        $book = $this->bookRepository->getOne($qb);
+        if ($book == null)
+            return null;
+
+        return $book;
+    }
+
+    public function getBookById(int $id): ?Book
+    {
+        $qb = BookQuery::asBookAdminDetails();
+        $qb->where(BookCriteria::byId(alias: 'b')
+                ->and(BookCriteria::notSoftDeleted(alias: 'b')))
+            ->bind(':id', $id);
 
         $book = $this->bookRepository->getOne($qb);
         if ($book == null)
