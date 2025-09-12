@@ -48,7 +48,7 @@ ob_start();
 
 <script>
     $("table.user-table tbody tr").click(/** @param {jQuery.Event} e */ (e) => {
-        window.location = `/admin/user/orders${e.currentTarget.dataset.id}`;
+        window.location = `/admin/order/${e.currentTarget.dataset.id}`;
     })
 
 </script>
