@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Core\Template;
 use App\Core\View;
 use App\DTO\Request\BookSearchDTO;
 use App\DTO\Request\BookSearchSortOption;
@@ -12,8 +13,14 @@ assert(isset($page) && $page instanceof PageResultDTO);
 assert(isset($search) && $search instanceof BookSearchDTO);
 /** @var PageResultDTO<Book> $page */
 
-ob_start();
+$template = new Template(
+    'webstore/_base.php',
+    ['title' => 'Searching']
+);
+
 ?>
+
+<?php $template->start(); ?>
     <main style="display: flex; flex-flow: column; align-items: center;">
         <div style="display: flex; gap: 2rem;">
             <div>
@@ -126,13 +133,4 @@ ob_start();
             </div>
         </div>
     </main>
-
-<?php
-
-$title = 'Search';
-$content = ob_get_clean();
-
-echo View::render(
-    'webstore/_base.php',
-    ['title' => $title, 'content' => $content]
-);
+<?= $template->end() ?>

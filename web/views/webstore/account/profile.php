@@ -2,13 +2,19 @@
 
 declare(strict_types=1);
 
-use App\Core\View;
 use App\Entity\User\User;
+use App\Core\Template;
 
 assert(isset($user) && $user instanceof User);
 
-ob_start();
+$template = new Template(
+    'webstore/_base.php',
+    ['title' => 'User Profile']
+);
+
 ?>
+
+<?php $template->start(); ?>
     <div class="profile-container">
         <h2>Profile</h2>
 
@@ -147,12 +153,4 @@ ob_start();
                 });
         });
     </script>
-<?php
-
-$title = 'User Profile';
-$content = ob_get_clean();
-
-echo View::render(
-    '/webstore/_base.php',
-    ['title' => $title, 'content' => $content]
-);
+<?= $template->end() ?>
