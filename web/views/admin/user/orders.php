@@ -31,9 +31,13 @@ ob_start();
                         <tr data-id="<?= $order->id ?>">
                             <td><?= $num?></td>
                             <td><?=$order->refNo?></td>
-                            <?php foreach ($order->items as $item): ?>
-                            <td><?= $item->quantity?></td>
-                            <?php endforeach; ?>
+                            <td><?= count($order->items)?></td>
+                            <td><?= number_format($order->getTotal()/100,2) ?></td>
+                            <td>
+                                <span class="chip" data-order-status="<?= strtolower($order->getOrderStatus()->name) ?>">
+                                    <?= $order->getOrderStatus()->toDescription() ?>
+                                </span>
+                            </td>
                         </tr>
                         <?php $num++;?>
                     <?php endforeach; ?>
