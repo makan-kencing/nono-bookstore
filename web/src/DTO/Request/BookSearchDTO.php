@@ -127,18 +127,6 @@ readonly class BookSearchDTO extends SearchDTO
      */
     public function validate(): void
     {
-        parent::validate();
-
-        $rules = [];
-        if (($this->minPrice === null) != ($this->maxPrice === null))
-            $rules[] = [
-                'field' => 'price',
-                'type' => 'range',
-                'message' => 'Min and max price must be either specified or not specified.'
-            ];
-
-        if ($rules)
-            throw new UnprocessableEntityException($rules);
     }
 
     public function toQueryString(): string
