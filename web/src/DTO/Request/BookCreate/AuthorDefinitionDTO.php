@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\DTO\Request\BookCreate;
 
 use App\DTO\Request\RequestDTO;
+use App\Entity\Book\Author\Author;
+use App\Entity\Book\Author\AuthorDefinition;
 use App\Entity\Book\Author\AuthorDefinitionType;
+use App\Entity\Book\Book;
 use App\Exception\BadRequestException;
 use Throwable;
 
@@ -40,5 +43,17 @@ readonly class AuthorDefinitionDTO extends RequestDTO
      */
     public function validate(): void
     {
+    }
+
+    public function toAuthorDefinition(Book $book): AuthorDefinition
+    {
+        $ad = new AuthorDefinition();
+        $ad->book = $book;
+        $ad->author = new Author();
+        $ad->author->id = $this->authorId;
+        $ad->type = $this->type;
+        $ad->comment = null;
+
+        return $ad;
     }
 }

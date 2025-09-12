@@ -16,6 +16,15 @@ class BookQuery
     }
 
     /**
+     * @return QueryBuilder<Book>
+     */
+    public static function minimal(): QueryBuilder
+    {
+        $qb = new QueryBuilder();
+        return $qb->from(Book::class, 'b');
+    }
+
+    /**
      * @param literal-string $property
      * @param string $alias
      * @return JoinBuilder<Entity, Book>

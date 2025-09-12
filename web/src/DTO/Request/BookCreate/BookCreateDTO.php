@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\DTO\Request\BookCreate;
 
 use App\DTO\Request\RequestDTO;
+use App\Entity\Book\Book;
+use App\Entity\Book\Work;
 use App\Entity\Product\CoverType;
 use App\Exception\BadRequestException;
 use App\Exception\UnprocessableEntityException;
@@ -92,5 +94,29 @@ readonly class BookCreateDTO extends RequestDTO
 
         if ($rules)
             throw new UnprocessableEntityException($rules);
+    }
+
+    public function toBook(): Book
+    {
+        $book = new Book();
+
+        $book->work = new Work();
+        $book->work->id = $this->workId;
+        $book->isbn = $this->isbn;
+        $book->description = $this->description;
+        $book->coverType = $this->coverType;
+        $book->numberOfPages = $this->numberOfPages;
+        $book->dimensions = $this->dimensions;
+        $book->language = $this->language;
+        $book->editionInformation = $this->editionInformation;
+        $book->publisher = $this->publisher;
+        $book->publicationDate = $this->publicationDate;
+        $book->authors = array_map(
+            fn ($dto) => $dto->toAuthorDefinition($book),
+            $this->authors
+        );
+        $book->deletedAt = null;
+
+        return $book;
     }
 }

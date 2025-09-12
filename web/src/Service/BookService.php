@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\DTO\Request\BookCreate\BookCreateDTO;
 use App\DTO\Request\BookSearchDTO;
 use App\DTO\Request\BookSearchSortOption;
 use App\DTO\Request\SearchDTO;
@@ -13,6 +14,7 @@ use App\DTO\Response\WorkRating\RatingSummaryDTO;
 use App\Entity\Book\Author\Author;
 use App\Entity\Book\Book;
 use App\Entity\Book\Work;
+use App\Exception\ConflictException;
 use App\Repository\BookRepository;
 use App\Repository\Query\AuthorCriteria;
 use App\Repository\Query\AuthorQuery;
@@ -37,6 +39,15 @@ readonly class BookService extends Service
         parent::__construct($pdo);
         $this->bookRepository = new BookRepository($this->pdo);
         $this->ratingRepository = new RatingRepository($this->pdo);
+    }
+
+    public function checkIsbnExists(string $isbn): bool
+    {
+        $qb = BookQuery::minimal()
+            ->where(BookCriteria::byIsbn(alias: 'b'))
+            ->bind(':isbn', $isbn);
+
+        return $this->bookRepository->count($qb) !== 0;
     }
 
     /**
@@ -203,5 +214,20 @@ readonly class BookService extends Service
         } finally {
             $this->pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         }
+    }
+
+    /**
+     * @throws ConflictException
+     */
+    public function createBook(BookCreateDTO $dto): Book
+    {
+        if ($this->checkIsbnExists($dto->isbn))
+            throw new ConflictException(['message' => 'A book with the isbn ' . $dto->isbn . ' already exists.']);
+
+        $book = $dto->toBook();
+
+        $this->bookRepository->insert($book);
+
+        return $book;
     }
 }
