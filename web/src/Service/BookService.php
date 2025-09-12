@@ -227,6 +227,8 @@ readonly class BookService extends Service
         $book = $dto->toBook();
 
         $this->bookRepository->insert($book);
+        foreach ($book->authors as $author)
+            $this->bookRepository->insertAuthor($author);
 
         return $book;
     }

@@ -206,7 +206,6 @@ ob_start();
             clone.find("select[name^=authors][name$='[id]']").attr("name", `authors[${order}][id]`);
             clone.find("select[name^=authors][name$='[type]']").attr("name", `authors[${order}][type]`);
 
-
             $(this).before(clone);
         });
 
@@ -223,7 +222,7 @@ ob_start();
                     method: 'POST',
                     data: $(this).serialize(),
                     success: () => {
-
+                        this.closest("dialog").close();
                     },
                     error: (jqXHR, textStatus, errorThrown) => {
 
