@@ -92,6 +92,10 @@ readonly class AuthService extends Service
 
     public function logout(): void
     {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
         unset($_SESSION['user']);
     }
+
 }
