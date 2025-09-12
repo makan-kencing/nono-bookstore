@@ -59,4 +59,26 @@ readonly class AccountController extends WebController
             ['user' => $user]
         );
     }
+
+    #[GET]
+    #[Path('/update-password')]
+    public function updatePassword(): void
+    {
+        $context = $this->getSessionContext();
+        if ($context === null)
+            throw new UnauthorizedException();
+
+        $qb = UserQuery::userListings()
+            ->where(UserCriteria::byId(alias: 'u'))
+            ->bind(':id', $context->id);
+        $user = $this->userRepository->getOne($qb);
+
+        if ($user === null)
+            throw new NotFoundException();
+
+        echo $this->render(
+            'webstore/account/updatePassword.php',
+            ['user' => $user]
+        );
+    }
 }
