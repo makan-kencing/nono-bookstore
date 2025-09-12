@@ -6,37 +6,40 @@ $title = 'Login';
 ob_start();
 ?>
     <link rel="stylesheet" href="/static/styles/Auth/login.css">
-    <div class="left-section">
-        <div class="login-form">
-            <h2>Login</h2>
-            <p class="subtitle">Login to access your account</p>
-            <form id="loginForm" method="POST" action="/api/login">
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <div class="input-container">
-                        <input type="password" id="password" name="password" required>
-                        <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+    <div class="login-container">
+        <div class="left-section">
+            <div class="login-form">
+                <h2>Login</h2>
+                <p class="subtitle">Login to access your account</p>
+                <form id="loginForm" method="POST" action="/api/login">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
                     </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-container">
+                            <input type="password" id="password" name="password" required>
+                            <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+                        </div>
+                    </div>
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox" id="remember" name="remember">
+                            Remember me
+                        </label>
+                        <a href="#" class="forgot-password">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="login-btn">Login</button>
+                </form>
+                <div class="signup-link">
+                    Don't have an account? <a href="/register">Sign up</a>
                 </div>
-                <div class="form-options">
-                    <label class="remember-me">
-                        <input type="checkbox" id="remember" name="remember">
-                        Remember me
-                    </label>
-                    <a href="#" class="forgot-password">Forgot password?</a>
-                </div>
-                <button type="submit" class="login-btn">Login</button>
-            </form>
-            <div class="signup-link">
-                Don't have an account? <a href="/register">Sign up</a>
             </div>
         </div>
+
         <div class="right-section">
-            <img src="/static/assets/login-illustration.jpg" alt="login-illustration">
+            <img src="/static/assets/login-illustration.jpg" alt="Login Illustration">
         </div>
     </div>
 
@@ -74,7 +77,7 @@ ob_start();
             )
         })
 
-        // Password toggle functionality
+        // Password toggle function
         $("#togglePassword").on("click", function() {
             const password = $("#password");
             const type = password.attr("type") === "password" ? "text" : "password";
