@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\DTO\Request\UserCreateDTO;
+use App\DTO\Request\UserPasswordUpdateDTO;
 use App\DTO\Request\UserProfileUpdateDTO;
 use App\DTO\Request\UserUpdateDTO;
 use App\DTO\UserLoginContextDTO;
@@ -16,8 +17,6 @@ use App\Exception\NotFoundException;
 use App\Exception\UnauthorizedException;
 use App\Repository\FileRepository;
 use App\Repository\Query\UserCriteria;
-use App\Repository\Query\UserProfileCriteria;
-use App\Repository\Query\UserProfileQuery;
 use App\Repository\Query\UserQuery;
 use App\Repository\UserProfileRepository;
 use App\Repository\UserRepository;
@@ -207,7 +206,6 @@ readonly class UserService extends Service
             throw new UnauthorizedException();
         }
 
-        // ensure user exists
         $qb = UserQuery::withMinimalDetails()
             ->leftJoin('profile', 'up')
             ->where(UserCriteria::byId())
@@ -224,12 +222,58 @@ readonly class UserService extends Service
             }
         }
 
-        $dto->updateProfile($user->profile);
+        // Ensure profile exists before updating
         if ($user->profile === null) {
+            $user->profile = new UserProfile();
+            $user->profile->user = $user;
+            $dto->updateProfile($user->profile);
             $this->userProfileRepository->insert($user->profile);
         } else {
+            $dto->updateProfile($user->profile);
             $this->userProfileRepository->update($user->profile);
         }
+    }
+
+    /**
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     * @throws ForbiddenException
+     */
+    public function updatePassword(UserPasswordUpdateDTO $dto, int $userId): void
+    {
+        $context = $this->getSessionContext();
+        if ($context === null) {
+            throw new UnauthorizedException();
+        }
+
+        $qb = UserQuery::withMinimalDetails()
+            ->where(UserCriteria::byId())
+            ->bind(':id', $userId);
+
+        $user = $this->userRepository->getOne($qb);
+        if ($user === null) {
+            throw new NotFoundException();
+        }
+
+        // Only self or higher role can change
+        if ($user->id !== (int)$context->id) {
+            if (!AuthRule::HIGHER->check($context->role, $user->role)) {
+                throw new ForbiddenException();
+            }
+        }
+
+        // Check old password
+        if (!password_verify($dto->oldPassword, $user->hashedPassword)) {
+            throw new UnprocessableEntityException([[
+                "field" => "old_password",
+                "type" => "invalid",
+                "reason" => "Old password is incorrect"
+            ]]);
+        }
+
+        // Update with new password
+        $user->hashedPassword = password_hash($dto->newPassword, PASSWORD_DEFAULT);
+        $this->userRepository->update($user);
     }
 
 }
