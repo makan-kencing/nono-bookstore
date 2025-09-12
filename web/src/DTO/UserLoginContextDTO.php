@@ -6,6 +6,7 @@ namespace App\DTO;
 
 use App\Entity\User\User;
 use App\Entity\User\UserRole;
+use App\Router\AuthRule;
 
 readonly class UserLoginContextDTO extends DTO
 {
@@ -21,5 +22,10 @@ readonly class UserLoginContextDTO extends DTO
         $user = new User();
         $user->id = $this->id;
         return $user;
+    }
+
+    public function isStaff(): bool
+    {
+        return AuthRule::HIGHER_OR_EQUAL->check($this->role, UserRole::STAFF);
     }
 }

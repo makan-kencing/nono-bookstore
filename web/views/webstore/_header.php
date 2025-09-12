@@ -26,7 +26,10 @@ $context = AuthService::getLoginContext();
                         </a>
                         <ul class="dropdown-menu">
                             <li><a href="/account">My Account</a></li>
-                            <li><a href="/">My Purchase</a></li>
+                            <li><a href="/orders">My Orders</a></li>
+                            <?php if ($context->isStaff()): ?>
+                                <li><a href="/admin">Admin Dashboard</a></li>
+                            <?php endif; ?>
                             <li><a href="#" id="logout-link">Logout</a></li>
                         </ul>
                     </li>
