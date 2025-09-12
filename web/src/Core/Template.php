@@ -12,6 +12,7 @@ class Template
     public array $fragments = [];
     /** @var ?literal-string */
     public ?string $currentFragment = null;
+    public ?string $previous = null;
 
     /**
      * @param string $file
@@ -29,6 +30,10 @@ class Template
             throw new RuntimeException('The template is already started. Raw dump: ' . json_encode($this));
 
         $this->started = true;
+
+        if (ob_get_status())
+            $this->previous = ob_get_clean() ?? '';
+
         ob_start();
     }
 
@@ -70,6 +75,11 @@ class Template
             return View::render($this->file, $this->data) ?: '';
         } finally {
             $this->started = false;
+
+            if ($this->previous !== null) {
+                ob_start();
+                echo $this->previous;
+            }
         }
     }
 }
