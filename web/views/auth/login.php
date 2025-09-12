@@ -54,12 +54,21 @@ ob_start();
                     contentType: "application/json",
                     dataType: "text",
                     data: JSON.stringify(Object.fromEntries(data.entries())),
-                    error: (xhr, textStatus, errorThrown) => {
-                        console.error(textStatus, errorThrown)
+                    error: (xhr) => {
+                        switch (xhr.status) {
+                            case 401:
+                                // TODO: make nicer
+                                alert("Invalid username or password.");
+                                break;
+                            default:
+                                alert("Failed to login");
+                                break;
+                        }
                     },
-                    success: (data, textStatus) => {
-                        console.log(data, textStatus);
-                        window.location.href = "/";
+                    success: () => {
+                        if (document.referrer === '/login' || document.referrer === '/register')
+                            window.location.href = document.referrer;
+                        window.location.href = document.referrer;
                     }
                 }
             )

@@ -9,6 +9,7 @@ use App\DTO\Request\UserLoginDTO;
 use App\DTO\Request\UserRegisterDTO;
 use App\Exception\BadRequestException;
 use App\Exception\ConflictException;
+use App\Exception\UnauthorizedException;
 use App\Exception\UnprocessableEntityException;
 use App\Router\Method\POST;
 use App\Router\Path;
@@ -47,6 +48,7 @@ readonly class AuthController extends ApiController
     /**
      * @throws UnprocessableEntityException
      * @throws BadRequestException
+     * @throws UnauthorizedException
      */
     #[POST]
     #[Path('/login')]
@@ -55,10 +57,10 @@ readonly class AuthController extends ApiController
         $dto = UserLoginDTO::jsonDeserialize(self::getJsonBody());
         $dto->validate();
 
-        if ($this->authService->login($dto))
-            http_response_code(200);
-        else
-            http_response_code(401);
+        if (!$this->authService->login($dto))
+            throw new UnauthorizedException();
+
+        http_response_code(200);
     }
 
     #[POST]
