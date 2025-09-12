@@ -120,7 +120,7 @@ ob_start();
         })
 
         $("dialog.add-user > form").submit(/** @param {jQuery.Event} e */ (e) => {
-            e.stopPropagation();
+            e.preventDefault();
 
             const data = new FormData(e.target);
 
@@ -132,11 +132,23 @@ ob_start();
                     data: JSON.stringify(Object.fromEntries(data.entries())),
                     error: (jqXHR, textStatus, errorThrown) => {
                         console.error(jqXHR, textStatus, errorThrown)
+                        switch (jqXHR.status) {
+                            case 401:
+                                alert("You are not logged. ");
+                                break;
+                            case 403:
+                                alert("You do not have permission to create this user.");
+                                break;
+                            case 422:
+                                alert("Your email method error.");
+                                break;
+
+                        }
                     },
                     success: (data, textStatus, jqXHR) => {
                         console.log(data, textStatus, jqXHR);
-
                         e.target.closest('dialog').close();
+                        window.location.reload();
                     }
                 }
             );

@@ -20,7 +20,7 @@ use PDO;
 
 #[Path('/api/user')]
 #[RequireAuth(redirect: false)]
-readonly class UserController extends ApiController
+readonly class  UserController extends ApiController
 {
     private UserService $userService;
 
@@ -56,7 +56,7 @@ readonly class UserController extends ApiController
      * @throws \App\Exception\UnauthorizedException
      */
     #[PUT]
-    #[Path('/update/{id}')]
+    #[Path('/{id}')]
     public function updateUser(String $id): void
     {
         $dto = UserUpdateDTO::jsonDeserialize(self::getJsonBody());

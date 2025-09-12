@@ -23,7 +23,7 @@ ob_start();
 
             <div class="form-grid">
 
-                <form class="form-group">
+                <form id="profileForm" class="form-group">
                     <label for="username">Username</label>
                     <input type="text" id="username" name="username" data-username-taken="0" value="<?= $user->username?>">
                     <span class="hint" style="color: red">Username taken</span>
@@ -40,12 +40,12 @@ ob_start();
                     }
                 </style>
 
-                <form class="form-group">
+                <form id="profileFormContect" class="form-group" >
                     <label for="phone">Contact No</label>
                     <input type="tel" id="phone" name="phone" value="<?= $user->profile?->contactNo ?>">
 
                     <label for="birthday">Birthday</label>
-                    <input type="date" id="birthday" name="birthday" value="<?= $user->profile?->dob ?>">
+                    <input type="date" id="birthday" name="birthday" value="<?=$user->profile?->dob?->format('Y-m-d') ?>">
 
                     <button type="submit" class="btn">Update</button>
                 </form>
@@ -71,6 +71,37 @@ ob_start();
                 }
             )
         })
+
+        $("form#profileForm").submit(/** @param {jQuery.Event} e */ (e) =>{
+            e.preventDefault();
+            console.log(e)
+
+            const data =new FormData(e.target);
+
+            $.ajax(
+                "/api/user/<?= $user->id ?>",
+                {
+                    method:'PUT',
+                    contentType:"application/json",
+                    data:(JSON.stringify(Object.fromEntries(data.entries()))),
+                    error:(jqXHR, textStatus, errorThrown)=>{
+                        console.error(jqXHR, textStatus, errorThrown)
+                        switch (jqXHR){
+                            case 500:
+                                alert("Error")
+                        }
+                    },
+                    success:(data, textStatus, jqXHR)=>{
+                        console.log(data, textStatus, jqXHR)
+                        prompt("Done update");
+                    }
+                }
+            );
+        });
+
+
+
+
     </script>
 
 <?php
