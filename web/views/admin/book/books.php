@@ -159,7 +159,7 @@ ob_start();
                 <fieldset>
                     <legend>Authors</legend>
 
-                    <fieldset>
+                    <fieldset data-author="0">
                         <button id="remove-author" type="button"
                                 onclick="this.closest('fieldset').remove()">X
                         </button>
@@ -167,12 +167,12 @@ ob_start();
                         <label>
                             Author*
                             <input type="search" placeholder="Search authors" onchange="fetchAuthorOptions.call(this)">
-                            <select name="authors[][id]" style="display: block; width: 100%;" required></select>
+                            <select name="authors[0][id]" style="display: block; width: 100%;" required></select>
                         </label>
 
                         <label>
                             Role*
-                            <select name="authors[][type]" required>
+                            <select name="authors[0][type]" required>
                                 <?php foreach (AuthorDefinitionType::cases() as $type): ?>
                                     <option value="<?= $type->name ?>"><?= $type->title() ?></option>
                                 <?php endforeach; ?>
@@ -196,15 +196,22 @@ ob_start();
             $("dialog#add-book")[0].showModal();
         });
 
-        $("button#add-author").click(/** @param {jQuery.Event} e */(e) => {
-            $(e.target).before(
-                $(e.target).prev("fieldset")
-                    .clone()
-            );
+        $("button#add-author").click(/** @param {jQuery.Event} e */ function (e) {
+            const clone = $(this).prev("fieldset").clone();
+
+            let order = parseInt(clone[0].dataset.author);
+            order += 1;
+            clone[0].dataset.author = order.toString();
+
+            clone.find("select[name^=authors][name$='[id]']").attr("name", `authors[${order}][id]`);
+            clone.find("select[name^=authors][name$='[type]']").attr("name", `authors[${order}][type]`);
+
+
+            $(this).before(clone);
         });
 
-        $("dialog button[type=reset]").click(/** @param {jQuery.Event} e */(e) => {
-            e.target.closest("dialog").close();
+        $("dialog button[type=reset]").click(/** @param {jQuery.Event} e */ function (e) {
+            this.closest("dialog").close();
         });
 
         $("dialog#add-book form").submit(/** @param {jQuery.Event} e */ function (e) {
@@ -213,7 +220,7 @@ ob_start();
             $.ajax(
                 '/api/book',
                 {
-                    method: 'POST'
+                    method: 'POST',
                     data: $(this).serialize(),
                     success: () => {
 
