@@ -23,14 +23,21 @@ ob_start();
                     <input type="email" id="email" name="email" data-email-taken="0" required>
                     <span class="hint">Email is taken</span>
                 </div>
-                <div class="form-group">
+                <div class="form-group password-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" required>
+                        <i class="fa-solid fa-eye toggle-password" data-target="password"></i>
+                    </div>
                 </div>
-                <div class="form-group">
+
+                <div class="form-group password-group">
                     <label for="confirm-password">Confirm Password</label>
-                    <input type="password" id="confirm-password" name="confirm-password" data-match="0" required>
-                    <span class="hint">Passwords do not match</span>
+                    <div class="password-wrapper">
+                        <input type="password" id="confirm-password" name="confirm-password" data-match="0" required>
+                        <i class="fa-solid fa-eye toggle-password" data-target="confirm-password"></i>
+                        <span class="hint">Passwords do not match</span>
+                    </div>
                 </div>
                 <div class="terms-policy">
                     By signing up, you agree to Novelty N'Nonsense <a href="#">Terms</a> and <a href="#">Privacy
@@ -90,6 +97,16 @@ ob_start();
             $password.on("input", validateMatch);
             $confirm.on("input", validateMatch);
         });
+
+        // Password toggle function
+        $(".toggle-password").on("click", function () {
+            const targetId = $(this).data("target");
+            const $input = $("#" + targetId);
+            const type = $input.attr("type") === "password" ? "text" : "password";
+            $input.attr("type", type);
+            $(this).toggleClass("fa-eye fa-eye-slash");
+        });
+
 
         /* TODO: When error exist disable the register button */
 
