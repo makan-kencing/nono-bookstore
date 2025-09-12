@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Core\View;
+use App\DTO\Request\UserPasswordUpdateDTO;
 use App\DTO\Request\UserProfileUpdateDTO;
 use App\DTO\Request\UserUpdateDTO;
 use App\Exception\BadRequestException;
@@ -89,4 +90,18 @@ readonly class  UserController extends ApiController
         header('Content-Type: application/json');
         echo json_encode(['success' => true, 'message' => 'User profile updated successfully']);
     }
+
+    #[PUT]
+    #[Path('/update-password/{id}')]
+    public function updatePassword(string $id): void
+    {
+        $dto = UserPasswordUpdateDTO::jsonDeserialize(self::getJsonBody());
+        $dto->validate();
+
+        $this->userService->updatePassword($dto, (int) $id);
+
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'message' => 'Password updated successfully']);
+    }
+
 }
