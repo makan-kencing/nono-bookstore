@@ -15,6 +15,7 @@ use App\Exception\ConflictException;
 use App\Exception\ForbiddenException;
 use App\Exception\NotFoundException;
 use App\Exception\UnauthorizedException;
+use App\Exception\UnprocessableEntityException;
 use App\Repository\FileRepository;
 use App\Repository\Query\UserCriteria;
 use App\Repository\Query\UserQuery;
