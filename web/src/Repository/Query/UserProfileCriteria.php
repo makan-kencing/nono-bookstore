@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository\Query;
 
 use App\Orm\Expr\Predicate;
@@ -10,44 +12,25 @@ class UserProfileCriteria
     {
     }
 
-    /**
-     * @param string $param
-     * @param string|null $alias
-     * @return Predicate
-     */
-    public static function byId(string $param = ':id', ?string $alias = null): Predicate
+    public static function byUserId(string $param = ':user_id', ?string $alias = 'up'): Predicate
     {
-        if ($alias === null) $alias = '';
-        else $alias .= '.';
+        if ($alias === null) {
+            $alias = '';
+        } else {
+            $alias .= '.';
+        }
+
+        return new Predicate($alias . 'user_id = ' . $param);
+    }
+
+    public static function byId(string $param = ':id', ?string $alias = 'up'): Predicate
+    {
+        if ($alias === null) {
+            $alias = '';
+        } else {
+            $alias .= '.';
+        }
 
         return new Predicate($alias . 'id = ' . $param);
     }
-
-    /**
-     * @param string $param
-     * @param string|null $alias
-     * @return Predicate
-     */
-    public static function byContactNo(string $param = ':contact_no', ?string $alias = null): Predicate
-    {
-        if ($alias === null) $alias = '';
-        else $alias .= '.';
-
-        return new Predicate($alias . 'contact_no = ' . $param);
-    }
-
-    /**
-     * @param string $param
-     * @param string|null $alias
-     * @return Predicate
-     */
-    public static function byDateOfBirth(string $param = ':date_of_birth', ?string $alias = null): Predicate
-    {
-        if ($alias === null) $alias = '';
-        else $alias .= '.';
-
-        return new Predicate($alias . 'date_of_birth = ' . $param);
-    }
 }
-
-

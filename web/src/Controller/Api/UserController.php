@@ -47,11 +47,13 @@ readonly class UserController extends ApiController
     }
 
     /**
+     * @param String $id
      * @return void
      * @throws BadRequestException
      * @throws NotFoundException
      * @throws UnprocessableEntityException
      * @throws \App\Exception\ForbiddenException
+     * @throws \App\Exception\UnauthorizedException
      */
     #[PUT]
     #[Path('/update/{id}')]
@@ -67,19 +69,22 @@ readonly class UserController extends ApiController
     }
 
     /**
+     * @param String $id
      * @return void
      * @throws BadRequestException
      * @throws NotFoundException
      * @throws UnprocessableEntityException
+     * @throws \App\Exception\ForbiddenException
+     * @throws \App\Exception\UnauthorizedException
      */
     #[PUT]
     #[Path('/update-profile/{id}')]
-    public function updateUserProfile(): void
+    public function updateUserProfile(String $id): void
     {
         $dto = UserProfileUpdateDTO::jsonDeserialize(self::getJsonBody());
         $dto->validate();
 
-        $this->userService->updateUserProfile($dto);
+        $this->userService->updateUserProfile($dto, (int) $id);
 
         header('Content-Type: application/json');
         echo json_encode(['success' => true, 'message' => 'User profile updated successfully']);

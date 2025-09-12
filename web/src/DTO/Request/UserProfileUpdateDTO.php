@@ -83,4 +83,21 @@ readonly class UserProfileUpdateDTO extends RequestDTO
             $userProfile->dob = $this->dob;
         }
     }
+
+    public function toEntity(int $id): UserProfile
+    {
+        $profile = new UserProfile();
+        $profile->userId = $id;
+
+        if ($this->contactNo) {
+            $profile->contactNo = $this->contactNo;
+        }
+
+        if ($this->dob) {
+            $profile->dob = $this->dob;
+        }
+
+        return $profile;
+    }
+
 }

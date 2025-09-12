@@ -8,25 +8,31 @@ use App\Entity\User\UserProfile;
 
 readonly class UserProfileRepository extends Repository
 {
-    public function insertProfile(UserProfile $userProfile): void{
-
-
+    public function insert(UserProfile $profile): void
+    {
         $stmt = $this->conn->prepare('
-        Insert into user_profile (user_id,contact_no,dob)VALUES(:user_id,:contact_no,:dob);
-        ');
-        $stmt->bindValue(':user_id', $userProfile->id);
-        $stmt->bindValue(':contact_no', $userProfile->contactNo);
-        $stmt->bindValue(':dob', $userProfile->dob);
+        INSERT INTO user_profile (user_id, contact_no, dob)
+        VALUES (:user_id, :contact_no, :dob)
+    ');
+        $stmt->bindValue(':user_id', $profile->user->id, \PDO::PARAM_INT);
+        $stmt->bindValue(':contact_no', $profile->contactNo);
+        $stmt->bindValue(':dob', $profile->dob?->format('Y-m-d'));
+        $stmt->execute();
     }
 
-    public function updateProfile(UserProfile $userProfile): void{
+    public function updateProfile(UserProfile $profile): void
+    {
         $stmt = $this->conn->prepare('
-        Update user_profile
-        SET contact_no=:contact_no,dob=:dob
-        WHERE user_id=:user_id;
-        ');
-        $stmt->bindValue(':user_id', $userProfile->id);
-        $stmt->bindValue(':contact_no', $userProfile->contactNo);
-        $stmt->bindValue(':dob', $userProfile->dob);
+        UPDATE user_profile
+        SET contact_no = :contact_no,
+            dob = :dob
+        WHERE user_id = :user_id
+    ');
+        $stmt->bindValue(':user_id', $profile->user->id, \PDO::PARAM_INT);
+        $stmt->bindValue(':contact_no', $profile->contactNo);
+        // Convert DateTime to string
+        $stmt->bindValue(':dob', $profile->dob?->format('Y-m-d'));
+        $stmt->execute();
     }
+
 }

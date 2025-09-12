@@ -17,6 +17,7 @@ use App\Exception\UnauthorizedException;
 use App\Repository\FileRepository;
 use App\Repository\Query\UserCriteria;
 use App\Repository\Query\UserProfileCriteria;
+use App\Repository\Query\UserProfileQuery;
 use App\Repository\Query\UserQuery;
 use App\Repository\UserProfileRepository;
 use App\Repository\UserRepository;
@@ -136,15 +137,15 @@ readonly class UserService extends Service
         }
 
         $qb = UserQuery::withMinimalDetails();
-            $qb->where(UserCriteria::byId())
-                ->bind(':id', $userId);
+        $qb->where(UserCriteria::byId())
+            ->bind(':id', $userId);
 
         $user = $this->userRepository->getOne($qb);
         if ($user === null) {
             throw new NotFoundException();
         }
 
-        if ($user->id !== (int) $context->id) {
+        if ($user->id !== (int)$context->id) {
             if (!AuthRule::HIGHER->check($context->role, $user->role)) {
                 throw new ForbiddenException([
                     "userId" => $user->id,
@@ -193,19 +194,51 @@ readonly class UserService extends Service
 
     /**
      * @param UserProfileUpdateDTO $dto
+     * @param int $id
      * @return void
+     * @throws ForbiddenException
+     * @throws NotFoundException
      * @throws UnauthorizedException
      */
-    public function updateUserProfile(UserProfileUpdateDTO $dto): void
+    public function updateUserProfile(UserProfileUpdateDTO $dto, int $id): void
     {
         $context = $this->getSessionContext();
         if ($context === null) {
             throw new UnauthorizedException();
         }
 
-        $userProfile = new UserProfile();
-        $userProfile->id = $context->id;
-        $dto->updateProfile($userProfile);
-        $this->userProfileRepository->updateProfile($userProfile);
+        // ensure user exists
+        $userQb = UserQuery::withMinimalDetails()
+            ->where(UserCriteria::byId())
+            ->bind(':id', $id);
+
+        $user = $this->userRepository->getOne($userQb);
+        if ($user === null) {
+            throw new NotFoundException;
+        }
+
+        if ($user->id !== (int)$context->id) {
+            if (!AuthRule::HIGHER->check($context->role, $user->role)) {
+                throw new ForbiddenException();
+            }
+        }
+
+        // check profile since it may or may not exist
+        $profileQb = UserProfileQuery::withMinimalDetails()
+            ->where(UserProfileCriteria::byUserId())
+            ->bind(':user_id', $id);
+
+        $userProfile = $this->userProfileRepository->getOne($profileQb);
+
+        if ($userProfile === null) {
+            // no profile yet, then create one
+            $userProfile = $dto->toEntity($id); // convert DTO → UserProfile entity
+            $this->userProfileRepository->insertProfile($userProfile);
+        } else {
+            // profile exists then update
+            $dto->updateProfile($userProfile);
+            $this->userProfileRepository->updateProfile($userProfile);
+        }
     }
+
 }
