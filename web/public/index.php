@@ -26,6 +26,7 @@ $pdo = new PDO(
 
 $controllers = [
     'App\Controller\Api\AdminUserController',
+    'App\Controller\Api\AdminOrderController',
     'App\Controller\Api\CartController',
     'App\Controller\Api\CheckoutController',
     'App\Controller\Api\PaymentController',
