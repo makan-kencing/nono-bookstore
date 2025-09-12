@@ -7,12 +7,16 @@ $id = $id ?? '';
 $classes = $classes ?? [];
 $title = $title ?? '';
 
+// fragments
+$scripts = $scripts ?? '';
+
 assert(isset($body) && is_string($body));
 
 /**
  * @var literal-string $id
  * @var literal-string[] $classes
  * @var string $title
+ * @var string $scripts
  */
 
 ?>
@@ -35,3 +39,11 @@ assert(isset($body) && is_string($body));
         </div>
     </form>
 </dialog>
+
+<script>
+    $("dialog button[type=reset]").click(/** @param {jQuery.Event} e */ function (e) {
+        this.closest("dialog").close();
+    });
+</script>
+
+<?= $scripts ?>
