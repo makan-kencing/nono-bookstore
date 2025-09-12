@@ -30,7 +30,7 @@ $context = AuthService::getLoginContext();
                             <?php if ($context->isStaff()): ?>
                                 <li><a href="/admin">Admin Dashboard</a></li>
                             <?php endif; ?>
-                            <li><a href="#" id="logout-link">Logout</a></li>
+                            <li><a href="/logout">Logout</a></li>
                         </ul>
                     </li>
                 <?php else: ?>
@@ -67,24 +67,6 @@ $context = AuthService::getLoginContext();
         </nav>
     </div>
 </header>
-
-<script>
-    $("#logout-link").on("click", function (e) {
-        e.preventDefault();
-
-        $.ajax({
-            url: "/api/logout",
-            type: "POST",
-            xhrFields: { withCredentials: true }, // keep PHPSESSID
-            success: function () {
-                window.location.href = "/login";
-            },
-            error: function () {
-                console.log("Logout failed, please try again.");
-            }
-        });
-    });
-</script>
 
 <style>
     #store-account .dropdown {
