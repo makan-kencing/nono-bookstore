@@ -42,10 +42,10 @@ ob_start();
 
                 <form id="profileFormContact" class="form-group" >
                     <label for="phone">Contact No</label>
-                    <input type="tel" id="phone" name="phone" value="<?= $user->profile?->contactNo ?>">
+                    <input type="tel" id="contact_no" name="contact_no" value="<?= $user->profile?->contactNo ?>">
 
                     <label for="birthday">Birthday</label>
-                    <input type="date" id="birthday" name="birthday" value="<?=$user->profile?->dob?->format('Y-m-d') ?>">
+                    <input type="date" id="dob" name="dob" value="<?=$user->profile?->dob?->format('Y-m-d') ?>">
 
                     <button type="submit" class="btn">Update</button>
                 </form>
