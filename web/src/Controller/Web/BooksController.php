@@ -51,7 +51,7 @@ readonly class BooksController extends WebController
         }
 
         echo $this->render(
-            'webstore/books/search.php',
+            'webstore/search.php',
             ['page' => $page, 'search' => $dto]
         );
     }
