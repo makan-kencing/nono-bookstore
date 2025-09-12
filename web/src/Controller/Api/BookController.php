@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Api;
 
+use App\DTO\Request\BookCreate\BookCreateDTO;
 use App\Entity\User\UserRole;
 use App\Router\AuthRule;
 use App\Router\Method\DELETE;
@@ -19,7 +20,8 @@ readonly class BookController extends ApiController
     #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function createBook(): void
     {
-        $dto = null;
+        $dto = BookCreateDTO::jsonDeserialize($_POST);
+        $dto->validate();
 
         http_response_code(201);
     }
