@@ -2,27 +2,29 @@
 
 declare(strict_types=1);
 
-ob_start();
+use App\Core\Template;
+use App\Core\View;
+
+$template = new Template(
+    '_base.php',
+    ['title' => $title ?? '']
+);
+
 ?>
 
-    <link rel="stylesheet" href="/static/styles/Admin/adminPage.css">
-    <link rel="stylesheet" href="/static/styles/Admin/users-table.css">
-    <link rel="stylesheet" href="/static/styles/Admin/orders-table.css">
-    <link rel="stylesheet" href="/static/styles/Admin/book-styles.css">
+<?php $template->startFragment('header'); ?>
 
-<?php
-$extraHead = ob_get_clean();
+<link rel="stylesheet" href="/static/styles/Admin/adminPage.css">
+<link rel="stylesheet" href="/static/styles/Admin/users-table.css">
+<link rel="stylesheet" href="/static/styles/Admin/orders-table.css">
+<link rel="stylesheet" href="/static/styles/Admin/book-styles.css">
 
-ob_start();
-?>
+<?php $template->endFragment(); ?>
 
-<?php include __DIR__ . "/_header.php" ?>
+<?php $template->start() ?>
 
+<?= View::render('admin/_header.php'); ?>
 <?= $content ?? '' ?>
+<?= View::render('admin/_footer.php'); ?>
 
-<?php include __DIR__ . "/_footer.php" ?>
-
-<?php
-$content = ob_get_clean();
-
-include __DIR__ . "/../_base.php";
+<?= $template->end() ?>

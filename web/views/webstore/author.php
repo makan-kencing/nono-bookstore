@@ -2,12 +2,17 @@
 
 declare(strict_types=1);
 
-$title = 'Author';
+use App\Core\Template;
 
-ob_start();
+$template = new Template(
+    'webstore/_base.php',
+    ['title' => $title ?? '']
+);
+
 ?>
-    <p></p>
-<?php
-$content = ob_get_clean();
 
-include __DIR__ . "/_base.php";
+<?php $template->start(); ?>
+
+    <p></p>
+
+<?= $template->end() ?>

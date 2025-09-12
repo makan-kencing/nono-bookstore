@@ -2,16 +2,18 @@
 
 declare(strict_types=1);
 
-ob_start();
+use App\Core\Template;
+use App\Core\View;
+
+$template = new Template(
+    '_base.php',
+    ['title' => $title ?? '']
+);
+
 ?>
 
-<?php include __DIR__ . "/_header.php" ?>
-
+<?php $template->start() ?>
+<?= View::render('auth/_header.php'); ?>
 <?= $content ?? '' ?>
-
-<?php include __DIR__ . "/_footer.php" ?>
-
-<?php
-$content = ob_get_clean();
-
-include __DIR__ . "/../_base.php";
+<?= View::render('auth/_footer.php'); ?>
+<?= $template->end() ?>

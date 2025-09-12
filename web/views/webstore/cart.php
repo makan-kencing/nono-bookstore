@@ -2,15 +2,21 @@
 
 declare(strict_types=1);
 
-use App\Core\View;
+use App\Core\Template;
 use App\Entity\Book\Author\AuthorDefinition;
 use App\Entity\Book\BookImage;
 use App\Entity\Cart\Cart;
 
 assert(isset($cart) && $cart instanceof Cart);
 
-ob_start();
+$template = new Template(
+    'webstore/_base.php',
+    ['title' => 'Shopping Cart']
+);
+
 ?>
+
+<?php $template->start() ?>
     <div style="display: flex; flex-flow: row">
         <div style="width: 100%">
             <h2>Shopping Cart</h2>
@@ -150,12 +156,4 @@ ob_start();
         });
 
     </script>
-<?php
-
-$title = 'Shopping Cart';
-$content = ob_get_clean();
-
-echo View::render(
-    'webstore/_base.php',
-    ['title' => $title, 'content' => $content]
-);
+<?= $template->end() ?>

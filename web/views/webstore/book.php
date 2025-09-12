@@ -2,15 +2,21 @@
 
 declare(strict_types=1);
 
-use App\Core\View;
+use App\Core\Template;
 use App\Entity\Book\Author\AuthorDefinition;
 use App\Entity\Book\Book;
 
 assert(isset($book) && $book instanceof Book);
 $work = $book->work;
 
-ob_start();
+$template = new Template(
+    'webstore/_base.php',
+    ['title' => $book->work->title ?? 'Book']
+);
+
 ?>
+
+<?php $template->start() ?>
     <main>
         <section id="book-listing">
             <div id="book-preview" class="carousel">
@@ -218,13 +224,4 @@ ob_start();
             <div></div>
         </section>
     </main>
-
-<?php
-
-        $title = $book->work->title ?? 'Book';
-$content = ob_get_clean();
-
-echo View::render(
-    'webstore/_base.php',
-    ['title' => $title, 'content' => $content]
-);
+<?= $template->end() ?>

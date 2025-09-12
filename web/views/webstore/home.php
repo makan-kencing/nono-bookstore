@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-
+use App\Core\Template;
 use App\Core\View;
 use App\DTO\Response\PageResultDTO;
 use App\Entity\Book\Book;
@@ -10,9 +10,14 @@ assert(isset($top) && $top instanceof PageResultDTO);
 /** @var $newest PageResultDTO<Book> */
 /** @var $top PageResultDTO<Book> */
 
+$template = new Template(
+    'webstore/_base.php',
+    ['title' => 'Home']
+);
 
-ob_start();
 ?>
+
+<?php $template->start() ?>
     <main style="display: flex; flex-flow: column; gap: 2rem;">
         <div style="display: flex; flex-flow: column; gap: 1rem;">
             <h2>Newest releases</h2>
@@ -40,11 +45,4 @@ ob_start();
             width: 200px;
         }
     </style>
-<?php
-$title = "Home";
-$content = ob_get_clean();
-
-echo View::render(
-    'webstore/_base.php',
-    ['title' => $title, 'content' => $content]
-);
+<?= $template->end() ?>

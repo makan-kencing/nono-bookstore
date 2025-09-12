@@ -2,12 +2,15 @@
 
 declare(strict_types=1);
 
-$title = 'Series';
+use App\Core\Template;
 
-ob_start();
+$template = new Template(
+    'webstore/_base.php',
+    ['title' => 'Series']
+);
+
 ?>
-    <p></p>
-<?php
-$content = ob_get_clean();
 
-include __DIR__ . "/_base.php";
+<?php $template->start() ?>
+    <p></p>
+<?= $template->end() ?>

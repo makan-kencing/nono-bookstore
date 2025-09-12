@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Core\Template;
 use App\Core\View;
 use App\Entity\Cart\Cart;
 use App\Entity\Cart\CartItem;
@@ -10,8 +11,14 @@ use function App\Utils\array_group_by;
 assert(isset($cart) && $cart instanceof Cart);
 assert($cart->user !== null);
 
-ob_start();
+$template = new Template(
+    'webstore/_base.php',
+    ['title' => 'Checkout']
+);
+
 ?>
+
+<?php $template->start(); ?>
     <div style="display: flex; flex-flow: row">
         <form action="/checkout" method="post" style="display: contents">
             <div style="width: 100%">
@@ -91,13 +98,4 @@ ob_start();
             </div>
         </form>
     </div>
-
-<?php
-
-$title = 'Checkout';
-$content = ob_get_clean();
-
-echo View::render(
-    'webstore/_base.php',
-    ['title' => $title, 'content' => $content]
-);
+<?= $template->end() ?>

@@ -2,25 +2,27 @@
 
 declare(strict_types=1);
 
-ob_start();
+use App\Core\Template;
+use App\Core\View;
+
+$template = new Template(
+    '_base.php',
+    ['title' => $title ?? '']
+);
+
 ?>
+
+<?php $template->startFragment('header') ?>
 
 <link rel="stylesheet" href="/static/styles/webstore.css">
 <link rel="stylesheet" href="/static/styles/user-table.css">
 
-<?php
-$extraHead = ob_get_clean();
+<?php $template->endFragment() ?>
 
-ob_start();
-?>
+<?php $template->start() ?>
 
-<?php include __DIR__ . "/_header.php" ?>
+<?= View::render('webstore/_header.php'); ?>
+<?= $body ?? '' ?>
+<?= View::render('webstore/_footer.php'); ?>
 
-<?= $content ?? '' ?>
-
-<?php include __DIR__ . "/_footer.php" ?>
-
-<?php
-$content = ob_get_clean();
-
-include __DIR__ . "/../_base.php";
+<?= $template->end() ?>

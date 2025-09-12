@@ -2,15 +2,20 @@
 
 declare(strict_types=1);
 
+use App\Core\Template;
 use App\Core\View;
 use App\Entity\Order\Order;
 
 assert(isset($order) && $order instanceof Order);
 
-$title = 'Order #0000';
+$template = new Template(
+    'webstore/_base.php',
+    ['title' => 'Order #' . $order->id]
+);
 
-ob_start();
 ?>
+
+<?php $template->start() ?>
     <div>
         <h3>Order Details</h3>
         <div>
@@ -67,8 +72,4 @@ ob_start();
             <?= View::render('webstore/_component/_order_detail.php', ['item' => $item]) ?>
         <?php endforeach;?>
     </div>
-
-<?php
-$content = ob_get_clean();
-
-include __DIR__ . "/_base.php";
+<?= $template->end() ?>

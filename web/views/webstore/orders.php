@@ -2,12 +2,19 @@
 
 declare(strict_types=1);
 
+use App\Core\Template;
 use App\Core\View;
 
 assert(isset($orders) && is_array($orders));
 
-ob_start();
+$template = new Template(
+    'webstore/_base.php',
+    ['title' => 'My Orders']
+);
+
 ?>
+
+<?php $template->start() ?>
 <main style="display: flex; flex-flow: column; align-items: center; width: 100%;">
     <div style="max-width: 1280px; width: 100%">
         <div>
@@ -51,12 +58,5 @@ ob_start();
         </div>
     </div>
 </main>
-<?php
+<?= $template->end() ?>
 
-$title = 'Order History';
-$content = ob_get_clean();
-
-echo View::render(
-    'webstore/_base.php',
-    ['title' => $title, 'content' => $content]
-);
