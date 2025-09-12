@@ -80,7 +80,7 @@ ob_start();
         reloadTable();
     </script>
 
-<?= View::render('admin/book/_book_dialog.php', ['title' => 'Add Book']) ?>
+<?= View::render('admin/book/_add_book_dialog.php') ?>
 
     <script>
         $("button#add-book").click(/** @param {jQuery.Event} e */(e) => {

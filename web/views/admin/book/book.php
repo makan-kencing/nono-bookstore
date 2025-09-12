@@ -91,31 +91,6 @@ ob_start();
 
                     <div style="display: flex; flex-flow: column; gap: 1rem;">
                         <div>
-                            <h4>Stocks</h4>
-
-                            <button id="add-stock" type="button">Add</button>
-
-                            <table>
-                                <thead>
-                                <tr>
-                                    <th>Location</th>
-                                    <th>Stock Count</th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <?php foreach ($book->inventories as $inventory): ?>
-                                    <tr data-id="<?= $inventory->id ?>">
-                                        <td><?= $inventory->location->title() ?></td>
-                                        <td><?= $inventory->quantity ?></td>
-                                        <td></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div>
                             <h4>Authors</h4>
 
                             <button id="add-author" type="button">Add</button>
@@ -133,6 +108,31 @@ ob_start();
                                     <tr data-id="<?= $author->author->id ?>">
                                         <td><?= $author->author->name ?></td>
                                         <td><?= $author->type?->title() ?></td>
+                                        <td></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div>
+                            <h4>Stocks</h4>
+
+                            <button id="add-stock" type="button">Add</button>
+
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>Location</th>
+                                    <th>Stock Count</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php foreach ($book->inventories as $inventory): ?>
+                                    <tr data-id="<?= $inventory->id ?>">
+                                        <td><?= $inventory->location->title() ?></td>
+                                        <td><?= $inventory->quantity ?></td>
                                         <td></td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -195,7 +195,7 @@ ob_start();
         </div>
     </main>
 
-<?= View::render('admin/book/_book_dialog.php', ['title' => 'Edit Book', 'book' => $book]) ?>
+<?= View::render('admin/book/_edit_book_dialog.php', ['book' => $book]) ?>
 
     <script>
         $("button#edit-book").click(/** @param {jQuery.Event} e */(e) => {
