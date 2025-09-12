@@ -52,7 +52,9 @@ class ResultSetMapper
                 'string' => fn($val) => strval($val),
                 'int' => fn($val) => intval($val),
                 'bool' => fn($val) => boolval($val),
-                DateTime::class => fn($val) => DateTime::createFromFormat('Y-m-d H:i:s', strval($val)) ?: null
+                DateTime::class => fn($val) => DateTime::createFromFormat('Y-m-d H:i:s', strval($val))
+                        ?: DateTime::createFromFormat('Y-m-d', strval($val))
+                        ?:null
             ];
     }
 
