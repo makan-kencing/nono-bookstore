@@ -12,145 +12,193 @@ $template = new Template(
     ['title' => 'User Profile']
 );
 
+// extract DOB
+$dobDay = $dobMonth = $dobYear = '';
+
+if ($user->profile?->dob instanceof DateTime) {
+    $dobYear  = $user->profile->dob->format('Y');
+    $dobMonth = $user->profile->dob->format('m');
+    $dobDay   = $user->profile->dob->format('d');
+}
+
 ?>
 
 <?php $template->start(); ?>
-    <div class="profile-container">
-        <h2>Profile</h2>
-
-        <!-- Success / Error Messages -->
-        <?php if (isset($_GET['success'])): ?>
-            <div class="message success">Profile updated successfully!</div>
-        <?php elseif (isset($_GET['error'])): ?>
-            <div class="message error"><?= htmlspecialchars($_GET['error']) ?></div>
-        <?php endif; ?>
-
-        <!-- Profile Form -->
-        <form method="post" action="/user/updateProfile" enctype="multipart/form-data" id="profileForm">
-
-            <!-- Avatar -->
-            <div class="form-group">
-                <label for="avatar">Avatar</label>
-                <?php if ($user->image !== null): ?>
-                    <img src="<?= htmlspecialchars($user->image->filepath) ?>" alt="<?= $user->image->alt ?>"
-                         style="max-width: 120px; display:block; margin-bottom:10px;">
-                <?php endif; ?>
-                <input type="file" name="avatar" id="avatar" accept="image/*">
+<link rel="stylesheet" href="/static/styles/Account/profile.css">
+<div class="profile-container">
+    <aside class="sidebar">
+        <div class="user-info">
+            <div class="avatar"><img src="/static/assets/default-user.jpg" alt="User Avatar"></div>
+            <div class="user-details">
+                <strong><?= $user->username ?? '' ?></strong>
+                <a href="/account/profile"><i class="fas fa-pencil-alt"></i> Edit Profile</a>
             </div>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="/account/profile" class="active"><i class="far fa-user"></i> My Account</a>
+                    <ul class="submenu">
+                        <li><a href="/account/profile" class="active-link">Profile</a></li>
+                        <li><a href="#">Banks & Cards</a></li>
+                        <li><a href="#">Addresses</a></li>
+                        <li><a href="#">Change Password</a></li>
+                    </ul>
+                </li>
+                <li><a href="#"><i class="fas fa-clipboard-list"></i> My Purchase</a></li>
+                <li><a href="#"><i class="far fa-bell"></i> Notifications</a></li>
+            </ul>
+        </nav>
+    </aside>
 
-            <!-- Username -->
-            <div class="form-group">
-                <label>Current Username</label>
-                <label>
-                    <input type="text" value="<?= htmlspecialchars($user->username) ?>" disabled>
-                </label>
-                <label for="username">New Username</label>
-                <input type="text" name="username" id="username">
-                <label for="confirm_username">Confirm New Username</label>
-                <input type="text" name="confirm_username" id="confirm_username">
+    <section class="main-content">
+        <div class="content-header">
+            <h1>My Profile</h1>
+            <p>Manage and protect your account</p>
+        </div>
+
+        <div class="profile-body">
+            <form id="profile-form" class="profile-form">
+                <div class="form-row">
+                    <label>Username</label>
+                    <div class="form-field">
+                        <input type="text" id="username" value="<?= $user->username ?? '' ?>">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label for="email">Email</label>
+                    <div class="form-field">
+                        <input type="email" id="email" value="<?= $user->email ?? '' ?>">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label for="contact">Contact Number</label>
+                    <div class="form-field">
+                        <input type="text" id="contact" value="<?= $user->profile->contactNo ?? '' ?>">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label>Date of birth</label>
+                    <div class="form-field dob-selects">
+                        <select id="dob-day" data-selected="<?= $dobDay ?>"></select>
+                        <select id="dob-month" data-selected="<?= $dobMonth ?>"></select>
+                        <select id="dob-year" data-selected="<?= $dobYear ?>"></select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label></label>
+                    <div class="form-field">
+                        <button type="submit" class="save-btn">Save</button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="image-upload">
+                <img src="<?= $user->image->filepath ?? '' ?>" alt="Profile Image" class="qr-code">
+                <button type="button" class="select-image-btn">Select Image</button>
+                <p class="file-info">File size: maximum 1 MB</p>
+                <p class="file-info">File extension: JPEG, PNG</p>
             </div>
+        </div>
+    </section>
+</div>
 
-            <!-- Email -->
-            <div class="form-group">
-                <label>Current Email</label>
-                <label>
-                    <input type="email" value="<?= htmlspecialchars($user->email) ?>" disabled>
-                </label>
-                <label for="email">New Email</label>
-                <input type="email" name="email" id="email">
-                <label for="confirm_email">Confirm New Email</label>
-                <input type="email" name="confirm_email" id="confirm_email">
-            </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const daySelect = document.getElementById('dob-day');
+        const monthSelect = document.getElementById('dob-month');
+        const yearSelect = document.getElementById('dob-year');
 
-            <!-- Contact Number -->
-            <div class="form-group">
-                <label for="contact_no">Contact Number</label>
-                <input type="text" name="contact_no" id="contact_no"
-                       value="<?= htmlspecialchars($user->contactNo ?? '') ?>">
-            </div>
+        const selectedDay = daySelect.dataset.selected;
+        const selectedMonth = monthSelect.dataset.selected;
+        const selectedYear = yearSelect.dataset.selected;
 
-            <!-- Date of Birth -->
-            <div class="form-group">
-                <label for="dob">Date of Birth</label>
-                <input type="date" name="dob" id="dob" value="<?= $user->profile?->dob?->format('Y-m-d')?>">
-            </div>
+        // Day
+        daySelect.innerHTML = '<option value="">Day</option>';
+        for (let i = 1; i <= 31; i++) {
+            daySelect.innerHTML += `<option value="${i}" ${i == selectedDay ? 'selected' : ''}>${i}</option>`;
+        }
 
-            <!-- Password -->
-            <div class="form-group">
-                <label for="current_password">Current Password</label>
-                <input type="password" name="current_password" id="current_password">
-                <label for="new_password">New Password</label>
-                <input type="password" name="new_password" id="new_password">
-                <label for="confirm_password">Confirm New Password</label>
-                <input type="password" name="confirm_password" id="confirm_password">
-            </div>
+        // Month
+        const months = ["January", "February", "March", "April", "May", "June", "July",
+            "August", "September", "October", "November", "December"];
+        monthSelect.innerHTML = '<option value="">Month</option>';
+        months.forEach((month, index) => {
+            const value = index + 1;
+            monthSelect.innerHTML += `<option value="${value}" ${value == selectedMonth ? 'selected' : ''}>${month}</option>`;
+        });
 
-            <button type="submit">Save Changes</button>
-        </form>
-    </div>
+        // Year
+        const currentYear = new Date().getFullYear();
+        yearSelect.innerHTML = '<option value="">Year</option>';
+        for (let i = currentYear; i >= currentYear - 100; i--) {
+            yearSelect.innerHTML += `<option value="${i}" ${i == selectedYear ? 'selected' : ''}>${i}</option>`;
+        }
+    });
 
-    <script>
-        $("#profileForm").on("submit", function (e) {
+    $(document).ready(function () {
+        const userId = <?= $user->id ?>;
+
+        $('.profile-form').on('submit', function (e) {
             e.preventDefault();
 
-            const username = $("#username").val();
-            const confirmUsername = $("#confirm_username").val();
-            const email = $("#email").val();
-            const confirmEmail = $("#confirm_email").val();
-            const contactNo = $("#contact_no").val();
-            const dob = $("#dob").val();
+            const username = $('#username').val().trim();
+            const email = $('#email').val().trim();
+            const contactNo = $('#contact').val().trim();
 
-            // validations
-            if (username && username !== confirmUsername) {
-                alert("Usernames do not match!");
+            const day = $('#dob-day').val();
+            const month = $('#dob-month').val();
+            const year = $('#dob-year').val();
+            const dob = (day && month && year) ? `${year}-${month}-${day}` : null;
+
+            // ✅ Frontend validation for contact number
+            const contactRegex = /^[0-9+\-\s]{7,20}$/;
+            if (contactNo && !contactRegex.test(contactNo)) {
+                alert("❌ Invalid contact number format.\n\nUse only digits, +, - and spaces. Must be 7–20 characters.");
                 return;
             }
-            if (email && email !== confirmEmail) {
-                alert("Emails do not match!");
-                return;
-            }
 
-            const updateCalls = [];
+            // Update user (username + email)
+            $.ajax({
+                url: `/api/user/${userId}`,
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    username: username,
+                    email: email
+                }),
+                success: function (response) {
+                    console.log("User update success:", response);
+                },
+                error: function (xhr) {
+                    console.error("User update failed:", xhr.responseText);
+                }
+            });
 
-            if (username || email) {
-                updateCalls.push(
-                    $.ajax({
-                        url: "/api/user/updateUser",
-                        type: "PUT",
-                        contentType: "application/json",
-                        data: JSON.stringify({
-                            username: username || null,
-                            email: email || null
-                        })
-                    })
-                );
-            }
-
-            if (contactNo || dob) {
-                updateCalls.push(
-                    $.ajax({
-                        url: "/api/user/updateUserProfile",
-                        type: "PUT",
-                        contentType: "application/json",
-                        data: JSON.stringify({
-                            contact_no: contactNo || null,
-                            dob: dob || null
-                        })
-                    })
-                );
-            }
-
-            // Run all updates
-            $.when.apply($, updateCalls)
-                .done(function () {
-                    alert("Profile updated successfully!");
-                    window.location.href = window.location.pathname + "?success=1";
-                })
-                .fail(function (xhr) {
-                    const msg = xhr.responseText || "Failed to update profile.";
-                    alert("Error: " + msg);
-                    window.location.href = window.location.pathname + "?error=" + encodeURIComponent(msg);
-                });
+            // Update user profile (contactNo + dob)
+            $.ajax({
+                url: `/api/user/update-profile/${userId}`,
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    contact_no: contactNo,
+                    dob: dob
+                }),
+                success: function (response) {
+                    console.log("Profile update success:", response);
+                    alert("✅ Profile updated successfully!");
+                },
+                error: function (xhr) {
+                    console.error("Profile update failed:", xhr.responseText);
+                    alert("❌ Profile update failed: " + xhr.responseText);
+                }
+            });
         });
-    </script>
+    });
+</script>
+
 <?= $template->end() ?>
