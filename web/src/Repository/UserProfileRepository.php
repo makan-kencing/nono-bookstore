@@ -20,7 +20,7 @@ readonly class UserProfileRepository extends Repository
         $stmt->execute();
     }
 
-    public function updateProfile(UserProfile $profile): void
+    public function update(UserProfile $profile): void
     {
         $stmt = $this->conn->prepare('
         UPDATE user_profile
