@@ -103,4 +103,38 @@ class Book extends Entity
         );
         return current($this->inventories) ?: null;
     }
+
+    public function normalizeOrder(): void
+    {
+        if (isset($this->images))
+            usort(
+                $this->images,
+                fn(BookImage $o1, BookImage $o2) => $o1->imageOrder - $o2->imageOrder
+            );
+        if (isset($this->authors))
+            usort(
+                $this->authors,
+                function (AuthorDefinition $o1, AuthorDefinition $o2) {
+                    if ($o1->type === null) return -1;
+                    if ($o2->type === null) return 1;
+                    return $o1->type->compareTo($o2->type);
+                }
+            );
+        if (isset($this->inventories))
+            usort(
+                $this->inventories,
+                fn (Inventory $o1, Inventory $o2) => $o1->location->compareTo($o2->location)
+            );
+        if (isset($this->prices))
+            usort(
+                $this->prices,
+                fn (Price $o1, Price $o2) => -$o1->fromDate->getTimestamp() + $o2->fromDate->getTimestamp()
+            );
+        if (isset($this->costs))
+            usort(
+                $this->costs,
+                fn (Cost $o1, Cost $o2) => -$o1->fromDate->getTimestamp() + $o2->fromDate->getTimestamp()
+            );
+
+    }
 }
