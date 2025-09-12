@@ -3,8 +3,15 @@
 namespace App\Service;
 
 use App\Entity\Order\Order;
+use App\Entity\User\User;
+use App\Exception\ForbiddenException;
+use App\Exception\NotFoundException;
+use App\Exception\UnauthorizedException;
 use App\Repository\OrderRepository;
+use App\Repository\Query\OrderCriteria;
 use App\Repository\Query\OrderQuery;
+use App\Repository\Query\ShipmentQuery;
+use App\Router\AuthRule;
 use App\Service\Service;
 use PDO;
 
@@ -30,12 +37,40 @@ readonly class OrderService extends Service
         return $this->orderRepository->getOne($qb);
     }
 
-    public function update()
+    /**
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     */
+    public function updateShipment(int $id):void
     {
+        $context = $this->getSessionContext();
+        if ($context===null)
+            throw new UnauthorizedException();
 
+        $qb= OrderQuery::withMinimalDetails();
+        $qb->join('shipment', 's')
+            ->where(OrderCriteria::byId(alias: 'o'))
+            ->bind(':id', $id);
+
+        $order = $this->orderRepository->getOne($qb);
+        if($order === null)
+            throw new NotFoundException();
+
+        if ($order->shipment->readyAt==null){
+            $order->shipment->readyAt=  new \DateTime();
+        }
+        elseif ($order->shipment->shippedAt==null){
+            $order->shipment->shippedAt=  new \DateTime();
+        }
+        elseif ($order->shipment->arrivedAt==null){
+            $order->shipment->arrivedAt=  new \DateTime();
+        }
+        else{
+            return;
+        }
+
+        $this->orderRepository->updateShipment($order->shipment);
     }
-
-
 
 
 }
