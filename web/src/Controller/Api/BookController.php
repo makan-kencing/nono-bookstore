@@ -6,12 +6,14 @@ namespace App\Controller\Api;
 
 use App\Core\View;
 use App\DTO\Request\BookCreate\BookCreateDTO;
+use App\DTO\Request\BookSearchDTO;
 use App\Entity\User\UserRole;
 use App\Exception\BadRequestException;
 use App\Exception\ConflictException;
 use App\Exception\UnprocessableEntityException;
 use App\Router\AuthRule;
 use App\Router\Method\DELETE;
+use App\Router\Method\GET;
 use App\Router\Method\POST;
 use App\Router\Method\PUT;
 use App\Router\Path;
@@ -48,6 +50,7 @@ readonly class BookController extends ApiController
     }
 
     #[PUT]
+    #[Path('/{id}')]
     #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function updateBook(string $id): void
     {
@@ -55,9 +58,36 @@ readonly class BookController extends ApiController
     }
 
     #[DELETE]
+    #[Path('/{id}')]
     #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function deleteBook(string $id): void
     {
 
+    }
+
+    /**
+     * @throws BadRequestException
+     * @throws UnprocessableEntityException
+     */
+    #[GET]
+    #[Path('/search/')]
+    #[Path('/search/{query}')]
+    public function search(?string $query = null): void
+    {
+        if ($query !== null)
+            $_GET['query'] = $query;
+
+        $dto = BookSearchDTO::jsonDeserialize($_GET);
+        $dto->validate();
+
+        $page = $this->bookService->search($dto);
+
+        if ($_SERVER['HTTP_ACCEPT'] === 'text/html') {
+            header('Content-Type: text/html');
+            echo $this->render(
+                'admin/book/_books_table.php',
+                ['page' => $page, 'search' => $dto]
+            );
+        }
     }
 }

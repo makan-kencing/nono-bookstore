@@ -45,17 +45,19 @@ ob_start();
         })
 
         function reloadTable() {
-            let data = new FormData($searchForm[0]);
-
             $.ajax(
-                '/api/books/search?' + new URLSearchParams(data).toString(),
+                '/api/book/search/',
                 {
                     method: 'GET',
-                    success: function (data) {
+                    data: $(this).serialize(),
+                    headers: {
+                        "Accept": "text/html"
+                    },
+                    success: (data) => {
                         $("#output-table").html(data);
                     }
                 }
-            )
+            );
         }
 
         function gotoPreviousPage() {
