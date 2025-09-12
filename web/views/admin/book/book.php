@@ -118,6 +118,8 @@ ob_start();
                         <div>
                             <h4>Authors</h4>
 
+                            <button id="add-author" type="button">Add</button>
+
                             <table>
                                 <thead>
                                 <tr>

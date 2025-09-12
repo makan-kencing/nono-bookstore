@@ -64,12 +64,29 @@ readonly class BookRepository extends Repository
 
     public function delete(Book|int $book): bool
     {
+        if ($book instanceof Book)
+            $book = $book->id;
+
         $stmt = $this->conn->prepare('
             DELETE FROM book
             WHERE id = :id
         ');
         return $stmt->execute([
             ':id' => $book
+        ]);
+    }
+
+    public function deleteAllBookAuthor(Book|int $book): void
+    {
+        if ($book instanceof Book)
+            $book = $book->id;
+
+        $stmt = $this->conn->prepare('
+            DELETE FROM author_definition
+            WHERE book_id = :book_id
+        ');
+        $stmt->execute([
+            ':book_id' => $book
         ]);
     }
 

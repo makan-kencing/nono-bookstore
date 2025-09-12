@@ -6,10 +6,12 @@ namespace App\Controller\Api;
 
 use App\Core\View;
 use App\DTO\Request\BookCreate\BookCreateDTO;
+use App\DTO\Request\BookCreate\BookUpdateDTO;
 use App\DTO\Request\BookSearchDTO;
 use App\Entity\User\UserRole;
 use App\Exception\BadRequestException;
 use App\Exception\ConflictException;
+use App\Exception\NotFoundException;
 use App\Exception\UnprocessableEntityException;
 use App\Router\AuthRule;
 use App\Router\Method\DELETE;
@@ -49,12 +51,25 @@ readonly class BookController extends ApiController
         http_response_code(201);
     }
 
+    /**
+     * @throws NotFoundException
+     * @throws ConflictException
+     * @throws BadRequestException
+     * @throws UnprocessableEntityException
+     */
     #[PUT]
     #[Path('/{id}')]
     #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
-    public function updateBook(string $id): void
+    public function editBook(string $id): void
     {
+        $_POST['id'] = $id;
 
+        $dto = BookUpdateDTO::jsonDeserialize($_POST);
+        $dto->validate();
+
+        $this->bookService->updateBook($dto);
+
+        http_response_code(201);
     }
 
     #[DELETE]
@@ -62,7 +77,13 @@ readonly class BookController extends ApiController
     #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function deleteBook(string $id): void
     {
+        try {
+            $this->bookService->deleteBook((int)$id);
+        } catch (ConflictException) {
+            $this->bookService->softDeleteBook((int) $id);
+        }
 
+        http_response_code(201);
     }
 
     /**

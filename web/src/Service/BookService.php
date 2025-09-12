@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\DTO\Request\BookCreate\BookCreateDTO;
+use App\DTO\Request\BookCreate\BookUpdateDTO;
 use App\DTO\Request\BookSearchDTO;
 use App\DTO\Request\BookSearchSortOption;
 use App\DTO\Request\SearchDTO;
@@ -15,6 +16,7 @@ use App\Entity\Book\Author\Author;
 use App\Entity\Book\Book;
 use App\Entity\Book\Work;
 use App\Exception\ConflictException;
+use App\Exception\NotFoundException;
 use App\Repository\BookRepository;
 use App\Repository\Query\AuthorCriteria;
 use App\Repository\Query\AuthorQuery;
@@ -28,6 +30,7 @@ use App\Repository\Query\WorkCriteria;
 use App\Repository\Query\WorkQuery;
 use App\Repository\RatingRepository;
 use PDO;
+use PDOException;
 
 readonly class BookService extends Service
 {
@@ -241,5 +244,52 @@ readonly class BookService extends Service
             $this->bookRepository->insertAuthor($author);
 
         return $book;
+    }
+
+    /**
+     * @throws ConflictException
+     * @throws NotFoundException
+     */
+    public function updateBook(BookUpdateDTO $dto): Book
+    {
+        if ($this->checkIsbnExists($dto->isbn))
+            throw new ConflictException(['message' => 'A book with the isbn ' . $dto->isbn . ' already exists.']);
+
+        $qb = BookQuery::minimal();
+        $qb->where(BookCriteria::byId(alias: 'b'))
+            ->bind(':id', $dto->id);
+
+        $book = $this->bookRepository->getOne($qb);
+        if ($book === null)
+            throw new NotFoundException();
+
+        $dto->update($book);
+
+        $this->bookRepository->update($book);
+
+        return $book;
+    }
+
+    /**
+     * @throws ConflictException
+     */
+    public function deleteBook(int $bookId): void
+    {
+        $this->pdo->beginTransaction();
+
+        try {
+            $this->bookRepository->deleteAllBookAuthor($bookId);
+            $this->bookRepository->delete($bookId);
+        } catch (PDOException $e) {
+            $this->pdo->rollBack();
+            throw new ConflictException();
+        }
+
+        $this->pdo->commit();
+    }
+
+    public function softDeleteBook(int $bookId): void
+    {
+        $this->bookRepository->softDelete($bookId);
     }
 }
