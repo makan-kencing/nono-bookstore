@@ -22,4 +22,10 @@ abstract readonly class RequestDTO extends DTO
      * @throws UnprocessableEntityException
      */
     abstract public function validate(): void;
+
+    public static function toInt(string|int|null $val): ?int
+    {
+        if ($val === null) return null;
+        return intval($val);
+    }
 }

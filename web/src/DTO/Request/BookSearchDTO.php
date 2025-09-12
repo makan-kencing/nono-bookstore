@@ -106,18 +106,18 @@ readonly class BookSearchDTO extends SearchDTO
         try {
             return new self(
                 $json['query'] ?? null,
-                array_key_exists('format', $json) ? CoverType::fromName($json['format']) : null,
-                $json['category_id'] ?? null,
-                $json['min_price'] ?? null,
-                $json['max_price'] ?? null,
-                $json['author_id'] ?? null,
-                $json['publisher_id'] ?? null,
+                    CoverType::tryFromName($json['format'] ?? null),
+                    self::toInt($json['category_id'] ?? null),
+                    self::toInt($json['min_price'] ?? null),
+                    self::toInt($json['max_price'] ?? null),
+                    self::toInt($json['author_id'] ?? null),
+                    $json['publisher'] ?? null,
                 $json['language'] ?? null,
-                array_key_exists('sort', $json) ? BookSearchSortOption::fromName($json['sort']) : null,
-                    (int) ($json['page'] ?? 1),
-                    (int) ($json['page_size'] ?? 50)
+                    BookSearchSortOption::tryFromName($json['sort'] ?? null),
+                    self::toInt($json['page'] ?? 1),
+                    self::toInt($json['page_size'] ?? 50)
             );
-        } catch (Throwable) {
+        } catch (Throwable $e) {
             throw new BadRequestException();
         }
     }
