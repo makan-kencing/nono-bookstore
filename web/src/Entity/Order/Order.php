@@ -66,4 +66,17 @@ class Order extends Entity
     {
         return $this->getSubtotal() + $this->getShipping();
     }
+
+    public function getOrderStatus(): OrderStatus
+    {
+        if ($this->shipment === null)
+            return OrderStatus::NO_SHIPMENT;
+
+        return match (true) {
+            $this->shipment->arrivedAt !== null => OrderStatus::ARRIVED,
+            $this->shipment->shippedAt !== null => OrderStatus::SHIPPED,
+            $this->shipment->readyAt !== null => OrderStatus::READY,
+            default => OrderStatus::PREPARING,
+        };
+    }
 }

@@ -122,4 +122,21 @@ readonly class OrderRepository extends Repository
 
         $invoice->id = (int) $this->conn->lastInsertId();
     }
+
+    public function updateShipment(Shipment $shipment): void{
+        $stmt = $this->conn->prepare('
+        UPDATE `shipment`
+        SET `ready_at` = :ready_at,
+            `shipped_at` = :shipped_at,
+            `arrived_at` = :arrived_at
+            WHERE `id` = :id'
+        );
+        $stmt->execute([
+            ':id' => $shipment->id,
+            ':ready_at' => $shipment->readyAt?->format( 'Y-m-d H:i:s'),
+            ':shipped_at' => $shipment->shippedAt?->format( 'Y-m-d H:i:s'),
+            ':arrived_at' => $shipment->arrivedAt?->format( 'Y-m-d H:i:s')
+        ]);
+    }
+
 }
