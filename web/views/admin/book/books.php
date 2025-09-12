@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 
+use App\Core\Template;
 use App\Core\View;
 use App\Entity\Book\Author\AuthorDefinitionType;
 use App\Entity\Product\CoverType;
@@ -81,115 +82,106 @@ ob_start();
         reloadTable();
     </script>
 
-    <dialog id="add-book" style="overflow: hidden">
-        <form method="dialog" style="width: 840px">
-            <div style="display: flex;">
-                <h2>Add Book</h2>
+<?php $dialog = new Template(
+    '_component/_dialog_form.php',
+    ['title' => 'Add Book', 'id' => 'add-book']
+);
+?>
 
-                <button type="reset" style="margin-left: auto">X</button>
-            </div>
+<?php $dialog->start(); ?>
+    <fieldset>
+        <legend>Book Information</legend>
 
-            <div style="overflow-y: auto; height: 80vh;">
-                <fieldset>
-                    <legend>Book Information</legend>
+        <label>
+            Title*
+            <input type="search" placeholder="Search titles" onchange="fetchWorkOptions.call(this)">
+            <select name="work[id]" style="display: block; width: 100%;" required></select>
+        </label>
 
-                    <label>
-                        Title*
-                        <input type="search" placeholder="Search titles" onchange="fetchWorkOptions.call(this)">
-                        <select name="work[id]" style="display: block; width: 100%;" required></select>
-                    </label>
+        <label>
+            ISBN*
+            <input type="text" name="isbn" required
+                   pattern="\d{13}" minlength="13" maxlength="13">
+        </label>
 
-                    <label>
-                        ISBN*
-                        <input type="text" name="isbn" required
-                               pattern="\d{13}" minlength="13" maxlength="13">
-                    </label>
+        <label>
+            Description
 
-                    <label>
-                        Description
+            <textarea name="description" rows="4"
+                      style="display: block; width: 100%; resize: vertical"></textarea>
+        </label>
 
-                        <textarea name="description" rows="4"
-                                  style="display: block; width: 100%; resize: vertical"></textarea>
-                    </label>
+        <label>
+            Format*
+            <select name="cover_type" required>
+                <?php foreach (CoverType::cases() as $format): ?>
+                    <option value="<?= $format->name ?>"><?= $format->title() ?></option>
+                <?php endforeach; ?>
+            </select>
+        </label>
 
-                    <label>
-                        Format*
-                        <select name="cover_type" required>
-                            <?php foreach (CoverType::cases() as $format): ?>
-                                <option value="<?= $format->name ?>"><?= $format->title() ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </label>
+        <label>
+            Number of Pages*
+            <input type="number" name="number_of_pages" min="1">
+        </label>
 
-                    <label>
-                        Number of Pages*
-                        <input type="number" name="number_of_pages" min="1">
-                    </label>
+        <label>
+            Dimensions
+            <input type="text" name="dimensions">
+        </label>
 
-                    <label>
-                        Dimensions
-                        <input type="text" name="dimensions">
-                    </label>
+        <label>
+            Language
+            <input type="text" name="language">
+        </label>
 
-                    <label>
-                        Language
-                        <input type="text" name="language">
-                    </label>
+        <label>
+            Edition Information
+            <input type="text" name="edition_information">
+        </label>
+    </fieldset>
 
-                    <label>
-                        Edition Information
-                        <input type="text" name="edition_information">
-                    </label>
-                </fieldset>
+    <fieldset>
+        <legend>Publisher</legend>
 
-                <fieldset>
-                    <legend>Publisher</legend>
+        <label>
+            Publisher*
+            <input type="text" name="publisher" required>
+        </label>
 
-                    <label>
-                        Publisher*
-                        <input type="text" name="publisher" required>
-                    </label>
+        <label>
+            Publication Date*
+            <input type="text" name="publication_date" pattern="[\d\-]+" required>
+        </label>
+    </fieldset>
 
-                    <label>
-                        Publication Date*
-                        <input type="text" name="publication_date" pattern="[\d\-]+" required>
-                    </label>
-                </fieldset>
+    <fieldset>
+        <legend>Authors</legend>
 
-                <fieldset>
-                    <legend>Authors</legend>
+        <fieldset data-author="0">
+            <button id="remove-author" type="button"
+                    onclick="this.closest('fieldset').remove()">X
+            </button>
 
-                    <fieldset data-author="0">
-                        <button id="remove-author" type="button"
-                                onclick="this.closest('fieldset').remove()">X
-                        </button>
+            <label>
+                Author*
+                <input type="search" placeholder="Search authors" onchange="fetchAuthorOptions.call(this)">
+                <select name="authors[0][id]" style="display: block; width: 100%;" required></select>
+            </label>
 
-                        <label>
-                            Author*
-                            <input type="search" placeholder="Search authors" onchange="fetchAuthorOptions.call(this)">
-                            <select name="authors[0][id]" style="display: block; width: 100%;" required></select>
-                        </label>
+            <label>
+                Role*
+                <select name="authors[0][type]" required>
+                    <?php foreach (AuthorDefinitionType::cases() as $type): ?>
+                        <option value="<?= $type->name ?>"><?= $type->title() ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
+        </fieldset>
 
-                        <label>
-                            Role*
-                            <select name="authors[0][type]" required>
-                                <?php foreach (AuthorDefinitionType::cases() as $type): ?>
-                                    <option value="<?= $type->name ?>"><?= $type->title() ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </label>
-                    </fieldset>
-
-                    <button id="add-author" type="button">Add author</button>
-                </fieldset>
-            </div>
-
-            <div style="display: flex; justify-content: right; gap: 1rem;">
-                <button type="reset">Cancel</button>
-                <button type="submit">Submit</button>
-            </div>
-        </form>
-    </dialog>
+        <button id="add-author" type="button">Add author</button>
+    </fieldset>
+<?= $dialog->end() ?>
 
     <script>
         $("button#add-book").click(/** @param {jQuery.Event} e */(e) => {
