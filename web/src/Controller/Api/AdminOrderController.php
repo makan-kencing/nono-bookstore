@@ -10,6 +10,7 @@ use App\Entity\User\UserRole;
 use App\Exception\BadRequestException;
 use App\Exception\ForbiddenException;
 use App\Exception\NotFoundException;
+use App\Exception\UnauthorizedException;
 use App\Exception\UnprocessableEntityException;
 use App\Router\AuthRule;
 use App\Router\Method\PUT;
@@ -17,6 +18,7 @@ use App\Router\Path;
 use App\Router\RequireAuth;
 use App\Service\OrderService;
 use App\Service\UserService;
+use PDO;
 
 #[Path('/api/orderList')]
 #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
@@ -35,13 +37,13 @@ readonly class AdminOrderController extends ApiController
      * @throws BadRequestException
      * @throws UnprocessableEntityException
      * @throws NotFoundException
+     * @throws UnauthorizedException
      */
-    #[Put]
-    #[Path('/updateShipmentStatus')]
-    public function updateShipmentStatus(): void
+    #[PUT]
+    #[Path('/{id}')]
+    public function updateShipmentStatus(string $id): void
     {
-        $dto=ShipmentUpdateDTO::jsonDeserialize(self::getJsonBody());
-        $this->orderService->update($dto);
+        $this->orderService->updateShipment((int)$id);
         http_response_code(204);
     }
 }

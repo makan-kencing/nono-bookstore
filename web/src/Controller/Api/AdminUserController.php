@@ -53,23 +53,6 @@ readonly class AdminUserController extends ApiController
     }
 
     /**
-     * @throws ForbiddenException
-     * @throws BadRequestException
-     * @throws UnprocessableEntityException
-     * @throws NotFoundException
-     */
-    #[PUT]
-    public function editUser(): void
-    {
-        $dto = UserUpdateDTO::jsonDeserialize(self::getJsonBody());
-        $dto->validate();
-
-        $this->userService->update($dto);
-
-        http_response_code(204);
-    }
-
-    /**
      * @throws UnauthorizedException
      * @throws ForbiddenException
      * @throws NotFoundException
