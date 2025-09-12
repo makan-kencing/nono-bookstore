@@ -10,7 +10,7 @@ use App\Orm\Attribute\OneToOne;
 use App\Orm\Entity;
 use DateTime;
 
-#[AllowDynamicProperties] class UserProfile extends Entity
+class UserProfile extends Entity
 {
     #[Id]
     #[OneToOne]
