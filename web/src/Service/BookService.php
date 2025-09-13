@@ -31,6 +31,7 @@ use App\Repository\Query\WorkQuery;
 use App\Repository\RatingRepository;
 use PDO;
 use PDOException;
+use Throwable;
 
 readonly class BookService extends Service
 {
@@ -231,6 +232,7 @@ readonly class BookService extends Service
 
     /**
      * @throws ConflictException
+     * @throws Throwable
      */
     public function createBook(BookCreateDTO $dto): Book
     {
@@ -239,9 +241,22 @@ readonly class BookService extends Service
 
         $book = $dto->toBook();
 
-        $this->bookRepository->insert($book);
-        foreach ($book->authors as $author)
-            $this->bookRepository->insertAuthor($author);
+        $this->pdo->beginTransaction();
+        try {
+            $this->bookRepository->insert($book);
+            foreach ($book->authors as $author)
+                $this->bookRepository->insertAuthor($author);
+            foreach ($book->inventories as $inventory)
+                $this->bookRepository->insertInventory($inventory);
+            foreach ($book->prices as $price)
+                $this->bookRepository->insertPrice($price);
+            foreach ($book->costs as $cost)
+                $this->bookRepository->insertCost($cost);
+        } catch (Throwable $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
+        $this->pdo->commit();
 
         return $book;
     }

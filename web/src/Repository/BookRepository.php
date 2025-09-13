@@ -6,6 +6,9 @@ namespace App\Repository;
 
 use App\Entity\Book\Author\AuthorDefinition;
 use App\Entity\Book\Book;
+use App\Entity\Product\Cost;
+use App\Entity\Product\Inventory;
+use App\Entity\Product\Price;
 
 readonly class BookRepository extends Repository
 {
@@ -142,5 +145,67 @@ readonly class BookRepository extends Repository
             ':book_id' => $ad->book->id,
             ':author_id' => $ad->author->id,
         ]);
+    }
+
+    public function insertInventory(Inventory $inventory): void
+    {
+        $stmt = $this->conn->prepare('
+            INSERT INTO inventory (book_id, location, quantity)
+            VALUES (:book_id, :location, :quantity)
+        ');
+        $stmt->execute([
+            ':book_id' => $inventory->book->id,
+            ':location' => $inventory->location->name,
+            ':quantity' => $inventory->quantity
+        ]);
+
+        $inventory->id = (int) $this->conn->lastInsertId();
+    }
+
+    public function updateInventory(Inventory $inventory): void
+    {
+
+    }
+
+    public function insertPrice(Price $price): void
+    {
+        $stmt = $this->conn->prepare('
+            INSERT INTO price (book_id, from_date, amount, comment)
+            VALUES (:book_id, :from_date, :amount, :comment)
+        ');
+        $stmt->execute([
+            ':book_id' => $price->book->id,
+            ':from_date' => $price->fromDate->format('Y-m-d H:i:s'),
+            ':amount' => $price->amount,
+            ':comment' => $price->comment
+        ]);
+
+        $price->id = (int) $this->conn->lastInsertId();
+    }
+
+    public function updatePrice(Price $price): void
+    {
+
+    }
+
+    public function insertCost(Cost $cost): void
+    {
+        $stmt = $this->conn->prepare('
+            INSERT INTO cost (book_id, from_date, amount, comment)
+            VALUES (:book_id, :from_date, :amount, :comment)
+        ');
+        $stmt->execute([
+            ':book_id' => $cost->book->id,
+            ':from_date' => $cost->fromDate->format('Y-m-d H:i:s'),
+            ':amount' => $cost->amount,
+            ':comment' => $cost->comment
+        ]);
+
+        $cost->id = (int) $this->conn->lastInsertId();
+    }
+
+    public function updateCost(Cost $cost): void
+    {
+
     }
 }

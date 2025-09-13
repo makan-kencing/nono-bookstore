@@ -7,9 +7,14 @@ namespace App\DTO\Request\BookCreate;
 use App\DTO\Request\RequestDTO;
 use App\Entity\Book\Book;
 use App\Entity\Book\Work;
+use App\Entity\Product\Cost;
 use App\Entity\Product\CoverType;
+use App\Entity\Product\Inventory;
+use App\Entity\Product\InventoryLocation;
+use App\Entity\Product\Price;
 use App\Exception\BadRequestException;
 use App\Exception\UnprocessableEntityException;
+use DateTime;
 use Throwable;
 
 readonly class BookCreateDTO extends RequestDTO
@@ -72,7 +77,10 @@ readonly class BookCreateDTO extends RequestDTO
                     fn($json) => AuthorDefinitionDTO::jsonDeserialize($json),
                     $json['authors'],
                 ),
-                $json['initial_stocks'],
+                array_map(
+                    fn ($stock) => (int) $stock,
+                    $json['initial_stocks']
+                ),
                 (int) ($json['initial_price'] * 100),
                 $json['initial_cost'] ?? null ? (int) ($json['initial_cost'] * 100) : null
             );
@@ -138,8 +146,53 @@ readonly class BookCreateDTO extends RequestDTO
             fn ($dto) => $dto->toAuthorDefinition($book),
             $this->authors
         );
+        $book->inventories = $this->toInventories($book);
+        $book->prices[] = $this->toPrice($book);
+        $book->costs[] = $this->toCost($book);
         $book->deletedAt = null;
 
         return $book;
+    }
+
+    public function toPrice(Book $book): Price
+    {
+        $price = new Price();
+        $price->book = $book;
+        $price->amount = $this->initialPrice;
+        $price->fromDate = new DateTime();
+        $price->thruDate = null;
+        $price->comment = null;
+
+        return $price;
+    }
+
+    public function toCost(Book $book): Cost
+    {
+        $cost = new Cost();
+        $cost->book = $book;
+        $cost->amount = $this->initialCost;
+        $cost->fromDate = new DateTime();
+        $cost->thruDate = null;
+        $cost->comment = null;
+
+        return $cost;
+    }
+
+    /**
+     * @return Inventory[]
+     */
+    public function toInventories(Book $book): array
+    {
+        $inventories = [];
+        foreach ($this->initialStocks as $name => $stock) {
+            $inventory = new Inventory();
+            $inventory->book = $book;
+            $inventory->location = InventoryLocation::fromName($name);
+            $inventory->quantity = $stock;
+
+            $inventories[] = $inventory;
+        }
+
+        return $inventories;
     }
 }
