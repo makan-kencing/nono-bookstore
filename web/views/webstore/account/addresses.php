@@ -216,6 +216,22 @@ $addressDialog = new Template(
         );
     });
 
+    $('button#delete-address').click(/** @param {jQuery.Event} e */ function (e){
+        data=new FormData(e.target.closest("form"));
+
+        $.ajax(
+            `/api/address/${data.get("id")}/delete`,{
+                method:'DELETE',
+                success: () => {
+                    window.location.reload();
+                },
+                error: (xhr) => {
+
+                }
+            }
+        );
+    });
+
     $("dialog.address form").submit(/** @param {jQuery.Event} e */ function (e) {
         e.preventDefault();
 
