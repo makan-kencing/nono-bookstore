@@ -6,6 +6,7 @@ services:
             MARIADB_DATABASE: ${DATABASE_NAME}
             MARIADB_USER: ${DATABASE_USER}
             MARIADB_PASSWORD: ${DATABASE_PASSWORD}
+            TZ: ${TIMEZONE}
         volumes:
             - ./var/mysql:/var/lib/mysql:z
         healthcheck:

@@ -10,7 +10,7 @@ use App\Exception\WebException;
 use App\Exception\Wrapper\WebExceptionWrapper;
 use App\Router\Router;
 
-date_default_timezone_set('Asia/Kuala_Lumpur');
+date_default_timezone_set(getenv('TIMEZONE'));
 
 $view = new View();
 $view::$viewPath = __DIR__ . "/../views";
