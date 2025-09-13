@@ -23,7 +23,7 @@ class Author extends Entity
     public ?string $description;
 
     #[OneToOne]
-    public File $image;
+    public ?File $image;
 
     /** @var AuthorDefinition[] */
     #[OneToMany(AuthorDefinition::class, mappedBy: 'author')]
