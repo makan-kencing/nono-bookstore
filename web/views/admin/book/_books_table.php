@@ -7,6 +7,7 @@ use App\DTO\Response\PageResultDTO;
 use App\Entity\Book\Author\AuthorDefinition;
 use App\Entity\Book\Book;
 use App\Entity\Book\BookImage;
+use App\Entity\Book\Category\CategoryDefinition;
 
 assert(isset($page) && $page instanceof PageResultDTO);
 assert(isset($search) && $search instanceof BookSearchDTO);
@@ -74,14 +75,20 @@ assert(isset($search) && $search instanceof BookSearchDTO);
             <td><?= $item->isbn ?></td>
             <td><?= $item->coverType->title() ?></td>
             <td>
-                <?php foreach ($item->authors as $author): ?>
-                    <span><?= $author->author->name ?></span>,
-                <?php endforeach; ?>
+                <?=
+                implode(', ', array_map(
+                    fn (AuthorDefinition $author) => "<span>{$author->author->name}</span>",
+                    $item->authors
+                ));
+                ?>
             </td>
             <td>
-                <?php foreach ($item->work->categories as $category): ?>
-                    <span><?= $category->category->name ?></span>,
-                <?php endforeach; ?>
+                <?=
+                implode(', ', array_map(
+                    fn (CategoryDefinition $category) => "<span>{$category->category->name}</span>",
+                    $item->work->categories
+                ));
+                ?>
             </td>
             <td><?= $item->publisher ?></td>
             <td><?= $item->publicationDate ?></td>
