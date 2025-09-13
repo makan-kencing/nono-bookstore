@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace App\Router;
 
 use App\Controller\Api\ApiController;
+use App\Controller\Controller;
 use App\Core\View;
-use App\DTO\UserLoginContextDTO;
-use App\Entity\User\UserRole;
-use App\Exception\BadRequestException;
 use App\Exception\ForbiddenException;
 use App\Exception\UnauthorizedException;
 use App\Exception\WebException;
@@ -17,7 +15,7 @@ use App\Exception\Wrapper\WebExceptionWrapper;
 use PDO;
 
 /**
- * @template T
+ * @template T of Controller
  */
 readonly class RouteHandler
 {
@@ -27,26 +25,26 @@ readonly class RouteHandler
      * @param ?RequireAuth $authConstraint
      */
     public function __construct(
-        public string $controller,
-        public string $method,
+        public string       $controller,
+        public string       $method,
         public ?RequireAuth $authConstraint
-    ) {
+    )
+    {
     }
 
     /**
      * @throws UnauthorizedException
      * @throws ForbiddenException
      */
-    public function handleAuthMiddleware(): bool
+    public function handleAuthMiddleware(Controller $controller): bool
     {
-        assert($this->authConstraint != null);
+        if ($this->authConstraint === null)
+            return true;
 
-        session_start();
-
-        $context = $_SESSION['user'] ?? null;
+        $context = $controller->refreshUserContext();;
         if ($context == null) {
             if ($this->authConstraint->redirect)
-                header('Location: /login');
+                $controller->redirect('/login?redirect=' . urlencode($_SERVER['REQUEST_URI']));
             else
                 throw new UnauthorizedException();
             return false;
@@ -72,7 +70,7 @@ readonly class RouteHandler
             $controller = new $this->controller($pdo, $view);
 
             if ($this->authConstraint)
-                if (!$this->handleAuthMiddleware())
+                if (!$this->handleAuthMiddleware($controller))
                     return;
 
             $controller->{$this->method}(...$params);

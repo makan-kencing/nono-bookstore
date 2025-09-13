@@ -4,22 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Web;
 
-use App\Core\View;
 use App\Router\Method\GET;
 use App\Router\Path;
-use App\Service\AuthService;
-use PDO;
 
 readonly class SecurityController extends WebController
 {
-    private AuthService $authService;
-
-    public function __construct(PDO $pdo, View $view)
-    {
-        parent::__construct($pdo, $view);
-        $this->authService = new AuthService($this->pdo);
-    }
-
     #[GET]
     #[Path('/login')]
     public function login(): void

@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Core\View;
 use App\DTO\UserLoginContextDTO;
+use App\Repository\UserRepository;
 use App\Service\AuthService;
 use App\Service\FileService;
 use PDO;
@@ -17,11 +18,13 @@ abstract readonly class Controller
 {
     protected PDO $pdo;
     protected View $view;
+    protected AuthService $authService;
 
     public function __construct(PDO $pdo, View $view)
     {
         $this->pdo = $pdo;
         $this->view = $view;
+        $this->authService = new AuthService($pdo);
     }
 
     /**
@@ -42,6 +45,11 @@ abstract readonly class Controller
     public function getSessionContext(): ?UserLoginContextDTO
     {
         return AuthService::getLoginContext();
+    }
+
+    public function refreshUserContext(): ?UserLoginContextDTO
+    {
+        return $this->authService->refreshUserContext();
     }
 
     /**
