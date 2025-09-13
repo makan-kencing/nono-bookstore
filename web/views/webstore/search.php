@@ -8,6 +8,8 @@ use App\DTO\Request\BookSearchDTO;
 use App\DTO\Request\BookSearchSortOption;
 use App\DTO\Response\PageResultDTO;
 use App\Entity\Book\Book;
+use App\Entity\Book\Category\Category;
+use App\Entity\Product\CoverType;
 
 assert(isset($page) && $page instanceof PageResultDTO);
 assert(isset($search) && $search instanceof BookSearchDTO);
@@ -34,6 +36,10 @@ $template = new Template(
                 <details>
                     <summary>Category</summary>
 
+                    <?php if ($search->categoryId !== null): ?>
+                        <input type="hidden" name="category_id" value="<?= $search->categoryId ?>">
+                    <?php endif; ?>
+
                     <ul>
                         <?php foreach ($categories as $category): ?>
                             <li><a href="<?= $search->withCategoryId($category->id)->toQueryString() ?>"><?= $category->name ?></a></li>
@@ -44,8 +50,14 @@ $template = new Template(
                 <details>
                     <summary>Format</summary>
 
+                    <?php if ($search->format !== null): ?>
+                        <input type="hidden" name="format" value="<?= $search->format ?>">
+                    <?php endif; ?>
+
                     <ul>
-                        <li></li>
+                        <?php foreach (CoverType::cases() as $type): ?>
+                            <li><a><?= $type->title() ?></a></li>
+                        <?php endforeach; ?>
                     </ul>
                 </details>
 
@@ -67,30 +79,6 @@ $template = new Template(
 
                     <button type="submit">Set</button>
                 </details>
-
-                <details>
-                    <summary>Author</summary>
-
-                    <ul>
-                        <li></li>
-                    </ul>
-                </details>
-
-                <details>
-                    <summary>Publisher</summary>
-
-                    <ul>
-                        <li></li>
-                    </ul>
-                </details>
-
-                <details>
-                    <summary>Language</summary>
-
-                    <ul>
-                        <li></li>
-                    </ul>
-                </details>
             </div>
 
             <div style="font-size: 0.8rem; display: flex; flex-flow: column; gap: 2rem;">
@@ -101,6 +89,8 @@ $template = new Template(
                     </div>
 
                     <label>
+                        <input type="hidden" name="page" value="<?= $search->page ?>">
+
                         Show:
                         <select name="page_size" id="page-size">
                             <?php $sizes = [10, 25, 50] ?>
@@ -117,7 +107,9 @@ $template = new Template(
                         Sort by:
                         <select name="sort" id="sort">
                             <?php foreach (BookSearchSortOption::cases() as $option): ?>
-                                <option value="<?= $option->name ?>"><?= $option->asLabel() ?></option>
+                                <option value="<?= $option->name ?>" <?= $search->option === $option ? 'selected' : '' ?>>
+                                    <?= $option->asLabel() ?>
+                                </option>
                             <?php endforeach; ?>
                         </select>
                     </label>
@@ -131,7 +123,7 @@ $template = new Template(
 
                 <div style="display: flex; justify-content: center; gap: 1rem; font-size: 1rem;">
                     <?php if ($page->hasPreviousPage()): ?>
-                        <a href="/books/search/<?= $search->query ?? '' ?><?= $search->withPage($search->page - 1)->toQueryString() ?>"><</a>
+                        <a href="<?= $search->query ?? '' ?><?= $search->withPage($search->page - 1)->toQueryString() ?>"><</a>
                     <?php else: ?>
                         <span><</span>
                     <?php endif; ?>
@@ -140,17 +132,23 @@ $template = new Template(
                         <?php if ($pageRequest->page === $page->pageRequest->page): ?>
                             <span><?= $pageRequest->page ?></span>
                         <?php else: ?>
-                            <a href="/books/search/<?= $search->query ?? '' ?><?= $search->withPage($pageRequest->page)->toQueryString() ?>"><?= $pageRequest->page ?></a>
+                            <a href="<?= $search->query ?? '' ?><?= $search->withPage($pageRequest->page)->toQueryString() ?>"><?= $pageRequest->page ?></a>
                         <?php endif; ?>
                     <?php endforeach; ?>
 
                     <?php if ($page->hasNextPage()): ?>
-                        <a href="/books/search/<?= $search->query ?? '' ?><?= $search->withPage($search->page + 1)->toQueryString() ?>">></a>
+                        <a href="<?= $search->query ?? '' ?><?= $search->withPage($search->page + 1)->toQueryString() ?>">></a>
                     <?php else: ?>
                         <span>></span>
                     <?php endif; ?>
                 </div>
             </div>
-        </div>
+        </form>
     </main>
+
+    <script>
+        $("select").change(/** @param {jQuery.Event} e */ function (e) {
+            this.closest("form").submit();
+        })
+    </script>
 <?= $template->end() ?>

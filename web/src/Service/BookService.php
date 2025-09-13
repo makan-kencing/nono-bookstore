@@ -14,6 +14,7 @@ use App\DTO\Response\WorkRating\RatingDTO;
 use App\DTO\Response\WorkRating\RatingSummaryDTO;
 use App\Entity\Book\Author\Author;
 use App\Entity\Book\Book;
+use App\Entity\Book\Category\Category;
 use App\Entity\Book\Work;
 use App\Exception\ConflictException;
 use App\Exception\NotFoundException;
@@ -23,6 +24,7 @@ use App\Repository\Query\AuthorQuery;
 use App\Repository\Query\BookCriteria;
 use App\Repository\Query\BookQuery;
 use App\Repository\Query\CategoryCriteria;
+use App\Repository\Query\CategoryQuery;
 use App\Repository\Query\PriceCriteria;
 use App\Repository\Query\RatingCriteria;
 use App\Repository\Query\RatingQuery;
@@ -83,6 +85,14 @@ readonly class BookService extends Service
     }
 
     /**
+     * @return Category[]
+     */
+    public function getAllCategories(): array
+    {
+        return $this->bookRepository->get(CategoryQuery::minimal());
+    }
+
+    /**
      * @param int|Work $work
      * @return RatingDTO[]
      */
@@ -135,8 +145,8 @@ readonly class BookService extends Service
 
         if ($dto->minPrice !== null && $dto->maxPrice !== null) {
             $predicates = $predicates->and(PriceCriteria::byAmountBetween(alias: 'p'));
-            $qb->bind(':low', $dto->minPrice);
-            $qb->bind(':high', $dto->maxPrice);
+            $qb->bind(':min', $dto->minPrice);
+            $qb->bind(':max', $dto->maxPrice);
         }
 
         if ($dto->authorId !== null) {

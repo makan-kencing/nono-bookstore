@@ -98,6 +98,57 @@ readonly class BookSearchDTO extends SearchDTO
         );
     }
 
+    public function withCategoryId(int $categoryId): BookSearchDTO
+    {
+        return new self(
+            $this->query,
+            $this->format,
+            $categoryId,
+            $this->minPrice,
+            $this->maxPrice,
+            $this->authorId,
+            $this->publisher,
+            $this->language,
+            $this->option,
+            $this->page,
+            $this->pageSize,
+        );
+    }
+
+    public function withCoverType(CoverType $coverType): BookSearchDTO
+    {
+        return new self(
+            $this->query,
+            $coverType,
+            $this->categoryId,
+            $this->minPrice,
+            $this->maxPrice,
+            $this->authorId,
+            $this->publisher,
+            $this->language,
+            $this->option,
+            $this->page,
+            $this->pageSize,
+        );
+    }
+
+    public function withPriceRange(int $minPrice, int $maxPrice): BookSearchDTO
+    {
+        return new self(
+            $this->query,
+            $this->format,
+            $this->categoryId,
+            $minPrice,
+            $maxPrice,
+            $this->authorId,
+            $this->publisher,
+            $this->language,
+            $this->option,
+            $this->page,
+            $this->pageSize,
+        );
+    }
+
     /**
      * @inheritDoc
      */
@@ -108,8 +159,8 @@ readonly class BookSearchDTO extends SearchDTO
                 $json['query'] ?? null,
                     CoverType::tryFromName($json['format'] ?? null),
                     self::toInt($json['category_id'] ?? null),
-                    self::toInt($json['min_price'] ?? null),
-                    self::toInt($json['max_price'] ?? null),
+                    $json['min_price'] ?? null ? ((int) $json['min_price']) * 100 : null,
+                    $json['max_price'] ?? null ? ((int) $json['max_price']) * 100 : null,
                     self::toInt($json['author_id'] ?? null),
                     $json['publisher'] ?? null,
                 $json['language'] ?? null,
