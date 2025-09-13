@@ -13,6 +13,11 @@ readonly class SecurityController extends WebController
     #[Path('/login')]
     public function login(): void
     {
+        if (!array_key_exists('redirect', $_GET)) {
+            $this->redirect('/login?redirect=' . urlencode($_SERVER['HTTP_REFERER']));
+            return;
+        }
+
         echo $this->render('auth/login.php');
     }
 
@@ -20,6 +25,11 @@ readonly class SecurityController extends WebController
     #[Path('/register')]
     public function register(): void
     {
+        if (!array_key_exists('redirect', $_GET)) {
+            $this->redirect('/register?redirect=' . urlencode($_SERVER['HTTP_REFERER']));
+            return;
+        }
+
         echo $this->render('auth/register.php');
     }
 

@@ -33,7 +33,10 @@ ob_start();
                     <button type="submit" class="login-btn">Login</button>
                 </form>
                 <div class="signup-link">
-                    Don't have an account? <a href="/register">Sign up</a>
+                    Don't have an account?
+                    <a href="/register?redirect=<?= urlencode($_GET['redirect'] ?? '') ?>">
+                        Sign up
+                    </a>
                 </div>
             </div>
         </div>

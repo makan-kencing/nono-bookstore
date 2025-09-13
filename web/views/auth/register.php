@@ -44,7 +44,11 @@ ob_start();
                         Policies</a>
                 </div>
                 <button type="submit">Register</button>
-                <div class="return-login">Have an account? <a href="/login">Login</a></div>
+                <div class="return-login">Have an account?
+                    <a href="/login?redirect=<?= urlencode($_GET['redirect'] ?? '') ?>">
+                        Login
+                    </a>
+                </div>
             </form>
         </div>
     </div>
@@ -133,7 +137,7 @@ ob_start();
 
                         // redirect to log in after 3 secs
                         setTimeout(() => {
-                            window.location.href = "/login";
+                            window.location.href = "/login?redirect=<?= urlencode($_GET['redirect'] ?? '') ?>";
                         }, 3000);
                     }
                 }
