@@ -67,4 +67,16 @@ readonly class UserRepository extends Repository
             ':file_id' => $file_id,
         ]);
     }
+
+    public function toggleBlock(int $userId): void
+    {
+        $stmt = $this->conn->prepare('
+            UPDATE user
+            SET is_blocked = !is_blocked
+            WHERE id = :user_id
+        ');
+        $stmt->execute([
+            ':user_id' => $userId
+        ]);
+    }
 }

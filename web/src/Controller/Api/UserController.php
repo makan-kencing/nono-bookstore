@@ -135,4 +135,12 @@ readonly class  UserController extends ApiController
         header('Content-Type: application/json');
         echo json_encode(ImageUploadedDTO::fromFile($file));
     }
+
+
+    #[PUT]
+    #[Path('/{id}/block/toggle')]
+    public function toggleBlock(string $id): void
+    {
+        $this->userService->toggleBlock((int) $id);
+    }
 }

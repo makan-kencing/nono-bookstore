@@ -455,4 +455,9 @@ readonly class UserService extends Service
         // delete token
         $this->userTokenRepository->deleteById($userToken->id);
     }
+
+    public function toggleBlock(int $userId): void
+    {
+        $this->toggleBlock($userId);
+    }
 }
