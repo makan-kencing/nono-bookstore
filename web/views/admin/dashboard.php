@@ -2,6 +2,16 @@
 
 declare(strict_types=1);
 
+use App\DTO\Response\CategorySalesDTO;
+use App\DTO\Response\MonthlySalesDTO;
+
+assert(isset($monthlySales) && is_array($monthlySales));
+assert(isset($categorySales) && is_array($categorySales));
+/**
+ * @var MonthlySalesDTO[] $monthlySales
+ * @var CategorySalesDTO[] $categorySales
+ */
+
 $title = 'Dashboard';
 
 ob_start();
@@ -12,7 +22,7 @@ ob_start();
             <canvas id="myChart"></canvas>
         </div>
 
-        <div>
+        <div style="height: 500px">
             <canvas id="mySecondChart">
         </div>
     </div>
