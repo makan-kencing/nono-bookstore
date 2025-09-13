@@ -1,23 +1,20 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Repository\Query;
 
-use App\Entity\User\User;
-use App\Entity\User\UserProfile;
+use App\Entity\User\UserToken;
 use App\Orm\QueryBuilder;
 
-class UserProfileQuery
+class UserTokenQuery
 {
     /**
-     * @return QueryBuilder
+     * @return QueryBuilder<UserToken>
      */
     public static function withMinimalDetails(): QueryBuilder
     {
         $qb = new QueryBuilder();
-        $qb->from(UserProfile::class, 'up')
-            ->join('user', 'u');
+        $qb->from(UserToken::class, 'ut');
 
         return $qb;
     }
