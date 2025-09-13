@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Api;
 
-use App\Core\View;
 use App\DTO\Request\UserLoginDTO;
 use App\DTO\Request\UserRegisterDTO;
 use App\Exception\BadRequestException;
@@ -14,20 +13,10 @@ use App\Exception\UnprocessableEntityException;
 use App\Router\Method\POST;
 use App\Router\Path;
 use App\Router\RequireAuth;
-use App\Service\AuthService;
-use PDO;
 
 #[Path('/api')]
 readonly class AuthController extends ApiController
 {
-    private AuthService $authService;
-
-    public function __construct(PDO $pdo, View $view)
-    {
-        parent::__construct($pdo, $view);
-        $this->authService = new AuthService($pdo);
-    }
-
     /**
      * @throws BadRequestException
      * @throws UnprocessableEntityException

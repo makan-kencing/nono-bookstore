@@ -11,6 +11,7 @@ use App\Exception\Wrapper\WebExceptionWrapper;
 use App\Router\Router;
 
 date_default_timezone_set(getenv('TIMEZONE'));
+session_start();
 
 $view = new View();
 $view::$viewPath = __DIR__ . "/../views";

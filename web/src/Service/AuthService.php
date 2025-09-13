@@ -33,6 +33,34 @@ readonly class AuthService extends Service
         return $_SESSION['user'] ?? null;
     }
 
+    public function invalidateSession(): void
+    {
+        unset($_SESSION['user']);
+    }
+
+    public function setSessionAs(User $user): void
+    {
+        $_SESSION['user'] = UserLoginContextDTO::fromUser($user);
+    }
+
+    public function refreshUserContext(): ?UserLoginContextDTO
+    {
+        // TODO: check remember me
+
+        $old = self::getLoginContext();
+        if ($old === null)
+            return null;
+
+        $user = $this->userService->getUserForProfile($old->id);
+        if ($user === null || $user->isBlocked) {
+            $this->invalidateSession();
+            return null;
+        }
+
+        $this->setSessionAs($user);
+        return self::getLoginContext();
+    }
+
     /**
      * @param UserRegisterDTO $dto
      * @return void
@@ -59,13 +87,13 @@ readonly class AuthService extends Service
 
     public function login(UserLoginDTO $dto): bool
     {
-        $qb = UserQuery::withMinimalDetails();
-        $qb->where(UserCriteria::byEmail())
+        $qb = UserQuery::asProfile();
+        $qb->where(UserCriteria::byEmail(alias: 'u'))
             ->bind(':email', $dto->email);
         $user = $this->userRepository->getOne($qb);
 
-        // prevent timing attack even if there's no has to compare with
-        if (!$user) {
+        // prevent timing attack even if its a failed login
+        if ($user === null || $user->isBlocked) {
             password_verify($dto->password, 'placeholder');
             return false;
         }
@@ -82,20 +110,12 @@ readonly class AuthService extends Service
 
         // TODO: log the login success / failure event
 
-        $_SESSION['user'] = new UserLoginContextDTO(
-            $user->id ?? throw new UnexpectedValueException('Logged in user does not have id'),
-            $user->username,
-            $user->role
-        );
+        $this->setSessionAs($user);
         return true;
     }
 
     public function logout(): void
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
-        unset($_SESSION['user']);
+        $this->invalidateSession();
     }
-
 }
