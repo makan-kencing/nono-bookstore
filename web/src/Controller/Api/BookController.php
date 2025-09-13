@@ -102,6 +102,7 @@ readonly class BookController extends ApiController
      */
     #[POST]
     #[Path('/{bookId}/author/{authorId}')]
+    #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function addAuthor(string $bookId, string $authorId): void
     {
         $type = AuthorDefinitionType::fromName($_POST['type'] ?? throw new BadRequestException());
@@ -110,6 +111,7 @@ readonly class BookController extends ApiController
 
     #[DELETE]
     #[Path('/{bookId}/author/{authorId}')]
+    #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function deleteAuthor(string $bookId, string $authorId): void
     {
         $this->bookService->removeAuthor((int) $bookId, (int) $authorId);
@@ -120,6 +122,7 @@ readonly class BookController extends ApiController
      */
     #[POST]
     #[Path('/{bookId}/stock')]
+    #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function addInventory(string $bookId): void
     {
         $json = self::getJsonBody();
@@ -135,6 +138,7 @@ readonly class BookController extends ApiController
      */
     #[PUT]
     #[Path('/{bookId}/stock/{inventoryId}')]
+    #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function editStock(string $bookId, string $inventoryId): void
     {
         $json = self::getJsonBody();
@@ -149,6 +153,7 @@ readonly class BookController extends ApiController
      */
     #[POST]
     #[Path('/{bookId}/price')]
+    #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function setPrice(string $bookId): void
     {
         $amount = (int) ($_POST['price'] ?? throw new BadRequestException());
@@ -161,6 +166,7 @@ readonly class BookController extends ApiController
      */
     #[POST]
     #[Path('/{bookId}/cost')]
+    #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function setCost(string $bookId): void
     {
         $amount = (int) ($_POST['cost'] ?? throw new BadRequestException());
@@ -175,6 +181,7 @@ readonly class BookController extends ApiController
     #[GET]
     #[Path('/search/')]
     #[Path('/search/{query}')]
+    #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function search(?string $query = null): void
     {
         if ($query !== null)
