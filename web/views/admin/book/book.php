@@ -14,7 +14,7 @@ ob_start();
         <div style="display: flex; justify-content: end; gap: 1rem;">
 
             <button id="edit-book" type="button">Edit</button>
-            <button id="delete-book" type="button">Delete</button>
+            <button data-id="<?= $book->id ?>" id="delete-book" type="button">Delete</button>
         </div>
 
         <div style="display: flex;">
@@ -202,22 +202,36 @@ ob_start();
             $("dialog.book")[0].showModal();
         });
 
-        $("button#delete-book").click(/** @param {jQuery.Event} e */(e) => {
+        $("button#delete-book").click(/** @param {jQuery.Event} e */function (e) {
             const confirmation = confirm("Are you sure?");
+            if (!confirmation)
+                return;
 
+            $.ajax(
+                `/api/book/${this.dataset.id}`,
+                {
+                    method: "DELETE",
+                    success: () => {
+                        window.location.replace("/admin/books");
+                    },
+                    error: (jqXHR, textStatus, errorThrown) => {
 
+                    }
+                }
+            );
         });
 
         $("dialog.book form").submit(/** @param {jQuery.Event} e */ function (e) {
             e.preventDefault();
 
             $.ajax(
-                '/api/book',
+                "/api/book",
                 {
-                    method: 'PUT',
+                    method: "PUT",
                     data: $(this).serialize(),
                     success: () => {
                         this.closest("dialog").close();
+                        window.location.reload();
                     },
                     error: (jqXHR, textStatus, errorThrown) => {
 

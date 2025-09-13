@@ -83,7 +83,7 @@ readonly class BookController extends ApiController
             $this->bookService->softDeleteBook((int) $id);
         }
 
-        http_response_code(201);
+        http_response_code(204);
     }
 
     /**
