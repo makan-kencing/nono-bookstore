@@ -11,7 +11,12 @@ use App\Entity\Book\Book;
 
 assert(isset($page) && $page instanceof PageResultDTO);
 assert(isset($search) && $search instanceof BookSearchDTO);
-/** @var PageResultDTO<Book> $page */
+assert(isset($categories) && is_array($categories));
+
+/**
+ * @var PageResultDTO<Book> $page
+ * @var Category[] $categories
+ */
 
 $template = new Template(
     'webstore/_base.php',
@@ -22,13 +27,17 @@ $template = new Template(
 
 <?php $template->start(); ?>
     <main style="display: flex; flex-flow: column; align-items: center;">
-        <div style="display: flex; gap: 2rem;">
+        <form style="display: flex; gap: 2rem;">
             <div>
+                <a href="<?= (new BookSearchDTO())->toQueryString() ?>">Reset Filters</a>
+
                 <details>
                     <summary>Category</summary>
 
                     <ul>
-                        <li></li>
+                        <?php foreach ($categories as $category): ?>
+                            <li><a href="<?= $search->withCategoryId($category->id)->toQueryString() ?>"><?= $category->name ?></a></li>
+                        <?php endforeach; ?>
                     </ul>
                 </details>
 
@@ -42,10 +51,21 @@ $template = new Template(
 
                 <details>
                     <summary>Price</summary>
+                    <div >
+                        <div>
+                            <label for="min-price" >Min</label>
+                            <input type="number" name="min_price" id="min-price"
+                                step="0.01" value="<?= number_format((int) $search->minPrice ?? 0 / 100, 2)  ?>">
+                        </div>
 
-                    <ul>
-                        <li></li>
-                    </ul>
+                        <div>
+                            <label id="max-price">Max</label>
+                            <input type="number" name="max_price" id="max-price"
+                                   step="0.01" value="<?= number_format((int) $search->maxPrice ?? 0 / 100, 2)  ?>">
+                        </div>
+                    </div>
+
+                    <button type="submit">Set</button>
                 </details>
 
                 <details>

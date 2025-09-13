@@ -8,7 +8,10 @@ use App\Core\View;
 use App\DTO\Request\BookSearchDTO;
 use App\Exception\BadRequestException;
 use App\Exception\NotFoundException;
+use App\Exception\UnauthorizedException;
 use App\Exception\UnprocessableEntityException;
+use App\Repository\BookRepository;
+use App\Repository\Query\BookQuery;
 use App\Router\Method\GET;
 use App\Router\Path;
 use App\Service\BookService;
@@ -50,9 +53,11 @@ readonly class BooksController extends WebController
             return;
         }
 
+        $categories = $this->bookService->getAllCategories();
+
         echo $this->render(
             'webstore/search.php',
-            ['page' => $page, 'search' => $dto]
+            ['page' => $page, 'search' => $dto, 'categories' => $categories]
         );
     }
 }
