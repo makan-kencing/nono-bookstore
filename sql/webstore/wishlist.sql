@@ -1,12 +1,12 @@
 create or replace table wishlist
 (
-    work_id bigint unsigned not null,
+    book_id bigint unsigned not null,
     user_id bigint unsigned not null,
-    primary key (work_id, user_id),
-    constraint wishlist_ibfk_1
-        foreign key (work_id) references work (id),
+    primary key (book_id, user_id),
     constraint wishlist_ibfk_2
-        foreign key (user_id) references user (id)
+        foreign key (user_id) references user (id),
+    constraint wishlist_ibfk_3
+        foreign key (book_id) references book (id)
 );
 
 create or replace index user_id

@@ -4,7 +4,7 @@ create or replace table work
         primary key,
     slug               varchar(255)    not null,
     title              varchar(255)    not null,
-    author_id          bigint unsigned not null,
+    author_id          bigint unsigned null,
     default_edition_id bigint unsigned null,
     constraint work_ibfk_1
         foreign key (author_id) references author (id),
