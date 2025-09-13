@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Core\View;
+session_start();
 $title = 'Login';
 ob_start();
 ?>
@@ -42,7 +44,7 @@ ob_start();
             <img src="/static/assets/login-illustration.jpg" alt="Login Illustration">
         </div>
     </div>
-
+<?= View::render('webstore/account/forgot-password.php') ?>
     <script>
         $("form#loginForm").submit(/** @param {jQuery.Event} e */ (e) => {
             e.preventDefault();

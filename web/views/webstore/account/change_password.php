@@ -53,7 +53,7 @@ $template = new Template(
         <div id="responseMessage" class="message"></div>
     </div>
 </div>
-
+<?= View::render('webstore/account/forgot-password.php') ?>
 <script>
     // Password toggle function
     $(".toggle-password").on("click", function () {
