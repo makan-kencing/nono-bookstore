@@ -69,14 +69,12 @@ readonly class RouteHandler
     {
 
         try {
-            if (is_subclass_of($this->controller, ApiController::class))
-                header('Content-Type: application/json');
+            $controller = new $this->controller($pdo, $view);
 
             if ($this->authConstraint)
                 if (!$this->handleAuthMiddleware())
                     return;
 
-            $controller = new $this->controller($pdo, $view);
             $controller->{$this->method}(...$params);
         } catch (WebException $e) {
             if (is_subclass_of($this->controller, ApiController::class))
