@@ -145,7 +145,7 @@ ob_start();
                                                     <input type="hidden" name="location"
                                                            value="<?= $inventory->location->name ?>">
                                                     <input type="number" name="quantity" min="0"
-                                                           step="1" value="<?= $inventory->quantity ?>">
+                                                           step="1" value="<?= $inventory->quantity ?>" required>
                                                 </label>
                                             </td>
                                             <td>
@@ -162,7 +162,7 @@ ob_start();
                                             <td>
                                                 <label>
                                                     <input type="hidden" name="location" value="<?= $location->name ?>">
-                                                    <input type="number" name="quantity" min="0" step="1">
+                                                    <input type="number" name="quantity" min="0" step="1" required>
                                                 </label>
                                             </td>
                                             <td>
@@ -179,7 +179,12 @@ ob_start();
                     <div>
                         <h4>Prices</h4>
 
-                        <button id="add-price" type="button">Add</button>
+                        <form action="/api/book/<?= $book->id ?>/price" id="add-price" style="display: flex;">
+                            <label for="price">New Price</label>
+                            <input type="number" name="amount" id="price" min="0.01" step="0.01" required>
+
+                            <button type="submit">Add</button>
+                        </form>
 
                         <table>
                             <thead>
@@ -204,7 +209,12 @@ ob_start();
                     <div>
                         <h4>Costs</h4>
 
-                        <button id="add-cost" type="button">Add</button>
+                        <form action="/api/book/<?= $book->id ?>/cost" id="add-cost" style="display: flex;">
+                            <label for="cost">New Cost</label>
+                            <input type="number" name="amount" id="cost" min="0.01" step="0.01" required>
+
+                            <button type="submit">Add</button>
+                        </form>
 
                         <table>
                             <thead>
@@ -279,15 +289,6 @@ ob_start();
             $("dialog.inventory")[0].showModal();
         });
 
-
-        $("button#add-price").click(/** @param {jQuery.Event} e */ function (e) {
-            $("dialog.price")[0].showModal();
-        });
-
-        $("button#add-cost").click(/** @param {jQuery.Event} e */ function (e) {
-            $("dialog.cost")[0].showModal();
-        });
-
         $("form#edit-inventory").submit(/** @param {jQuery.Event} e */ function (e) {
             e.preventDefault();
 
@@ -307,7 +308,7 @@ ob_start();
             );
         });
 
-        $("form#add-inventory").submit(/** @param {jQuery.Event} e */ function (e) {
+        $("form#add-price, form#add-cost, form#add-inventory").submit(/** @param {jQuery.Event} e */ function (e) {
             e.preventDefault();
 
             const data = new FormData(e.target);

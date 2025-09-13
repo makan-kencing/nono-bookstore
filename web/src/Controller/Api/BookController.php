@@ -9,7 +9,6 @@ use App\DTO\Request\BookCreate\BookCreateDTO;
 use App\DTO\Request\BookCreate\BookUpdateDTO;
 use App\DTO\Request\BookSearchDTO;
 use App\Entity\Book\Author\AuthorDefinitionType;
-use App\Entity\Product\CoverType;
 use App\Entity\Product\InventoryLocation;
 use App\Entity\User\UserRole;
 use App\Exception\BadRequestException;
@@ -91,7 +90,7 @@ readonly class BookController extends ApiController
         try {
             $this->bookService->deleteBook((int)$id);
         } catch (ConflictException) {
-            $this->bookService->softDeleteBook((int) $id);
+            $this->bookService->softDeleteBook((int)$id);
         }
 
         http_response_code(204);
@@ -106,7 +105,7 @@ readonly class BookController extends ApiController
     public function addAuthor(string $bookId, string $authorId): void
     {
         $type = AuthorDefinitionType::fromName($_POST['type'] ?? throw new BadRequestException());
-        $this->bookService->addAuthor((int) $bookId, (int) $authorId, $type);
+        $this->bookService->addAuthor((int)$bookId, (int)$authorId, $type);
     }
 
     #[DELETE]
@@ -114,7 +113,7 @@ readonly class BookController extends ApiController
     #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function deleteAuthor(string $bookId, string $authorId): void
     {
-        $this->bookService->removeAuthor((int) $bookId, (int) $authorId);
+        $this->bookService->removeAuthor((int)$bookId, (int)$authorId);
     }
 
     /**
@@ -128,9 +127,9 @@ readonly class BookController extends ApiController
         $json = self::getJsonBody();
 
         $location = InventoryLocation::tryFromName($json['location'] ?? null) ?? throw new BadRequestException();
-        $quantity = (int) ($json['quantity'] ?? throw new BadRequestException());
+        $quantity = (int)($json['quantity'] ?? throw new BadRequestException());
 
-        $this->bookService->insertInventory((int) $bookId, $location, $quantity);
+        $this->bookService->insertInventory((int)$bookId, $location, $quantity);
     }
 
     /**
@@ -143,9 +142,9 @@ readonly class BookController extends ApiController
     {
         $json = self::getJsonBody();
 
-        $quantity = (int) ($json['quantity'] ?? throw new BadRequestException());
+        $quantity = (int)($json['quantity'] ?? throw new BadRequestException());
 
-        $this->bookService->updateInventory((int) $inventoryId, $quantity);
+        $this->bookService->updateInventory((int)$inventoryId, $quantity);
     }
 
     /**
@@ -156,9 +155,13 @@ readonly class BookController extends ApiController
     #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function setPrice(string $bookId): void
     {
-        $amount = (int) ($_POST['price'] ?? throw new BadRequestException());
+        $json = self::getJsonBody();
 
-        $this->bookService->setNewPrice((int) $bookId, $amount);
+        $amount = $json['amount'] ?? throw new BadRequestException();
+        $amount = (float) $amount * 100;
+        $amount = (int) $amount;
+
+        $this->bookService->setNewPrice((int)$bookId, $amount);
     }
 
     /**
@@ -169,9 +172,13 @@ readonly class BookController extends ApiController
     #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function setCost(string $bookId): void
     {
-        $amount = (int) ($_POST['cost'] ?? throw new BadRequestException());
+        $json = self::getJsonBody();
 
-        $this->bookService->setNewCost((int) $bookId, $amount);
+        $amount = $json['amount'] ?? throw new BadRequestException();
+        $amount = (float) $amount * 100;
+        $amount = (int) $amount;
+
+        $this->bookService->setNewCost((int)$bookId, $amount);
     }
 
     /**
