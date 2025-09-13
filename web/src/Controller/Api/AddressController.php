@@ -7,6 +7,7 @@ use App\Core\View;
 use App\DTO\Request\AddressCreateDTO;
 use App\DTO\Request\UserAddressDTO;
 use App\Exception\BadRequestException;
+use App\Exception\ForbiddenException;
 use App\Exception\NotFoundException;
 use App\Exception\UnauthorizedException;
 use App\Exception\UnprocessableEntityException;
@@ -59,11 +60,16 @@ readonly class AddressController extends ApiController
         $this->userService->updateUserAddress($dto,$id);
     }
 
+    /**
+     * @throws ForbiddenException
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     */
     #[DELETE]
-    #[Path('/{id}')]
+    #[Path('/{id}/delete')]
     public function deleteAddress(string $id): void
     {
-        $this->userService->deleteAddress($id);
+        $this->userService->deleteAddress((int) $id);
     }
 
     /**

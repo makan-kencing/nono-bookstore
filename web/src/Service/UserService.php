@@ -252,22 +252,7 @@ readonly class UserService extends Service
      */
     public function updateUserAddress(UserAddressDTO $dto, int $id): void
     {
-        $context = $this->getSessionContext();
-        if ($context === null)
-            throw new UnauthorizedException();
-
-        $qb = AddressQuery::minimal();
-        $qb->join('user', 'u')
-            ->where(AddressCriteria::byId(alias: 'a'))
-            ->bind(':id', $id);
-
-        $address = $this->userRepository->getOne($qb);
-        if ($address === null)
-            throw new NotFoundException;
-
-        if ($address->user->id !== $context->id)
-            if (!AuthRule::HIGHER->check($context->role, $address->user->role))
-                throw new ForbiddenException();
+        $address = $this->getModifiableAddress($id);
 
         $dto->update($address);
         $this->userAddressRepository->update($address);
@@ -291,19 +276,48 @@ readonly class UserService extends Service
             $this->userAddressRepository->setDefault($address);
     }
 
-    public function deleteAddress(int $id): void{
+    /**
+     * @throws ForbiddenException
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     */
+    public function deleteAddress(int $id): void
+    {
+        $address = $this->getModifiableAddress($id);
+
+        $this->userAddressRepository->deleteAddress($address->id);
+    }
+
+    /**
+     * @throws ForbiddenException
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     */
+    public function getModifiableAddress(int $addressId): Address
+    {
         $context = $this->getSessionContext();
         if ($context === null)
             throw new UnauthorizedException();
 
-        if ($id != $context->toUserReference()){
-            throw new ForbiddenException([]);
-        }
+        $qb = AddressQuery::minimal();
+        $qb->join('user', 'u')
+            ->where(AddressCriteria::byId(alias: 'a'))
+            ->bind(':id', $addressId);
 
-        $this->userAddressRepository->deleteAddress($id);
+        $address = $this->userRepository->getOne($qb);
+        if ($address === null)
+            throw new NotFoundException;
 
+        if ($address->user->id !== $context->id)
+            if (!AuthRule::HIGHER->check($context->role, $address->user->role))
+                throw new ForbiddenException();
+
+        return $address;
     }
 
+    /**
+     * @throws UnauthorizedException
+     */
     public function setAddressDefault(int $addressId): void
     {
         $context = $this->getSessionContext();
