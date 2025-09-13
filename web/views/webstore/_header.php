@@ -3,9 +3,6 @@ declare(strict_types=1);
 
 use App\Service\AuthService;
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
 $context = AuthService::getLoginContext();
 ?>
 
