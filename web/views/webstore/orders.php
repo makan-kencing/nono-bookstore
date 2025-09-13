@@ -55,9 +55,14 @@ $template = new Template(
                         </div>
                     </div>
 
-                    <div style="display: flex; flex-flow: column; gap: 0.5rem;">
-                        <?php foreach ($order->items as $item): ?>
-                            <?= View::render('webstore/_component/_order_history_item.php', ['item' => $item]) ?>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <?php foreach (array_splice($order->items, 0, 5) as $item): ?>
+                            <?php
+                            $book = $item->book;
+                            $book->normalizeOrder();
+                            $image = $book->images[0] ?? null;
+                            ?>
+                            <img title="<?= $book->work->title ?>" src="<?= $image?->file?->filepath ?>" alt="<?= $image?->file?->alt ?>">
                         <?php endforeach; ?>
                     </div>
                 </div>
