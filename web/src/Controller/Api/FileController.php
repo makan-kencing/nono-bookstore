@@ -33,26 +33,6 @@ readonly class FileController extends ApiController
     }
 
     /**
-     * @param array $files
-     * @return PhpFile[]
-     */
-    function normalizeFiles(array $files): array
-    {
-        $isMulti = is_array($files['name']);
-        $n = $isMulti ? count($files['name']) : 1;
-
-        $normalized = [];
-        for ($i = 0; $i < $n; $i++)
-            foreach (array_keys($files) as $key)
-                if ($isMulti)
-                    $normalized[$i][$key] = $files[$key][$i];
-                else
-                    $normalized[$i][$key] = $files[$key];
-
-        return $normalized;
-    }
-
-    /**
      * @throws UnauthorizedException
      * @throws UnprocessableEntityException
      * @throws ConflictException

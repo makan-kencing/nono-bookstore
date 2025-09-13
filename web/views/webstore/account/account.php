@@ -76,17 +76,50 @@ if ($user->profile?->dob instanceof DateTime) {
                 </div>
             </form>
 
-            <div class="image-upload">
+            <form class="image-upload" enctype="multipart/form-data">
                 <img src="<?= $user->image->filepath ?? '' ?>" alt="Profile Image" class="qr-code">
-                <button type="button" class="select-image-btn">Select Image</button>
-                <p class="file-info">File size: maximum 1 MB</p>
-                <p class="file-info">File extension: JPEG, PNG</p>
-            </div>
+
+                <input type="file" accept="image/png, image/jpeg, image/webp" name="profile_image" id="profile-image" hidden>
+
+                <label for="profile-image" class="select-image-btn">Select Image</label>
+
+                <p class="file-info">File size: maximum 5 MB</p>
+                <p class="file-info">File extension: JPEG, PNG, WEBP</p>
+            </form>
         </div>
     </section>
 </div>
 
 <script>
+    $("form.image-upload input[type=file]").change(/** @param {jQuery.Event} e */ function (e) {
+
+        const form = this.closest("form");
+        const data = new FormData(form);
+
+        $(form).find("label[for=profile-image]").text("Saving");
+
+        $.ajax(
+            "/api/user/profile/image",
+            {
+                method: "POST",
+                data: data,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: (data) => {
+                    $(form).find("img")
+                        .attr("src", data.filepath)
+                        .attr("alt", data.alt);
+                    $(form).find("label[for=profile-image]")
+                        .text("Saved");
+                },
+                error: (xhr) => {
+                    console.error(xhr);
+                }
+            }
+        );
+    })
+
     document.addEventListener('DOMContentLoaded', function () {
         const daySelect = document.getElementById('dob-day');
         const monthSelect = document.getElementById('dob-month');

@@ -11,10 +11,13 @@ use App\DTO\Request\UserPasswordUpdateDTO;
 use App\DTO\Request\UserProfileUpdateDTO;
 use App\DTO\Request\UserUpdateDTO;
 use App\DTO\UserLoginContextDTO;
+use App\Entity\File;
 use App\Entity\User\Address;
 use App\Entity\User\User;
 use App\Entity\User\UserProfile;
+use App\Exception\BadRequestException;
 use App\Exception\ConflictException;
+use App\Exception\ContentTooLargeException;
 use App\Exception\ForbiddenException;
 use App\Exception\NotFoundException;
 use App\Exception\UnauthorizedException;
@@ -36,7 +39,7 @@ readonly class UserService extends Service
     private UserRepository $userRepository;
     private UserProfileRepository $userProfileRepository;
     private UserAddressRepository $userAddressRepository;
-    private FileRepository $fileRepository;
+    private FileService $fileService;
 
     public function __construct(PDO $pdo)
     {
@@ -44,7 +47,7 @@ readonly class UserService extends Service
         $this->userRepository = new UserRepository($this->pdo);
         $this->userProfileRepository = new UserProfileRepository($pdo);
         $this->userAddressRepository = new UserAddressRepository($pdo);
-        $this->fileRepository = new FileRepository($pdo);
+        $this->fileService = new FileService($this->pdo);
     }
 
     public function checkUsernameExists(string $username): bool
@@ -80,7 +83,7 @@ readonly class UserService extends Service
 
     public function getUserForProfile(int $id): ?User
     {
-        $qb = UserQuery::userListings();
+        $qb = UserQuery::asProfile();
         $qb->where(UserCriteria::byId(alias: 'u'))
             ->bind(':id', $id);
         return $this->userRepository->getOne($qb);
@@ -330,5 +333,20 @@ readonly class UserService extends Service
 
         $user->hashedPassword = password_hash($dto->newPassword, PASSWORD_DEFAULT);
         $this->userRepository->update($user);
+    }
+
+    /**
+     * @throws UnauthorizedException
+     * @throws ConflictException
+     * @throws BadRequestException
+     * @throws UnprocessableEntityException
+     * @throws ContentTooLargeException
+     */
+    public function uploadProfileImage(array $file): File
+    {
+        $file = $this->fileService->uploadImage($file);
+        $this->userRepository->setProfileImage($file->user->id, $file->id);
+
+        return $file;
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\File;
 use App\Entity\User\User;
 
 readonly class UserRepository extends Repository
@@ -54,13 +55,16 @@ readonly class UserRepository extends Repository
         $stmt->execute();
     }
 
-    public function updateAvatar(int $userId, string $avatarPath): void
+    public function setProfileImage(int $user_id, int $file_id): void
     {
         $stmt = $this->conn->prepare('
-        UPDATE user SET image_id = :avatar WHERE id = :id;
-    ');
-        $stmt->bindValue(':avatar', $avatarPath);
-        $stmt->bindValue(':id', $userId);
-        $stmt->execute();
+            UPDATE user
+            SET image_id = :file_id
+            WHERE id = :id;
+        ');
+        $stmt->execute([
+            ':id' => $user_id,
+            ':file_id' => $file_id,
+        ]);
     }
 }

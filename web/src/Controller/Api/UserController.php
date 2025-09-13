@@ -8,14 +8,20 @@ use App\Core\View;
 use App\DTO\Request\UserPasswordUpdateDTO;
 use App\DTO\Request\UserProfileUpdateDTO;
 use App\DTO\Request\UserUpdateDTO;
+use App\DTO\Response\ImageUploadedDTO;
 use App\Exception\BadRequestException;
+use App\Exception\ConflictException;
+use App\Exception\ContentTooLargeException;
+use App\Exception\ForbiddenException;
 use App\Exception\NotFoundException;
+use App\Exception\UnauthorizedException;
 use App\Exception\UnprocessableEntityException;
 use App\Router\Method\GET;
 use App\Router\Method\POST;
 use App\Router\Method\PUT;
 use App\Router\Path;
 use App\Router\RequireAuth;
+use App\Service\FileService;
 use App\Service\UserService;
 use PDO;
 
@@ -91,6 +97,13 @@ readonly class  UserController extends ApiController
         echo json_encode(['success' => true, 'message' => 'User profile updated successfully']);
     }
 
+    /**
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     * @throws ForbiddenException
+     * @throws BadRequestException
+     * @throws UnprocessableEntityException
+     */
     #[PUT]
     #[Path('/update-password/{id}')]
     public function updatePassword(string $id): void
@@ -104,4 +117,22 @@ readonly class  UserController extends ApiController
         echo json_encode(['success' => true, 'message' => 'Password updated successfully']);
     }
 
+    /**
+     * @throws UnauthorizedException
+     * @throws ConflictException
+     * @throws BadRequestException
+     * @throws UnprocessableEntityException
+     * @throws ContentTooLargeException
+     */
+    #[POST]
+    #[Path('/profile/image')]
+    public function setProfileImage(): void
+    {
+        $file = $_FILES['profile_image'];
+
+        $file = $this->userService->uploadProfileImage($file);
+
+        header('Content-Type: application/json');
+        echo json_encode(ImageUploadedDTO::fromFile($file));
+    }
 }

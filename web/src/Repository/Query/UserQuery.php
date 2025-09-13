@@ -35,6 +35,19 @@ class UserQuery
     /**
      * @return QueryBuilder<User>
      */
+    public static function asProfile(): QueryBuilder
+    {
+        $qb = new QueryBuilder();
+        $qb->from(User::class, 'u')
+            ->leftJoin('profile', 'up')
+            ->leftJoin('image', 'i');
+
+        return $qb;
+    }
+
+    /**
+     * @return QueryBuilder<User>
+     */
     public static function userListings(): QueryBuilder
     {
         $qb = new QueryBuilder();
