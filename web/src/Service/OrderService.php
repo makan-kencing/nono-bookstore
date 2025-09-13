@@ -2,6 +2,8 @@
 
 namespace App\Service;
 
+use App\DTO\Response\CategorySalesDTO;
+use App\DTO\Response\MonthlySalesDTO;
 use App\Entity\Order\Order;
 use App\Entity\User\User;
 use App\Exception\ForbiddenException;
@@ -13,6 +15,7 @@ use App\Repository\Query\OrderQuery;
 use App\Repository\Query\ShipmentQuery;
 use App\Router\AuthRule;
 use App\Service\Service;
+use DateTime;
 use PDO;
 
 readonly class OrderService extends Service
@@ -72,5 +75,16 @@ readonly class OrderService extends Service
         $this->orderRepository->updateShipment($order->shipment);
     }
 
-
+    /**
+     * @param DateTime $from
+     * @param DateTime $to
+     * @return array{0: MonthlySalesDTO[], 0: CategorySalesDTO[]}
+     */
+    public function getSalesMetrics(DateTime $from, DateTime $to): array
+    {
+        return [
+            $this->orderRepository->getMonthlySales($from, $to),
+            $this->orderRepository->getCategorySales($from, $to)
+        ];
+    }
 }

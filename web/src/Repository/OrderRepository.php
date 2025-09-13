@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\DTO\Response\CategorySalesDTO;
+use App\DTO\Response\MonthlySalesDTO;
 use App\Entity\Order\Invoice;
 use App\Entity\Order\Order;
 use App\Entity\Order\OrderAdjustment;
 use App\Entity\Order\OrderItem;
 use App\Entity\Order\Payment;
 use App\Entity\Order\Shipment;
+use DateTime;
 use UnexpectedValueException;
 
 readonly class OrderRepository extends Repository
@@ -139,4 +142,69 @@ readonly class OrderRepository extends Repository
         ]);
     }
 
+    /**
+     * @param DateTime $from
+     * @param DateTime $to
+     * @return MonthlySalesDTO[]
+     */
+    public function getMonthlySales(DateTime $from, DateTime $to): array
+    {
+        $stmt = $this->conn->prepare('
+        select extract(year_month from o.ordered_at) `yearMonth`,
+               SUM(oi.quantity)                      `quantitySold`,
+               SUM(oi.unit_price)                    `revenue`
+        from `order` o
+                 join order_item oi on o.id = oi.order_id
+        where o.ordered_at BETWEEN :start_at AND :end_at
+        group by 1;
+        ');
+        $stmt->execute([
+            ':start_at' => $from->format('Y-m-d'),
+            ':end_at' => $to->format('Y-m-d')
+        ]);
+
+        $results = [];
+        foreach ($stmt as $row)
+            $results[] = new MonthlySalesDTO(
+                (string) $row['yearMonth'],
+                (int) $row['quantitySold'],
+                (int) $row['revenue']
+            );
+        return $results;
+    }
+
+    /**
+     * @param DateTime $from
+     * @param DateTime $to
+     * @return CategorySalesDTO[]
+     */
+    public function getCategorySales(DateTime $from, DateTime $to): array
+    {
+        $stmt = $this->conn->prepare('
+        select c.name            `categoryName`,
+               SUM(oi.quantity)  `quantitySold`,
+               SUM(oi.unit_price)`revenue`
+        from `order` o
+                 join order_item oi on o.id = oi.order_id
+                 join book b on oi.book_id = b.id
+                 join work w on b.work_id = w.id
+                 join category_definition cd on w.id = cd.work_id and cd.is_primary is true
+                 join category c on cd.category_id = c.id
+        where o.ordered_at BETWEEN :start_at AND :end_at
+        group by 1;
+        ');
+        $stmt->execute([
+            ':start_at' => $from->format('Y-m-d'),
+            ':end_at' => $to->format('Y-m-d')
+        ]);
+
+        $results = [];
+        foreach ($stmt as $row)
+            $results[] = new CategorySalesDTO(
+                (string) $row['categoryName'],
+                (int) $row['quantitySold'],
+                (int) $row['revenue']
+            );
+        return $results;
+    }
 }

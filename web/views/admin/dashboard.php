@@ -8,7 +8,7 @@ ob_start();
 ?>
 
     <div>
-        <div>
+        <div style="height: 500px">
             <canvas id="myChart"></canvas>
         </div>
 
@@ -67,7 +67,56 @@ ob_start();
                 }
             }
         }
-    });
+    })
+
+    const ctx2 = document.getElementById('mySecondChart');
+
+    const mixedSecondChart = new Chart(ctx2, {
+        data: {
+            datasets: [{
+                type: 'bar',
+                label: 'Total Revenue',
+                data: [<?= implode(', ', array_map(
+                    fn(CategorySalesDTO $dto) => $dto->quantity / 100,
+                    $categorySales
+                )) ?>],
+                yAxisID: 'y'
+            }, {
+                type: 'line',
+                label: 'Quantity Sold',
+                data: [<?= implode(', ', array_map(
+                    fn(CategorySalesDTO $dto) => $dto->revenue,
+                    $categorySales
+                )) ?>],
+                yAxisID: 'y1'
+            }],
+            labels: [<?= implode(', ', array_map(
+                fn(CategorySalesDTO $dto) => '\'' . $dto->categoryName . '\'',
+                $categorySales
+            )) ?>]
+        },
+        options: {
+            stacked: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Monthly Category Top Sales'
+                }
+            },
+            scales: {
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left'
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right'
+                }
+            }
+        }
+    })
 
 
 
