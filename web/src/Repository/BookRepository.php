@@ -55,7 +55,7 @@ readonly class BookRepository extends Repository
             ':publisher' => $book->publisher,
             ':publication_date' => $book->publicationDate,
             ':number_of_pages' => $book->numberOfPages,
-            ':cover_type' => $book->coverType,
+            ':cover_type' => $book->coverType->name,
             ':edition_information' => $book->editionInformation,
             ':language' => $book->language,
             ':dimensions' => $book->dimensions

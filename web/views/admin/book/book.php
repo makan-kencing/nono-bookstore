@@ -224,11 +224,13 @@ ob_start();
         $("dialog.book form").submit(/** @param {jQuery.Event} e */ function (e) {
             e.preventDefault();
 
+            const data = new FormData(e.target);
+
             $.ajax(
-                "/api/book",
+                `/api/book/${data.get("id")}`,
                 {
                     method: "PUT",
-                    data: $(this).serialize(),
+                    data: JSON.stringify(Object.fromEntries(data.entries())),
                     success: () => {
                         this.closest("dialog").close();
                         window.location.reload();

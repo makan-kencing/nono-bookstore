@@ -51,6 +51,8 @@ $dialog = new Template(
 <fieldset>
     <legend>Book Information</legend>
 
+    <input type="hidden" name="id" value="<?= $book->id ?>">
+
     <div>
         <label for="title">Title*</label>
         <input type="search" id="title" placeholder="Search titles" value="<?= $book->work->title ?>"
@@ -62,7 +64,7 @@ $dialog = new Template(
 
     <div>
         <label for="isbn">ISBN*</label>
-        <input type="text" id="isbn" name="isbn" value="<?= $book->isbn ?>" required
+        <input type="text" id="isbn" name="isbn" value="<?= $book->isbn ?>" disabled required
                pattern="\d{13}" minlength="13" maxlength="13">
     </div>
 

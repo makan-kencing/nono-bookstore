@@ -30,7 +30,6 @@ readonly class BookUpdateDTO extends RequestDTO
     public function __construct(
         public int        $id,
         public ?int       $workId,
-        public ?string    $isbn,
         public ?string    $description,
         public ?CoverType $coverType,
         public ?int       $numberOfPages,
@@ -53,8 +52,7 @@ readonly class BookUpdateDTO extends RequestDTO
         try {
             return new self(
                 (int)$json['id'],
-                (int)($json['work']['id'] ?? null),
-                $json['isbn'] ?? null,
+                (int)($json['work[id]'] ?? null),
                 $json['description'] ?? null,
                 CoverType::tryFromName($json['cover_type']),
                 (int)($json['number_of_pages'] ?? null),
@@ -75,13 +73,6 @@ readonly class BookUpdateDTO extends RequestDTO
     public function validate(): void
     {
         $rules = [];
-        if (strlen($this->isbn) != 13 || !ctype_digit($this->isbn))
-            $rules[] = [
-                "field" => "isbn",
-                "type" => "isbn",
-                "reason" => "Invalid isbn format. Needs to be 13 digits long."
-            ];
-
         if ($this->numberOfPages < 1)
             $rules[] = [
                 "field" => "number_of_pages",
@@ -97,8 +88,6 @@ readonly class BookUpdateDTO extends RequestDTO
     {
         if ($this->workId !== null)
             $book->work->id = $this->workId;
-        if ($this->isbn !== null)
-            $book->isbn = $this->isbn;
         if ($this->description !== null)
             $book->description = $this->description;
         if ($this->coverType !== null)

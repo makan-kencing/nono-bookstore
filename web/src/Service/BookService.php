@@ -252,9 +252,6 @@ readonly class BookService extends Service
      */
     public function updateBook(BookUpdateDTO $dto): Book
     {
-        if ($this->checkIsbnExists($dto->isbn))
-            throw new ConflictException(['message' => 'A book with the isbn ' . $dto->isbn . ' already exists.']);
-
         $qb = BookQuery::minimal();
         $qb->where(BookCriteria::byId(alias: 'b'))
             ->bind(':id', $dto->id);
