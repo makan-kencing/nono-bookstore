@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\DTO\UserLoginContextDTO;
 use PDO;
+use Transliterator;
 
 abstract readonly class Service
 {
@@ -31,5 +32,23 @@ abstract readonly class Service
     public function getSiteUrl(): string
     {
         return $this->getProtocol() . $_SERVER['HTTP_HOST'];
+    }
+
+    public function slugify(string $s): string
+    {
+        $rules = <<<'RULES'
+            :: Any-Latin;
+            :: NFD;
+            :: [:Nonspacing Mark:] Remove;
+            :: NFC;
+            :: [^-[:^Punctuation:]] Remove;
+            :: Lower();
+            [:^L:] { [-] > ;
+            [-] } [:^L:] > ;
+            [-[:Separator:]]+ > '-';
+        RULES;
+
+        return Transliterator::createFromRules($rules)
+            ->transliterate($s);
     }
 }
