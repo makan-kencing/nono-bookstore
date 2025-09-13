@@ -34,6 +34,14 @@ readonly class BookController extends ApiController
         $this->bookService = new BookService($pdo);
     }
 
+    #[GET]
+    #[Path('/isbn/{isbn}')]
+    public function checkIsbnExists(string $isbn): void
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['exists' => $this->bookService->checkIsbnExists($isbn)]);
+    }
+
     /**
      * @throws UnprocessableEntityException
      * @throws BadRequestException
@@ -62,9 +70,7 @@ readonly class BookController extends ApiController
     #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function editBook(string $id): void
     {
-        $_POST['id'] = $id;
-
-        $dto = BookUpdateDTO::jsonDeserialize($_POST);
+        $dto = BookUpdateDTO::jsonDeserialize(array_merge([$id], self::getJsonBody()));
         $dto->validate();
 
         $this->bookService->updateBook($dto);

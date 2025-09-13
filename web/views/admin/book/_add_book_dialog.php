@@ -39,6 +39,26 @@ $dialog = new Template(
         $(this).before(clone);
     });
 
+    $("dialog.book input[name=isbn").change(/** @param {jQuery.Event} e */ function (e) {
+        const $this = $(this);
+
+        $.ajax(
+            `/api/book/isbn/${$this.val()}`,
+            {
+                method: "GET",
+                success: (data) => {
+                    if (data.exists) {
+                        this.setCustomValidity("The ISBN already exists.");
+                        $this.next("span.validity").text("The ISBN already exists");
+                    } else
+                        this.setCustomValidity("");
+                },
+                error: (xhr) => {
+                }
+            }
+        )
+    });
+
     function fetchWorkOptions() {
         $.get(
             `/api/work/options/${this.value}`,
@@ -67,6 +87,10 @@ $dialog = new Template(
         fieldset + fieldset > button#remove-author {
             display: block;
         }
+
+        input:valid + span.validity {
+            display: none;
+        }
     }
 </style>
 <?php $dialog->endFragment(); ?>
@@ -87,6 +111,7 @@ $dialog = new Template(
         <label for="isbn">ISBN*</label>
         <input type="text" id="isbn" name="isbn" required
                pattern="\d{13}" minlength="13" maxlength="13">
+        <span class="validity"></span>
     </div>
 
     <div>
