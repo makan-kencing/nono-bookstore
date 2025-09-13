@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Book\Author\Author;
 use App\Entity\Book\Author\AuthorDefinition;
 use App\Entity\Book\Book;
 use App\Entity\Book\BookImage;
+use App\Entity\Book\Work;
 use App\Entity\Product\Cost;
 use App\Entity\Product\Inventory;
 use App\Entity\Product\Price;
@@ -107,7 +109,7 @@ readonly class BookRepository extends Repository
     }
 
 
-    public function insertAuthor(AuthorDefinition $ad): void
+    public function insertBookAuthor(AuthorDefinition $ad): void
     {
         $stmt = $this->conn->prepare('
             INSERT INTO author_definition (book_id, author_id, type)
@@ -120,7 +122,7 @@ readonly class BookRepository extends Repository
         ]);
     }
 
-    public function updateAuthor(AuthorDefinition $ad): void
+    public function updateBookAuthor(AuthorDefinition $ad): void
     {
         $stmt = $this->conn->prepare('
             UPDATE author_definition
@@ -135,18 +137,51 @@ readonly class BookRepository extends Repository
         ]);
     }
 
-    public function deleteAuthor(AuthorDefinition $ad): void
+    public function deleteBookAuthor(AuthorDefinition $ad): void
     {
         $stmt = $this->conn->prepare('
             DELETE FROM author_definition
             WHERE book_id = :book_id
-                AND author_id = :author_id
+                AND author_id = :author_id;
         ');
         $stmt->execute([
             ':book_id' => $ad->book->id,
             ':author_id' => $ad->author->id,
         ]);
     }
+
+    public function insertWork(Work $work): void
+    {
+        $stmt = $this->conn->prepare('
+            INSERT INTO work (slug, title, author_id, default_edition_id)
+            VALUES (:slug, :title, :author_id, :default_edition_id);
+        ');
+        $stmt->execute([
+            ':slug' => $work->slug,
+            ':title' => $work->title,
+            ':author_id' => $work->author?->id,
+            'default_edition_id' => $work->defaultEdition?->id
+        ]);
+
+        $work->id = (int)$this->conn->lastInsertId();
+    }
+
+    public function insertAuthor(Author $author): void
+    {
+        $stmt = $this->conn->prepare('
+            INSERT INTO author (slug, name, description, image_id)
+            VALUES (:slug, :name, :description, :image_id);
+        ');
+        $stmt->execute([
+            ':slug' => $author->slug,
+            ':name' => $author->name,
+            ':description' => $author->description,
+            ':image_id' => $author->image?->id
+        ]);
+
+        $author->id = (int)$this->conn->lastInsertId();
+    }
+
 
     public function insertInventory(Inventory $inventory): void
     {

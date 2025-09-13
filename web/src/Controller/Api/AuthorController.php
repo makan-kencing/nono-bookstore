@@ -6,8 +6,13 @@ namespace App\Controller\Api;
 
 use App\Core\View;
 use App\DTO\Request\SearchDTO;
+use App\Entity\User\UserRole;
+use App\Exception\ConflictException;
+use App\Router\AuthRule;
 use App\Router\Method\GET;
+use App\Router\Method\POST;
 use App\Router\Path;
+use App\Router\RequireAuth;
 use App\Service\BookService;
 use PDO;
 
@@ -33,5 +38,16 @@ readonly class AuthorController extends ApiController
         header('Content-Type: text/html');
         foreach ($page->items as $item)
             echo "<option value='$item->id'>$item->name</option>";
+    }
+
+    /**
+     * @throws ConflictException
+     */
+    #[POST]
+    #[Path('/name/{name}')]
+    #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
+    public function createFromName(string $name): void
+    {
+        $this->bookService->createAuthorFromName($name);
     }
 }

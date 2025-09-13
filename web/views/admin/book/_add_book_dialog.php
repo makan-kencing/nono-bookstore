@@ -59,11 +59,53 @@ $dialog = new Template(
         )
     });
 
+    $("dialog.book button#add-title").click(/** @param {jQuery.Event} e */ function (e) {
+        let search = $(this).prev("input[type=search]")[0];
+
+        $.ajax(
+            `/api/work/title/${search.value}`,
+            {
+                method: "POST",
+                success: () => {
+                    fetchWorkOptions.call(search);
+                },
+                error: (xhr) => {
+                    console.error(xhr);
+                    switch (xhr.status) {
+                        case 409:
+                            alert("The title already exists.");
+                    }
+                }
+            }
+        );
+    })
+
+    $("dialog.book button#add-new-author").click(/** @param {jQuery.Event} e */ function (e) {
+        let search = $(this).prev("input[type=search]")[0];
+
+        $.ajax(
+            `/api/author/name/${search.value}`,
+            {
+                method: "POST",
+                success: () => {
+                    fetchAuthorOptions.call(search);
+                },
+                error: (xhr) => {
+                    console.error(xhr);
+                    switch (xhr.status) {
+                        case 409:
+                            alert("The author already exists.");
+                    }
+                }
+            }
+        );
+    })
+
     function fetchWorkOptions() {
         $.get(
             `/api/work/options/${this.value}`,
             (data) => {
-                $(this).next("select").html(data);
+                $(this).parent().next("select").html(data);
             }
         );
     }
@@ -72,7 +114,7 @@ $dialog = new Template(
         $.get(
             `/api/author/options/${this.value}`,
             (data) => {
-                $(this).next("select").html(data);
+                $(this).parent().next("select").html(data);
             }
         );
     }
@@ -101,8 +143,11 @@ $dialog = new Template(
 
     <div>
         <label for="title">Title*</label>
-        <input type="search" id="title" placeholder="Search titles"
-               onchange="fetchWorkOptions.call(this)">
+        <div style="display: flex">
+            <input type="search" id="title" placeholder="Search titles"
+                   onchange="fetchWorkOptions.call(this)">
+            <button id="add-title" type="button"><i class="fa-solid fa-plus"></i></button>
+        </div>
         <select name="work[id]" id="title" style="display: block; width: 100%;" required>
         </select>
     </div>
@@ -175,8 +220,11 @@ $dialog = new Template(
 
         <div>
             <label for="author[0][id]">Author*</label>
-            <input type="search" id="author[0][id]" placeholder="Search authors"
-                   onchange="fetchAuthorOptions.call(this)">
+            <div style="display: flex;">
+                <input type="search" id="author[0][id]" placeholder="Search authors"
+                       onchange="fetchAuthorOptions.call(this)">
+                <button id="add-new-author" type="button"><i class="fa-solid fa-plus"></i></button>
+            </div>
             <select name="authors[0][id]" id="author[0][id]" style="display: block; width: 100%;" required></select>
         </div>
 
@@ -198,10 +246,10 @@ $dialog = new Template(
 
     <table>
         <thead>
-            <tr>
-                <th>Location</th>
-                <th>Stock Count</th>
-            </tr>
+        <tr>
+            <th>Location</th>
+            <th>Stock Count</th>
+        </tr>
         </thead>
         <tbody>
         <?php foreach (InventoryLocation::cases() as $location): ?>

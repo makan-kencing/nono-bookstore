@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use function App\Utils\array_move_elem;
-use function App\Utils\array_find_key;
 use App\DTO\Request\BookCreate\BookCreateDTO;
 use App\DTO\Request\BookCreate\BookUpdateDTO;
 use App\DTO\Request\BookSearchDTO;
@@ -50,6 +48,8 @@ use DateTime;
 use PDO;
 use PDOException;
 use Throwable;
+use function App\Utils\array_find_key;
+use function App\Utils\array_move_elem;
 
 /**
  * @phpstan-import-type PhpFile from FileService
@@ -81,7 +81,7 @@ readonly class BookService extends Service
     {
         $qb = BookQuery::asBookDetails();
         $qb->where(BookCriteria::byIsbn(alias: 'b')
-                ->and(BookCriteria::notSoftDeleted(alias: 'b')))
+            ->and(BookCriteria::notSoftDeleted(alias: 'b')))
             ->bind(':isbn', $isbn);
 
         $book = $this->bookRepository->getOne($qb);
@@ -95,7 +95,7 @@ readonly class BookService extends Service
     {
         $qb = BookQuery::asBookAdminDetails();
         $qb->where(BookCriteria::byId(alias: 'b')
-                ->and(BookCriteria::notSoftDeleted(alias: 'b')))
+            ->and(BookCriteria::notSoftDeleted(alias: 'b')))
             ->bind(':id', $id);
 
         $book = $this->bookRepository->getOne($qb);
@@ -152,9 +152,7 @@ readonly class BookService extends Service
         if ($dto->isIsbnQuery()) {
             $predicates = $predicates->and(BookCriteria::byIsbn(alias: 'b'));
             $qb->bind(':isbn', $dto->query);
-        }
-
-        else if ($dto->query !== null) {
+        } else if ($dto->query !== null) {
             $predicates = $predicates->and(WorkCriteria::byTitleLike(alias: 'w'));
             $qb->bind(':title', '%' . $dto->query . '%');
         }
@@ -276,7 +274,7 @@ readonly class BookService extends Service
         try {
             $this->bookRepository->insert($book);
             foreach ($book->authors as $author)
-                $this->bookRepository->insertAuthor($author);
+                $this->bookRepository->insertBookAuthor($author);
             foreach ($book->inventories as $inventory)
                 $this->bookRepository->insertInventory($inventory);
             foreach ($book->prices as $price)
@@ -344,7 +342,7 @@ readonly class BookService extends Service
         $ad->author->id = $authorId;
         $ad->type = $type;
 
-        $this->bookRepository->insertAuthor($ad);
+        $this->bookRepository->insertBookAuthor($ad);
     }
 
     public function removeAuthor(int $bookId, int $authorId): void
@@ -355,7 +353,7 @@ readonly class BookService extends Service
         $ad->author = new Author();
         $ad->author->id = $authorId;
 
-        $this->bookRepository->deleteAuthor($ad);
+        $this->bookRepository->deleteBookAuthor($ad);
     }
 
     public function insertInventory(int $bookId, InventoryLocation $location, int $quantity): void
@@ -429,9 +427,9 @@ readonly class BookService extends Service
             throw new NotFoundException();
 
         $i = max(array_merge(array_map(
-            fn (BookImage $image) => $image->imageOrder,
-            $book->images
-        ), [-1])) + 1;
+                fn(BookImage $image) => $image->imageOrder,
+                $book->images
+            ), [-1])) + 1;
 
         $images = [];
         $this->pdo->beginTransaction();
@@ -497,4 +495,41 @@ readonly class BookService extends Service
         $this->bookRepository->removeImage($image);
     }
 
+    /**
+     * @throws ConflictException
+     */
+    public function createWorkFromTitle(string $title): Work
+    {
+        $work = new Work();
+        $work->slug = $this->slugify($title);
+        $work->title = $title;
+        $work->author = null;
+        $work->defaultEdition = null;
+
+        try {
+            $this->bookRepository->insertWork($work);
+            return $work;
+        } catch (PDOException) {
+            throw new ConflictException();
+        }
+    }
+
+    /**
+     * @throws ConflictException
+     */
+    public function createAuthorFromName(string $name): Author
+    {
+        $author = new Author();
+        $author->slug = $this->slugify($name);
+        $author->name = $name;
+        $author->description = null;
+        $author->image = null;
+
+        try {
+            $this->bookRepository->insertAuthor($author);
+            return $author;
+        } catch (PDOException) {
+            throw new ConflictException();
+        }
+    }
 }

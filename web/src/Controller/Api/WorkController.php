@@ -6,8 +6,13 @@ namespace App\Controller\Api;
 
 use App\Core\View;
 use App\DTO\Request\SearchDTO;
+use App\Entity\User\UserRole;
+use App\Exception\ConflictException;
+use App\Router\AuthRule;
 use App\Router\Method\GET;
+use App\Router\Method\POST;
 use App\Router\Path;
+use App\Router\RequireAuth;
 use App\Service\BookService;
 use PDO;
 
@@ -26,7 +31,7 @@ readonly class WorkController extends ApiController
     #[Path('/{workId}/ratings')]
     public function getRatings(string $workId): void
     {
-        $ratings = $this->bookService->getRatings((int) $workId);
+        $ratings = $this->bookService->getRatings((int)$workId);
 
         header('Content-Type: application/json');
         echo json_encode($ratings);
@@ -36,7 +41,7 @@ readonly class WorkController extends ApiController
     #[Path('/{workId}/rating/summary')]
     public function getRatingSummary(string $workId): void
     {
-        $summary = $this->bookService->getRatingSummary((int) $workId);
+        $summary = $this->bookService->getRatingSummary((int)$workId);
 
         header('Content-Type: application/json');
         echo json_encode($summary);
@@ -53,5 +58,16 @@ readonly class WorkController extends ApiController
         header('Content-Type: text/html');
         foreach ($page->items as $item)
             echo "<option value='$item->id'>$item->title</option>";
+    }
+
+    /**
+     * @throws ConflictException
+     */
+    #[POST]
+    #[Path('/title/{title}')]
+    #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
+    public function createFromTitle(string $title): void
+    {
+        $this->bookService->createWorkFromTitle($title);
     }
 }
