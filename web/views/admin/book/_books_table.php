@@ -77,7 +77,7 @@ assert(isset($search) && $search instanceof BookSearchDTO);
             <td>
                 <?=
                 implode(', ', array_map(
-                    fn (AuthorDefinition $author) => "<span>{$author->author->name}</span>",
+                    fn (AuthorDefinition $author) => "<span title='{$author->type?->title()}'>{$author->author->name}</span>",
                     $item->authors
                 ));
                 ?>
