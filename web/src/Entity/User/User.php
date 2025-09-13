@@ -31,6 +31,8 @@ class User extends Entity
 
     public bool $isVerified;
 
+    public bool $isBlocked;
+
     #[OneToOne]
     public ?File $image;
 
