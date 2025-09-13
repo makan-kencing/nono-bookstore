@@ -31,11 +31,38 @@ ob_start();
                         <div class="carousel">
                             <div class="carousel-images">
                                 <?php foreach ($book->images as $image) : ?>
-                                    <div style="order: <?= $image->imageOrder ?>; display: flex;">
-                                        <img src="<?= $image->file->filepath ?>" alt="<?= $image->file->alt ?>"
-                                             style="height: 240px;">
+                                    <div style="order: <?= $image->imageOrder ?>; display: grid; place-items: stretch">
+                                        <div style="grid-area: 1 / 1">
+                                            <img src="<?= $image->file->filepath ?>" alt="<?= $image->file->alt ?>"
+                                                 style="height: 240px;">
+                                        </div>
+                                        <form id="remove-image"
+                                              action="/api/book/<?= $book->id ?>/image/<?= $image->file->id ?>"
+                                              style="grid-area: 1 / 1;">
+                                            <button id="upload-image" type="button">
+                                                <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                                            </button>
+                                            <button type="submit">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 <?php endforeach; ?>
+                                <?php if (count($book->images) === 0): ?>
+                                    <div style="display: grid; place-items: stretch">
+                                        <div style="grid-area: 1 / 1">
+                                            <img
+                                                src="https://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png"
+                                                alt=""
+                                                style="height: 240px;">
+                                        </div>
+                                        <div style="grid-area: 1 / 1">
+                                            <button id="upload-image" type="button">
+                                                <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
 
@@ -260,14 +287,60 @@ ob_start();
     </main>
 
 <?= View::render('admin/book/_edit_book_dialog.php', ['book' => $book]) ?>
+<?= View::render('admin/book/_upload_book_image_dialog.php') ?>
 
     <script>
+        $("button#upload-image").click(/** @param {jQuery.Event} e */(e) => {
+            $("dialog.upload-image")[0].showModal();
+        });
+
+        $("dialog.upload-image form").submit(/** @param {jQuery.Event} e */(e) => {
+            const data = new FormData(e.target);
+
+            $.ajax(
+                "/api/book/<?= $book->id ?>/image",
+                {
+                    method: "POST",
+                    data: data,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: () => {
+                        window.location.reload();
+                    },
+                    error: (xhr) => {
+                    }
+                }
+            );
+        });
+
         $("button#edit-book").click(/** @param {jQuery.Event} e */(e) => {
             $("dialog.book")[0].showModal();
         });
 
+        $("form#remove-image").submit(/** @param {jQuery.Event} e */function (e) {
+            e.preventDefault();
+
+            const confirmation = confirm("Are you sure to remove the image from this book?");
+            if (!confirmation)
+                return;
+
+            $.ajax(
+                e.target.action,
+                {
+                    method: "DELETE",
+                    success: () => {
+                        window.location.reload();
+                    },
+                    error: (xhr) => {
+                        console.error(xhr);
+                    }
+                }
+            )
+        });
+
         $("button#delete-book").click(/** @param {jQuery.Event} e */function (e) {
-            const confirmation = confirm("Are you sure?");
+            const confirmation = confirm("Are you sure to delete this book?");
             if (!confirmation)
                 return;
 
@@ -278,7 +351,7 @@ ob_start();
                     success: () => {
                         window.location.replace("/admin/books");
                     },
-                    error: (jqXHR, textStatus, errorThrown) => {
+                    error: (xhr) => {
                     }
                 }
             );
