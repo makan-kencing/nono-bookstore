@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\DTO\Request\AddressCreateDTO;
+use App\DTO\Request\SearchDTO;
 use App\DTO\Request\UserAddressDTO;
 use App\DTO\Request\UserCreateDTO;
 use App\DTO\Request\UserPasswordUpdateDTO;
 use App\DTO\Request\UserProfileUpdateDTO;
 use App\DTO\Request\UserUpdateDTO;
+use App\DTO\Response\PageResultDTO;
 use App\DTO\UserLoginContextDTO;
 use App\Entity\File;
 use App\Entity\User\Address;
@@ -458,6 +460,32 @@ readonly class UserService extends Service
 
     public function toggleBlock(int $userId): void
     {
-        $this->toggleBlock($userId);
+        $this->userRepository->toggleBlock($userId);
+    }
+
+    /**
+     * @param SearchDTO $dto
+     * @return PageResultDTO<User>
+     */
+    public function search(SearchDTO $dto): PageResultDTO
+    {
+        $qb = UserQuery::userListings();
+
+        $predicates = UserCriteria::byUsernameLike(alias: 'u');
+        $qb->bind(':username', '%' . ($dto->query ?? '') . '%');
+
+        $qb->where($predicates);
+        $qb->page($dto->toPageRequest());
+
+        $this->pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
+        try {
+            return new PageResultDTO(
+                $this->userRepository->get($qb),
+                $this->userRepository->count($qb),
+                $dto->toPageRequest()
+            );
+        } finally {
+            $this->pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+        }
     }
 }

@@ -29,7 +29,19 @@ class UserCriteria
         if ($alias === null) $alias = '';
         else $alias .= '.';
 
-        return new Predicate('username = ' . $param);
+        return new Predicate($alias . 'username = ' . $param);
+    }
+
+    /**
+     * @param literal-string $param
+     * @return Predicate
+     */
+    public static function byUsernameLike(string $param = ':username', ?string $alias = null): Predicate
+    {
+        if ($alias === null) $alias = '';
+        else $alias .= '.';
+
+        return new Predicate($alias . 'username LIKE ' . $param);
     }
 
     /**

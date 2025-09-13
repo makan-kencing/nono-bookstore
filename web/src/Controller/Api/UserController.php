@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Core\View;
+use App\DTO\Request\SearchDTO;
 use App\DTO\Request\UserPasswordUpdateDTO;
 use App\DTO\Request\UserProfileUpdateDTO;
 use App\DTO\Request\UserUpdateDTO;
 use App\DTO\Response\ImageUploadedDTO;
+use App\Entity\User\UserRole;
 use App\Exception\BadRequestException;
 use App\Exception\ConflictException;
 use App\Exception\ContentTooLargeException;
@@ -16,12 +18,12 @@ use App\Exception\ForbiddenException;
 use App\Exception\NotFoundException;
 use App\Exception\UnauthorizedException;
 use App\Exception\UnprocessableEntityException;
+use App\Router\AuthRule;
 use App\Router\Method\GET;
 use App\Router\Method\POST;
 use App\Router\Method\PUT;
 use App\Router\Path;
 use App\Router\RequireAuth;
-use App\Service\FileService;
 use App\Service\UserService;
 use PDO;
 
@@ -64,12 +66,12 @@ readonly class  UserController extends ApiController
      */
     #[PUT]
     #[Path('/{id}')]
-    public function updateUser(String $id): void
+    public function updateUser(string $id): void
     {
         $dto = UserUpdateDTO::jsonDeserialize(self::getJsonBody());
         $dto->validate();
 
-        $this->userService->update($dto, (int) $id);
+        $this->userService->update($dto, (int)$id);
 
         header('Content-Type: application/json');
         echo json_encode(['success' => true, 'message' => 'User updated successfully']);
@@ -86,12 +88,12 @@ readonly class  UserController extends ApiController
      */
     #[PUT]
     #[Path('/update-profile/{id}')]
-    public function updateUserProfile(String $id): void
+    public function updateUserProfile(string $id): void
     {
         $dto = UserProfileUpdateDTO::jsonDeserialize(self::getJsonBody());
         $dto->validate();
 
-        $this->userService->updateUserProfile($dto, (int) $id);
+        $this->userService->updateUserProfile($dto, (int)$id);
 
         header('Content-Type: application/json');
         echo json_encode(['success' => true, 'message' => 'User profile updated successfully']);
@@ -111,7 +113,7 @@ readonly class  UserController extends ApiController
         $dto = UserPasswordUpdateDTO::jsonDeserialize(self::getJsonBody());
         $dto->validate();
 
-        $this->userService->updatePassword($dto, (int) $id);
+        $this->userService->updatePassword($dto, (int)$id);
 
         header('Content-Type: application/json');
         echo json_encode(['success' => true, 'message' => 'Password updated successfully']);
@@ -141,6 +143,33 @@ readonly class  UserController extends ApiController
     #[Path('/{id}/block/toggle')]
     public function toggleBlock(string $id): void
     {
-        $this->userService->toggleBlock((int) $id);
+        $this->userService->toggleBlock((int)$id);
+    }
+
+    /**
+     * @throws BadRequestException
+     * @throws UnprocessableEntityException
+     */
+    #[GET]
+    #[Path('/search/')]
+    #[Path('/search/{query}')]
+    #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
+    public function search(?string $query = null): void
+    {
+        if ($query !== null)
+            $_GET['query'] = $query;
+
+        $dto = SearchDTO::jsonDeserialize($_GET);
+        $dto->validate();
+
+        $page = $this->userService->search($dto);
+
+        if ($_SERVER['HTTP_ACCEPT'] === 'text/html') {
+            header('Content-Type: text/html');
+            echo $this->render(
+                'admin/_component/_users_table.php',
+                ['page' => $page, 'search' => $dto]
+            );
+        }
     }
 }
