@@ -181,9 +181,9 @@ $dialog = new Template(
         <tbody>
         <?php foreach (InventoryLocation::cases() as $location): ?>
             <tr>
-                <td><label for="initial-stocks['<?= $location->name ?>']"><?= $location->title() ?></label></td>
-                <td><input type="number" name="initial_stocks['<?= $location->name ?>']"
-                           id="initial-stocks['<?= $location->name ?>']"
+                <td><label for="initial-stocks[<?= $location->name ?>]"><?= $location->title() ?></label></td>
+                <td><input type="number" name="initial_stocks[<?= $location->name ?>]"
+                           id="initial-stocks[<?= $location->name ?>]"
                            min="0" step="1" value="0"></td>
             </tr>
         <?php endforeach; ?>
