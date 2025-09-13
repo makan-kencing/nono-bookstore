@@ -45,7 +45,7 @@ ob_start();
                 '/api/book/search/',
                 {
                     method: 'GET',
-                    data: $(this).serialize(),
+                    data: $searchForm.serialize(),
                     headers: {
                         "Accept": "text/html"
                     },
