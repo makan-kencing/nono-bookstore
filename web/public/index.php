@@ -66,6 +66,7 @@ $controllers = [
     'App\Controller\Web\SecurityController',
     'App\Controller\Web\SeriesController',
     'App\Controller\Web\WishlistController',
+    'App\Controller\Web\MapController',
     'App\Controller\Web\ResetPasswordPageController',
 ];
 $router = new Router($pdo, $view);
