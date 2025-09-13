@@ -19,5 +19,5 @@ class WishlistItem extends Entity
 
     #[Id]
     #[ManyToOne]
-    public Work $work;
+    public Book $book;
 }

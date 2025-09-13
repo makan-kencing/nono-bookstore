@@ -29,7 +29,7 @@ class Work extends Entity
     public string $title;
 
     #[ManyToOne]
-    public Author $author;
+    public ?Author $author;
 
     #[OneToOne]
     public ?Book $defaultEdition;
@@ -48,8 +48,4 @@ class Work extends Entity
     /** @var Rating[] */
     #[OneToMany(Rating::class, mappedBy: 'work')]
     public array $ratings;
-
-    /** @var WishlistItem[] */
-    #[OneToMany(WishlistItem::class, mappedBy: 'work')]
-    public array $wishlisted;
 }

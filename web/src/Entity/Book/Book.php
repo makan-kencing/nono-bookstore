@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Book;
 
+use App\Entity\Cart\WishlistItem;
 use function App\Utils\array_find;
 use App\Entity\Book\Author\AuthorDefinition;
 use App\Entity\Cart\CartItem;
@@ -73,6 +74,10 @@ class Book extends Entity
     /** @var OrderItem[] */
     #[OneToMany(OrderItem::class, mappedBy: 'book')]
     public array $inOrders;
+
+    /** @var WishlistItem[] */
+    #[OneToMany(WishlistItem::class, mappedBy: 'book')]
+    public array $inWishlist;
 
     public function getCurrentPrice(): ?Price
     {
