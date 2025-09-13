@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 use App\Core\View;
 use App\Entity\Book\Book;
+use App\Entity\Product\Inventory;
+use App\Entity\Product\InventoryLocation;
+use function App\Utils\array_find;
 
 assert(isset($book) && $book instanceof Book);
 $book->normalizeOrder();
@@ -11,10 +14,11 @@ $book->normalizeOrder();
 ob_start();
 ?>
     <main>
-        <div style="display: flex; justify-content: end; gap: 1rem;">
+        <input type="hidden" name="book_id" value="<?= $book->id ?>">
 
+        <div style="display: flex; justify-content: end; gap: 1rem;">
             <button id="edit-book" type="button">Edit</button>
-            <button data-id="<?= $book->id ?>" id="delete-book" type="button">Delete</button>
+            <button id="delete-book" type="button">Delete</button>
         </div>
 
         <div>
@@ -103,7 +107,9 @@ ob_start();
                                 <tr data-id="<?= $author->author->id ?>">
                                     <td><?= $author->author->name ?></td>
                                     <td><?= $author->type?->title() ?></td>
-                                    <td></td>
+                                    <td>
+                                        <button id="remove-author" type="button">Delete</button>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                             </tbody>
@@ -112,8 +118,6 @@ ob_start();
 
                     <div>
                         <h4>Stocks</h4>
-
-                        <button id="add-stock" type="button">Add</button>
 
                         <table>
                             <thead>
@@ -124,12 +128,49 @@ ob_start();
                             </tr>
                             </thead>
                             <tbody>
-                            <?php foreach ($book->inventories as $inventory): ?>
-                                <tr data-id="<?= $inventory->id ?>">
-                                    <td><?= $inventory->location->title() ?></td>
-                                    <td><?= $inventory->quantity ?></td>
-                                    <td></td>
-                                </tr>
+                            <?php foreach (InventoryLocation::cases() as $location): ?>
+                                <?php $inventory = array_find(
+                                    $book->inventories,
+                                    fn(Inventory $inventory) => $inventory->location === $location
+                                ); ?>
+
+                                <?php if ($inventory !== null): ?>
+                                    <tr data-id="<?= $inventory->id ?>">
+                                        <form id="edit-inventory"
+                                              action="/api/book/<?= $book->id ?>/stock/<?= $inventory->id ?>"
+                                              style="display: contents">
+                                            <td><?= $inventory->location->title() ?></td>
+                                            <td>
+                                                <label>
+                                                    <input type="hidden" name="location"
+                                                           value="<?= $inventory->location->name ?>">
+                                                    <input type="number" name="quantity" min="0"
+                                                           step="1" value="<?= $inventory->quantity ?>">
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <button type="submit">Set</button>
+                                            </td>
+                                        </form>
+                                    </tr>
+                                <?php else: ?>
+                                    <tr>
+                                        <form id="add-inventory"
+                                              action="/admin/book/<?= $book->id ?>/stock"
+                                              style="display: contents">
+                                            <td><?= $inventory->location->title() ?></td>
+                                            <td>
+                                                <label>
+                                                    <input type="hidden" name="location" value="<?= $location->name ?>">
+                                                    <input type="number" name="quantity" min="0" step="1">
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <button type="submit">Set</button>
+                                            </td>
+                                        </form>
+                                    </tr>
+                                <?php endif; ?>
                             <?php endforeach; ?>
                             </tbody>
                         </table>
@@ -202,18 +243,88 @@ ob_start();
                 return;
 
             $.ajax(
-                `/api/book/${this.dataset.id}`,
+                `/api/book/${$("input[name='book_id']").val()}`,
                 {
                     method: "DELETE",
                     success: () => {
                         window.location.replace("/admin/books");
                     },
                     error: (jqXHR, textStatus, errorThrown) => {
-
                     }
                 }
             );
         });
+
+        $("button#add-author").click(/** @param {jQuery.Event} e */ function (e) {
+            $("dialog.author")[0].showModal();
+        });
+
+        $("button#remove-author").click(/** @param {jQuery.Event} e */ function (e) {
+            const authorId = e.target.closest("tr").dataset.id;
+
+            $.ajax(
+                `/api/book/${$("input[name='book_id']").val()}/author/${authorId}`,
+                {
+                    method: "DELETE",
+                    success: () => {
+                        window.location.reload();
+                    },
+                    error: (jqXHR, textStatus, errorThrown) => {
+                    }
+                }
+            );
+        });
+
+        $("button#add-stock").click(/** @param {jQuery.Event} e */ function (e) {
+            $("dialog.inventory")[0].showModal();
+        });
+
+
+        $("button#add-price").click(/** @param {jQuery.Event} e */ function (e) {
+            $("dialog.price")[0].showModal();
+        });
+
+        $("button#add-cost").click(/** @param {jQuery.Event} e */ function (e) {
+            $("dialog.cost")[0].showModal();
+        });
+
+        $("form#edit-inventory").submit(/** @param {jQuery.Event} e */ function (e) {
+            e.preventDefault();
+
+            const data = new FormData(e.target);
+
+            $.ajax(
+                e.target.action,
+                {
+                    method: "PUT",
+                    data: JSON.stringify(Object.fromEntries(data.entries())),
+                    success: () => {
+                        window.location.reload();
+                    },
+                    error: (xhr) => {
+                    }
+                }
+            );
+        });
+
+        $("form#add-inventory").submit(/** @param {jQuery.Event} e */ function (e) {
+            e.preventDefault();
+
+            const data = new FormData(e.target);
+
+            $.ajax(
+                e.target.action,
+                {
+                    method: "POST",
+                    data: JSON.stringify(Object.fromEntries(data.entries())),
+                    success: () => {
+                        window.location.reload();
+                    },
+                    error: (xhr) => {
+                    }
+                }
+            );
+        })
 
         $("dialog.book form").submit(/** @param {jQuery.Event} e */ function (e) {
             e.preventDefault();
@@ -230,7 +341,6 @@ ob_start();
                         window.location.reload();
                     },
                     error: (jqXHR, textStatus, errorThrown) => {
-
                     }
                 }
             );

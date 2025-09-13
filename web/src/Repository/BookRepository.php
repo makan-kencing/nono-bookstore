@@ -31,7 +31,7 @@ readonly class BookRepository extends Repository
             ':dimensions' => $book->dimensions
         ]);
 
-        $book->id = (int) $this->conn->lastInsertId();
+        $book->id = (int)$this->conn->lastInsertId();
     }
 
     public function update(Book $book): void
@@ -151,7 +151,7 @@ readonly class BookRepository extends Repository
     {
         $stmt = $this->conn->prepare('
             INSERT INTO inventory (book_id, location, quantity)
-            VALUES (:book_id, :location, :quantity)
+            VALUES (:book_id, :location, :quantity);
         ');
         $stmt->execute([
             ':book_id' => $inventory->book->id,
@@ -159,19 +159,27 @@ readonly class BookRepository extends Repository
             ':quantity' => $inventory->quantity
         ]);
 
-        $inventory->id = (int) $this->conn->lastInsertId();
+        $inventory->id = (int)$this->conn->lastInsertId();
     }
 
     public function updateInventory(Inventory $inventory): void
     {
-
+        $stmt = $this->conn->prepare('
+            UPDATE inventory
+            SET quantity = :quantity
+            WHERE id = :id;
+        ');
+        $stmt->execute([
+            ':id' => $inventory->id,
+            ':quantity' => $inventory->quantity
+        ]);
     }
 
     public function insertPrice(Price $price): void
     {
         $stmt = $this->conn->prepare('
             INSERT INTO price (book_id, from_date, amount, comment)
-            VALUES (:book_id, :from_date, :amount, :comment)
+            VALUES (:book_id, :from_date, :amount, :comment);
         ');
         $stmt->execute([
             ':book_id' => $price->book->id,
@@ -180,19 +188,26 @@ readonly class BookRepository extends Repository
             ':comment' => $price->comment
         ]);
 
-        $price->id = (int) $this->conn->lastInsertId();
+        $price->id = (int)$this->conn->lastInsertId();
     }
 
-    public function updatePrice(Price $price): void
+    public function setNewPrice(Price $price): void
     {
+        $stmt = $this->conn->prepare('
+            UPDATE price
+            SET thru_date = CURRENT_TIMESTAMP
+            WHERE thru_date IS NULL;
+        ');
+        $stmt->execute();
 
+        $this->insertPrice($price);
     }
 
     public function insertCost(Cost $cost): void
     {
         $stmt = $this->conn->prepare('
             INSERT INTO cost (book_id, from_date, amount, comment)
-            VALUES (:book_id, :from_date, :amount, :comment)
+            VALUES (:book_id, :from_date, :amount, :comment);
         ');
         $stmt->execute([
             ':book_id' => $cost->book->id,
@@ -201,11 +216,18 @@ readonly class BookRepository extends Repository
             ':comment' => $cost->comment
         ]);
 
-        $cost->id = (int) $this->conn->lastInsertId();
+        $cost->id = (int)$this->conn->lastInsertId();
     }
 
-    public function updateCost(Cost $cost): void
+    public function setNewCost(Cost $cost): void
     {
+        $stmt = $this->conn->prepare('
+            UPDATE price
+            SET thru_date = CURRENT_TIMESTAMP
+            WHERE thru_date IS NULL;
+        ');
+        $stmt->execute();
 
+        $this->insertCost($cost);
     }
 }

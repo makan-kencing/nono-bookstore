@@ -8,6 +8,9 @@ use App\Core\View;
 use App\DTO\Request\BookCreate\BookCreateDTO;
 use App\DTO\Request\BookCreate\BookUpdateDTO;
 use App\DTO\Request\BookSearchDTO;
+use App\Entity\Book\Author\AuthorDefinitionType;
+use App\Entity\Product\CoverType;
+use App\Entity\Product\InventoryLocation;
 use App\Entity\User\UserRole;
 use App\Exception\BadRequestException;
 use App\Exception\ConflictException;
@@ -22,6 +25,7 @@ use App\Router\Path;
 use App\Router\RequireAuth;
 use App\Service\BookService;
 use PDO;
+use Throwable;
 
 #[Path('/api/book')]
 readonly class BookController extends ApiController
@@ -46,6 +50,7 @@ readonly class BookController extends ApiController
      * @throws UnprocessableEntityException
      * @throws BadRequestException
      * @throws ConflictException
+     * @throws Throwable
      */
     #[POST]
     #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
@@ -90,6 +95,77 @@ readonly class BookController extends ApiController
         }
 
         http_response_code(204);
+    }
+
+    /**
+     * @throws BadRequestException
+     */
+    #[POST]
+    #[Path('/{bookId}/author/{authorId}')]
+    public function addAuthor(string $bookId, string $authorId): void
+    {
+        $type = AuthorDefinitionType::fromName($_POST['type'] ?? throw new BadRequestException());
+        $this->bookService->addAuthor((int) $bookId, (int) $authorId, $type);
+    }
+
+    #[DELETE]
+    #[Path('/{bookId}/author/{authorId}')]
+    public function deleteAuthor(string $bookId, string $authorId): void
+    {
+        $this->bookService->removeAuthor((int) $bookId, (int) $authorId);
+    }
+
+    /**
+     * @throws BadRequestException
+     */
+    #[POST]
+    #[Path('/{bookId}/stock')]
+    public function addInventory(string $bookId): void
+    {
+        $json = self::getJsonBody();
+
+        $location = InventoryLocation::tryFromName($json['location'] ?? null) ?? throw new BadRequestException();
+        $quantity = (int) ($json['quantity'] ?? throw new BadRequestException());
+
+        $this->bookService->insertInventory((int) $bookId, $location, $quantity);
+    }
+
+    /**
+     * @throws BadRequestException
+     */
+    #[PUT]
+    #[Path('/{bookId}/stock/{inventoryId}')]
+    public function editStock(string $bookId, string $inventoryId): void
+    {
+        $json = self::getJsonBody();
+
+        $quantity = (int) ($json['quantity'] ?? throw new BadRequestException());
+
+        $this->bookService->updateInventory((int) $inventoryId, $quantity);
+    }
+
+    /**
+     * @throws BadRequestException
+     */
+    #[POST]
+    #[Path('/{bookId}/price')]
+    public function setPrice(string $bookId): void
+    {
+        $amount = (int) ($_POST['price'] ?? throw new BadRequestException());
+
+        $this->bookService->setNewPrice((int) $bookId, $amount);
+    }
+
+    /**
+     * @throws BadRequestException
+     */
+    #[POST]
+    #[Path('/{bookId}/cost')]
+    public function setCost(string $bookId): void
+    {
+        $amount = (int) ($_POST['cost'] ?? throw new BadRequestException());
+
+        $this->bookService->setNewCost((int) $bookId, $amount);
     }
 
     /**

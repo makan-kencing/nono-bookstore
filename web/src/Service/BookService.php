@@ -13,9 +13,15 @@ use App\DTO\Response\PageResultDTO;
 use App\DTO\Response\WorkRating\RatingDTO;
 use App\DTO\Response\WorkRating\RatingSummaryDTO;
 use App\Entity\Book\Author\Author;
+use App\Entity\Book\Author\AuthorDefinition;
+use App\Entity\Book\Author\AuthorDefinitionType;
 use App\Entity\Book\Book;
 use App\Entity\Book\Category\Category;
 use App\Entity\Book\Work;
+use App\Entity\Product\Cost;
+use App\Entity\Product\Inventory;
+use App\Entity\Product\InventoryLocation;
+use App\Entity\Product\Price;
 use App\Exception\ConflictException;
 use App\Exception\NotFoundException;
 use App\Repository\BookRepository;
@@ -31,6 +37,7 @@ use App\Repository\Query\RatingQuery;
 use App\Repository\Query\WorkCriteria;
 use App\Repository\Query\WorkQuery;
 use App\Repository\RatingRepository;
+use DateTime;
 use PDO;
 use PDOException;
 use Throwable;
@@ -272,7 +279,6 @@ readonly class BookService extends Service
     }
 
     /**
-     * @throws ConflictException
      * @throws NotFoundException
      */
     public function updateBook(BookUpdateDTO $dto): Book
@@ -313,5 +319,74 @@ readonly class BookService extends Service
     public function softDeleteBook(int $bookId): void
     {
         $this->bookRepository->softDelete($bookId);
+    }
+
+    public function addAuthor(int $bookId, int $authorId, AuthorDefinitionType $type): void
+    {
+        $ad = new AuthorDefinition();
+        $ad->book = new Book();
+        $ad->book->id = $bookId;
+        $ad->author = new Author();
+        $ad->author->id = $authorId;
+        $ad->type = $type;
+
+        $this->bookRepository->insertAuthor($ad);
+    }
+
+    public function removeAuthor(int $bookId, int $authorId): void
+    {
+        $ad = new AuthorDefinition();
+        $ad->book = new Book();
+        $ad->book->id = $bookId;
+        $ad->author = new Author();
+        $ad->author->id = $authorId;
+
+        $this->bookRepository->deleteAuthor($ad);
+    }
+
+    public function insertInventory(int $bookId, InventoryLocation $location, int $quantity): void
+    {
+        $inventory = new Inventory();
+        $inventory->book = new Book();
+        $inventory->book->id = $bookId;
+        $inventory->location = $location;
+        $inventory->quantity = $quantity;
+
+        $this->bookRepository->insertInventory($inventory);
+    }
+
+    public function updateInventory(int $inventoryId, int $quantity): void
+    {
+        $inventory = new Inventory();
+        $inventory->id = $inventoryId;
+        $inventory->quantity = $quantity;
+
+        $this->bookRepository->updateInventory($inventory);
+    }
+
+    public function setNewPrice(int $bookId, int $amount): void
+    {
+        $price = new Price();
+        $price->book = new Book();
+        $price->book->id = $bookId;
+        $price->amount = $amount;
+        $price->fromDate = new DateTime();
+        $price->thruDate = null;
+        $price->comment = null;
+
+        $this->bookRepository->setNewPrice($price);
+    }
+
+    public function setNewCost(int $bookId, int $amount): void
+    {
+        $cost = new Cost();
+        $cost->book = new Book();
+        $cost->book->id = $bookId;
+        $cost->amount = $amount;
+        $cost->fromDate = new DateTime();
+        $cost->thruDate = null;
+        $cost->comment = null;
+
+        $this->bookRepository->setNewCost($cost);
     }
 }
