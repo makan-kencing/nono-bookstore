@@ -38,9 +38,16 @@ $template = new Template(
                         </div>
 
                         <div>
+                            <div> Quantity </div>
+                            <div><?= count($order->items) ?></div>
+                        </div>
+
+                        <div>
                             <div>SHIP TO</div>
                             <div><?= $order->address->name ?></div>
                         </div>
+
+
 
                         <div style="text-align: right; margin-left: auto;">
                             <div>ORDER #<?= $order->id ?></div>
