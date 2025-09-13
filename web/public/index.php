@@ -52,7 +52,6 @@ $controllers = [
     'App\Controller\Web\Admin\UsersController',
     'App\Controller\Web\Admin\WorksController',
     'App\Controller\Web\AccountController',
-    'App\Controller\Web\AddressesController',
     'App\Controller\Web\AuthorController',
     'App\Controller\Web\BookController',
     'App\Controller\Web\BooksController',

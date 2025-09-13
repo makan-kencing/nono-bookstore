@@ -28,7 +28,6 @@ use App\Repository\UserAddressRepository;
 use App\Repository\UserProfileRepository;
 use App\Repository\UserRepository;
 use App\Router\AuthRule;
-use DateTime;
 use PDO;
 use PDOException;
 
@@ -36,7 +35,6 @@ readonly class UserService extends Service
 {
     private UserRepository $userRepository;
     private UserProfileRepository $userProfileRepository;
-
     private UserAddressRepository $userAddressRepository;
     private FileRepository $fileRepository;
 
@@ -67,12 +65,46 @@ readonly class UserService extends Service
         return $this->userRepository->count($qb) != 0;
     }
 
+    public function canModify(User|UserLoginContextDTO $editor, User $target): bool
+    {
+        return $editor->id === $target->id || AuthRule::HIGHER->check($editor->role, $target->role);
+    }
+
+    public function getPlainUser(int $id): ?User
+    {
+        $qb = UserQuery::withMinimalDetails();
+        $qb->where(UserCriteria::byId(alias: 'u'))
+            ->bind(':id', $id);
+        return $this->userRepository->getOne($qb);
+    }
+
+    public function getUserForProfile(int $id): ?User
+    {
+        $qb = UserQuery::userListings();
+        $qb->where(UserCriteria::byId(alias: 'u'))
+            ->bind(':id', $id);
+        return $this->userRepository->getOne($qb);
+    }
+
+    public function getUserForAddressesBook(int $id): ?User
+    {
+        $qb = UserQuery::withAddress();
+        $qb->where(UserCriteria::byId(alias: 'u'))
+            ->bind(':id', $id);
+        return $this->userRepository->getOne($qb);
+    }
+
     /**
      * @throws ConflictException
      * @throws ForbiddenException
+     * @throws UnauthorizedException
      */
     public function create(UserCreateDTO $dto): void
     {
+        $context = $this->getSessionContext();
+        if ($context === null)
+            throw new UnauthorizedException();
+
         // TODO: add conflict message
         if ($this->checkUsernameExists($dto->username))
             throw new ConflictException([]);
@@ -80,8 +112,6 @@ readonly class UserService extends Service
         if ($this->checkEmailExists($dto->email))
             throw new ConflictException([]);
 
-        /** @var UserLoginContextDTO $context */
-        $context = $this->getSessionContext();
         if (!AuthRule::HIGHER->check($context->role, $dto->role))
             throw new ForbiddenException();
 
@@ -95,44 +125,6 @@ readonly class UserService extends Service
         $this->userRepository->insert($user);
     }
 
-//    /**
-//     * @throws ForbiddenException
-//     * @throws NotFoundException
-//     * @throws UnauthorizedException
-//     */
-//    public function update(UserUpdateDTO $dto, string $id): void
-//    {
-//        $context = $this->getSessionContext();
-//        if ($context === null)
-//            throw new UnauthorizedException();
-//
-//        $qb = UserQuery::withMinimalDetails();
-//        if ($dto->id != null)
-//            $qb->where(UserCriteria::byId())
-//                ->bind(':id', $dto->id);
-//        else if ($dto->username != null)
-//            $qb->where(UserCriteria::byUsername())
-//                ->bind(':username', $dto->username);
-//        else if ($dto->email != null)
-//            $qb->where(UserCriteria::byEmail())
-//                ->bind(':email', $dto->email);
-//        else if ($dto->role != null)
-//            if (!AuthRule::HIGHER->check($context->role, $dto->role))
-//                throw new ForbiddenException();
-//
-//        $user = $this->userRepository->getOne($qb);
-//        if ($user == null)
-//            throw new NotFoundException();
-//
-//        if ($user->id !== $context->id)
-//            if (!AuthRule::HIGHER->check($context->role, $user->role))
-//                throw new ForbiddenException();
-//
-//        $dto->update($user);
-//
-//        $this->userRepository->update($user);
-//    }
-
     /**
      * @throws ForbiddenException
      * @throws NotFoundException
@@ -141,29 +133,15 @@ readonly class UserService extends Service
     public function update(UserUpdateDTO $dto, int $userId): void
     {
         $context = $this->getSessionContext();
-        if ($context === null) {
+        if ($context === null)
             throw new UnauthorizedException();
-        }
 
-        $qb = UserQuery::withMinimalDetails();
-        $qb->where(UserCriteria::byId())
-            ->bind(':id', $userId);
-
-        $user = $this->userRepository->getOne($qb);
-        if ($user === null) {
+        $user = $this->getPlainUser($userId);
+        if ($user === null)
             throw new NotFoundException();
-        }
 
-        if ($user->id !== (int)$context->id) {
-            if (!AuthRule::HIGHER->check($context->role, $user->role)) {
-                throw new ForbiddenException([
-                    "userId" => $user->id,
-                    "contextId" => $context->id,
-                    "contextRole" => $context->role,
-                    "userRole" => $user->role,
-                ]);
-            }
-        }
+        if (!$this->canModify($context, $user))
+            throw new ForbiddenException();
 
         $dto->update($user);
         $this->userRepository->update($user);
@@ -181,15 +159,11 @@ readonly class UserService extends Service
         if ($context === null)
             throw new UnauthorizedException();
 
-        $qb = UserQuery::withMinimalDetails();
-        $qb->where(UserCriteria::byId())
-            ->bind(':id', $id);
-
-        $user = $this->userRepository->getOne($qb);
+        $user = $this->getPlainUser($id);
         if ($user == null)
             throw new NotFoundException();
 
-        if (!AuthRule::HIGHER->check($context->role, $user->role))
+        if (!$this->canModify($context, $user))
             throw new ForbiddenException();
 
         try {
@@ -212,28 +186,16 @@ readonly class UserService extends Service
     public function updateUserProfile(UserProfileUpdateDTO $dto, int $id): void
     {
         $context = $this->getSessionContext();
-        if ($context === null) {
+        if ($context === null)
             throw new UnauthorizedException();
-        }
 
-        // ensure user exists
-        $qb = UserQuery::withMinimalDetails()
-            ->leftJoin('profile', 'up')
-            ->where(UserCriteria::byId())
-            ->bind(':id', $id);
-
-        $user = $this->userRepository->getOne($qb);
-        if ($user === null) {
+        $user = $this->getUserForProfile($id);
+        if ($user === null)
             throw new NotFoundException;
-        }
 
-        if ($user->id !== (int)$context->id) {
-            if (!AuthRule::HIGHER->check($context->role, $user->role)) {
-                throw new ForbiddenException();
-            }
-        }
+        if (!$this->canModify($context, $user))
+            throw new ForbiddenException();
 
-        // Ensure profile exists before updating
         if ($user->profile === null) {
             $user->profile = new UserProfile();
             $user->profile->user = $user;
@@ -243,19 +205,6 @@ readonly class UserService extends Service
             $dto->updateProfile($user->profile);
             $this->userProfileRepository->update($user->profile);
         }
-    }
-
-    /**
-     * @throws UnauthorizedException
-     * @throws NotFoundException
-     * @throws ForbiddenException
-     */
-    public function updateUserAddress(UserAddressDTO $dto, int $id): void
-    {
-        $address = $this->getModifiableAddress($id);
-
-        $dto->update($address);
-        $this->userAddressRepository->update($address);
     }
 
     /**
@@ -277,46 +226,60 @@ readonly class UserService extends Service
     }
 
     /**
-     * @throws ForbiddenException
      * @throws UnauthorizedException
      * @throws NotFoundException
-     */
-    public function deleteAddress(int $id): void
-    {
-        $address = $this->getModifiableAddress($id);
-
-        $this->userAddressRepository->deleteAddress($address->id);
-    }
-
-    /**
      * @throws ForbiddenException
-     * @throws UnauthorizedException
-     * @throws NotFoundException
      */
-    public function getModifiableAddress(int $addressId): Address
+    public function updateUserAddress(UserAddressDTO $dto, int $addressId): void
     {
         $context = $this->getSessionContext();
         if ($context === null)
             throw new UnauthorizedException();
 
         $qb = AddressQuery::minimal();
-        $qb->join('user', 'u')
-            ->where(AddressCriteria::byId(alias: 'a'))
+        $qb->where(AddressCriteria::byId(alias: 'a'))
             ->bind(':id', $addressId);
 
         $address = $this->userRepository->getOne($qb);
         if ($address === null)
-            throw new NotFoundException;
+            throw new NotFoundException();
 
-        if ($address->user->id !== $context->id)
-            if (!AuthRule::HIGHER->check($context->role, $address->user->role))
-                throw new ForbiddenException();
+        if (!$this->canModify($context, $address->user))
+            throw new ForbiddenException();
 
-        return $address;
+        $dto->update($address);
+        $this->userAddressRepository->update($address);
     }
 
     /**
      * @throws UnauthorizedException
+     * @throws NotFoundException
+     * @throws ForbiddenException
+     */
+    public function deleteAddress(int $addressId): void
+    {
+        $context = $this->getSessionContext();
+        if ($context === null)
+            throw new UnauthorizedException();
+
+        $qb = AddressQuery::minimal();
+        $qb->where(AddressCriteria::byId(alias: 'a'))
+            ->bind(':id', $addressId);
+
+        $address = $this->userRepository->getOne($qb);
+        if ($address === null)
+            throw new NotFoundException();
+
+        if (!$this->canModify($context, $address->user))
+            throw new ForbiddenException();
+
+        $this->userAddressRepository->deleteAddress($address->id);
+    }
+
+    /**
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     * @throws ForbiddenException
      */
     public function setAddressDefault(int $addressId): void
     {
@@ -324,41 +287,39 @@ readonly class UserService extends Service
         if ($context === null)
             throw new UnauthorizedException();
 
-        $address = new Address();
-        $address->id = $addressId;
-        $address->user = $context->toUserReference();
+        $qb = AddressQuery::minimal();
+        $qb->where(AddressCriteria::byId(alias: 'a'))
+            ->bind(':id', $addressId);
+
+        $address = $this->userRepository->getOne($qb);
+        if ($address === null)
+            throw new NotFoundException();
+
+        if (!$this->canModify($context, $address->user))
+            throw new ForbiddenException();
 
         $this->userAddressRepository->setDefault($address);
     }
+
     /**
      * @throws UnauthorizedException
      * @throws NotFoundException
      * @throws ForbiddenException
+     * @throws UnprocessableEntityException
      */
     public function updatePassword(UserPasswordUpdateDTO $dto, int $userId): void
     {
         $context = $this->getSessionContext();
-        if ($context === null) {
+        if ($context === null)
             throw new UnauthorizedException();
-        }
 
-        $qb = UserQuery::withMinimalDetails()
-            ->where(UserCriteria::byId())
-            ->bind(':id', $userId);
-
-        $user = $this->userRepository->getOne($qb);
-        if ($user === null) {
+        $user = $this->getPlainUser($userId);
+        if ($user === null)
             throw new NotFoundException();
-        }
 
-        // Only self or higher role can change
-        if ($user->id !== (int)$context->id) {
-            if (!AuthRule::HIGHER->check($context->role, $user->role)) {
-                throw new ForbiddenException();
-            }
-        }
+        if (!$this->canModify($context, $user))
+            throw new ForbiddenException();
 
-        // Check old password
         if (!password_verify($dto->oldPassword, $user->hashedPassword)) {
             throw new UnprocessableEntityException([[
                 "field" => "old_password",
@@ -367,9 +328,7 @@ readonly class UserService extends Service
             ]]);
         }
 
-        // Update with new password
         $user->hashedPassword = password_hash($dto->newPassword, PASSWORD_DEFAULT);
         $this->userRepository->update($user);
     }
-
 }

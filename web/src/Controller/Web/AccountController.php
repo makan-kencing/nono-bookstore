@@ -13,25 +13,19 @@ use App\Repository\UserRepository;
 use App\Router\Method\GET;
 use App\Router\Path;
 use App\Router\RequireAuth;
+use App\Service\UserService;
 use PDO;
 
-#[Path('/account')]
 #[RequireAuth]
+#[Path('/account')]
 readonly class AccountController extends WebController
 {
-    private UserRepository $userRepository;
+    private UserService $userService;
 
     public function __construct(PDO $pdo, View $view)
     {
         parent::__construct($pdo, $view);
-        $this->userRepository = new UserRepository($this->pdo);
-    }
-
-    #[GET]
-    public function viewAccount(): void
-    {
-        $this->redirect('/account/profile');
-//        echo $this->render('webstore/account/account.php');
+        $this->userService = new UserService($this->pdo);
     }
 
     /**
@@ -39,46 +33,61 @@ readonly class AccountController extends WebController
      * @throws UnauthorizedException
      */
     #[GET]
-    #[Path('/profile')]
     public function viewProfile(): void
     {
         $context = $this->getSessionContext();
         if ($context === null)
             throw new UnauthorizedException();
 
-        $qb = UserQuery::userListings()
-            ->where(UserCriteria::byId(alias: 'u'))
-            ->bind(':id', $context->id);
-        $user = $this->userRepository->getOne($qb);
-
+        $user = $this->userService->getUserForProfile($context->id);
         if ($user === null)
             throw new NotFoundException();
 
         echo $this->render(
-            'webstore/account/profile.php',
+            'webstore/account/account.php',
             ['user' => $user]
         );
     }
 
+    /**
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     */
     #[GET]
-    #[Path('/update-password')]
+    #[Path('/change-password')]
     public function updatePassword(): void
     {
         $context = $this->getSessionContext();
         if ($context === null)
             throw new UnauthorizedException();
 
-        $qb = UserQuery::userListings()
-            ->where(UserCriteria::byId(alias: 'u'))
-            ->bind(':id', $context->id);
-        $user = $this->userRepository->getOne($qb);
-
+        $user = $this->userService->getPlainUser($context->id);
         if ($user === null)
             throw new NotFoundException();
 
         echo $this->render(
-            'webstore/account/updatePassword.php',
+            'webstore/account/change_password.php',
             ['user' => $user]
+        );
+    }
+
+    /**
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     */
+    #[GET]
+    #[Path('/addresses')]
+    public function viewAddresses(): void{
+        $context = $this->getSessionContext();
+        if ($context === null)
+            throw new UnauthorizedException();
+
+        $user = $this->userService->getUserForAddressesBook($context->id);
+        if ($user === null)
+            throw new NotFoundException();
+
+        echo $this->render(
+            'webstore/account/addresses.php', ['user' => $user]
         );
     }
 }

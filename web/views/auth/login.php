@@ -69,9 +69,8 @@ ob_start();
                         }
                     },
                     success: () => {
-                        if (document.referrer === '/login' || document.referrer === '/register')
-                            window.location.href = document.referrer;
-                        window.location.href = document.referrer;
+                        const params = new URLSearchParams(window.location.search);
+                        window.location.href = params.get("redirect");
                     }
                 }
             )

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Core\Template;
+use App\Core\View;
 use App\Entity\User\User;
 
 $title = 'Update Password';
@@ -19,34 +20,38 @@ $template = new Template(
 <?php $template->start(); ?>
 
 <link rel="stylesheet" href="/static/styles/Account/updatePassword.css"/>
-<body>
+<link rel="stylesheet" href="/static/styles/Account/profile.css">
 
-<div class="password-form">
-    <h2>Update Password</h2>
-    <form id="passwordForm">
-        <div class="form-group">
-            <label for="old_password">Old Password</label>
-            <input type="password" id="old_password" name="old_password" required>
-            <i class="fas fa-eye toggle-password" data-target="old_password"></i>
-        </div>
+<div class="profile-container">
+    <?= View::render('webstore/account/_sidebar.php', ['user' => $user, 'currentMenu' => 2]); ?>
 
-        <div class="form-group">
-            <label for="new_password">New Password</label>
-            <input type="password" id="new_password" name="new_password" required>
-            <i class="fas fa-eye toggle-password" data-target="new_password"></i>
-        </div>
+    <div class="password-form">
+        <h2>Update Password</h2>
+        <form id="passwordForm">
+            <div class="form-group">
+                <label for="old_password">Old Password</label>
+                <input type="password" id="old_password" name="old_password" required>
+                <i class="fas fa-eye toggle-password" data-target="old_password"></i>
+            </div>
 
-        <div class="form-group">
-            <label for="confirm_password">Confirm New Password</label>
-            <input type="password" id="confirm_password" name="confirm_password" required>
-            <i class="fas fa-eye toggle-password" data-target="confirm_password"></i>
-        </div>
+            <div class="form-group">
+                <label for="new_password">New Password</label>
+                <input type="password" id="new_password" name="new_password" required>
+                <i class="fas fa-eye toggle-password" data-target="new_password"></i>
+            </div>
 
-        <button type="submit">Update</button>
-    </form>
+            <div class="form-group">
+                <label for="confirm_password">Confirm New Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+                <i class="fas fa-eye toggle-password" data-target="confirm_password"></i>
+            </div>
 
-    <a href="/forgot-password" class="forgot-link">Forgot password?</a>
-    <div id="responseMessage" class="message"></div>
+            <button type="submit">Update</button>
+        </form>
+
+        <a href="/forgot-password" class="forgot-link">Forgot password?</a>
+        <div id="responseMessage" class="message"></div>
+    </div>
 </div>
 
 <script>

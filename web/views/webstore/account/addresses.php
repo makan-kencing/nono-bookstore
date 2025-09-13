@@ -21,7 +21,14 @@ $addressDialog = new Template(
 ?>
 
 <?php $template->start(); ?>
-<main>
+
+<link rel="stylesheet" href="/static/styles/Account/profile.css">
+
+
+<div class="profile-container">
+    <?= View::render('webstore/account/_sidebar.php', ['user' => $user, 'currentMenu' => 1]); ?>
+
+
     <!-- right side -->
     <div style="border: 1px gray solid; width: 100%;">
         <!-- header -->
@@ -48,7 +55,7 @@ $addressDialog = new Template(
                         <input type="hidden" name="address3" value="<?= $address->address3 ?? '' ?>">
                         <input type="hidden" name="state" value="<?= $address->state ?>">
                         <input type="hidden" name="postcode" value="<?= $address->postcode ?>">
-                        <input type="hidden" name="country" value="<?= $address->country?>">
+                        <input type="hidden" name="country" value="<?= $address->country ?>">
                         <input type="hidden" name="default" value="<?= $isDefault ? 1 : 0 ?>">
 
                         <!-- left -->
@@ -81,8 +88,7 @@ $addressDialog = new Template(
             </div>
         </div>
     </div>
-</main>
-
+</div>
 
 <?php $addressDialog->start(); ?>
 <input type="hidden" name="id">
