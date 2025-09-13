@@ -34,10 +34,15 @@ readonly class HomeController extends WebController
             option: BookSearchSortOption::RELEVANCE,
             pageSize: 10
         ));
+        $books = $this->bookService->search(new BookSearchDTO(
+            option: BookSearchSortOption::RELEVANCE,
+            pageSize: 25
+        ));
+
 
         echo $this->render(
             'webstore/home.php',
-            ['newest' => $newest, 'top' => $top]
+            ['newest' => $newest, 'top' => $top,'books'=>$books]
         );
     }
 }
