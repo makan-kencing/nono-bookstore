@@ -11,7 +11,6 @@ $menus = [
     ['User Details', '/admin/user/' . $user->id],
     ['Addresses', '/admin/user/' . $user->id . '/addresses'],
     ['Orders', '/admin/user/' . $user->id . '/orders'],
-    ['Security Events', '/admin/user/' . $user->id . '/events'],
 ]
 
 ?>
