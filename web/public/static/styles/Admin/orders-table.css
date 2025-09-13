@@ -83,11 +83,6 @@
     font-size: .85rem;
     line-height: 1;
 }
-.chip-preparing { background: #fff3cd; color: #8a6d3b; }
-.chip-ready     { background: #e7f1ff; color: #0b5ed7; }
-.chip-shipped   { background: #d1e7dd; color: #0f5132; }
-.chip-delivered { background: #d1e7dd; color: #0f5132; }
-.chip-error     { background: #f8d7da; color: #842029; }
 
 /* responsive: stack columns on small screens */
 @media (max-width: 992px) {
