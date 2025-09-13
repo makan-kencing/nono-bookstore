@@ -182,7 +182,7 @@ $dialog = new Template(
         <?php foreach (InventoryLocation::cases() as $location): ?>
             <tr>
                 <td><label for="initial-stocks['<?= $location->name ?>']"><?= $location->title() ?></label></td>
-                <td><input type="number" name="initial_stocks['<?= $location->name ?>"
+                <td><input type="number" name="initial_stocks['<?= $location->name ?>']"
                            id="initial-stocks['<?= $location->name ?>']"
                            min="0" step="1" value="0"></td>
             </tr>
@@ -195,7 +195,7 @@ $dialog = new Template(
     <legend>Initial Pricing</legend>
 
     <div>
-        <label for="initial-price">Initial Unit Price</label>
+        <label for="initial-price">Initial Unit Price*</label>
         <input type="number" name="initial_price" id="initial-price" min="0.01" step="0.01" required>
     </div>
 

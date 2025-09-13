@@ -17,15 +17,18 @@ readonly class BookCreateDTO extends RequestDTO
     /**
      * @param int $workId
      * @param string $isbn
-     * @param string|null $description
+     * @param ?string $description
      * @param CoverType $coverType
-     * @param int $numberOfPages
-     * @param string|null $dimensions
-     * @param string|null $language
-     * @param string|null $editionInformation
+     * @param positive-int $numberOfPages
+     * @param ?string $dimensions
+     * @param ?string $language
+     * @param ?string $editionInformation
      * @param string $publisher
      * @param string $publicationDate
      * @param AuthorDefinitionDTO[] $authors
+     * @param array<string, positive-int> $initialStocks
+     * @param positive-int $initialPrice
+     * @param ?positive-int $initialCost
      */
     public function __construct(
         public int       $workId,
@@ -38,7 +41,10 @@ readonly class BookCreateDTO extends RequestDTO
         public ?string   $editionInformation,
         public string    $publisher,
         public string    $publicationDate,
-        public array     $authors
+        public array $authors,
+        public array $initialStocks,
+        public int   $initialPrice,
+        public ?int  $initialCost,
     )
     {
     }
@@ -65,7 +71,10 @@ readonly class BookCreateDTO extends RequestDTO
                 array_map(
                     fn($json) => AuthorDefinitionDTO::jsonDeserialize($json),
                     $json['authors'],
-                )
+                ),
+                $json['initial_stocks'],
+                (int) ($json['initial_price'] * 100),
+                $json['initial_cost'] ?? null ? (int) ($json['initial_cost'] * 100) : null
             );
         } catch (Throwable) {
             throw new BadRequestException();
@@ -90,6 +99,20 @@ readonly class BookCreateDTO extends RequestDTO
                 "field" => "number_of_pages",
                 "type" => "length",
                 "reason" => "Must be 1 or more pages"
+            ];
+
+        if ($this->initialPrice < 0)
+            $rules[] = [
+                "field" => "initial_price",
+                "type" => "price",
+                "reason" => "Initial price can't be negative."
+            ];
+
+        if ($this->initialCost && $this->initialCost < 0)
+            $rules[] = [
+                "field" => "initial_cost",
+                "type" => "cost",
+                "reason" => "Initial cost can't be negative."
             ];
 
         if ($rules)
