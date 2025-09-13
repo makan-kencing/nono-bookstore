@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Core\View;
 use App\Entity\User\User;
+use App\Entity\User\UserRole;
 
 assert(isset($user) && $user instanceof User);
 
@@ -24,14 +25,32 @@ ob_start();
             <div class="form-grid">
 
                 <form id="profileForm" class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" data-username-taken="0" value="<?= $user->username?>">
-                    <span class="hint" style="color: red">Username taken</span>
+                    <div>
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" data-username-taken="0" value="<?= $user->username?>">
+                        <span class="hint" style="color: red">Username taken</span>
+                    </div>
 
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" value="<?= $user->email?>">
-                    <label><?= $user->role->title() ?></label>
-                    <button type="submit" class="btn">Update</button>
+                    <div>
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" value="<?= $user->email?>">
+                    </div>
+
+                    <div>
+                        <label for="role">Role</label>
+                        <select id="role" name="role">
+                            <?php foreach (UserRole::cases() as $role): ?>
+                                <option id="role" name="role" value="<?= $role->name ?>"
+                                    <?= $role === $user->role ? 'selected' : ''?>>
+                                    <?= $role->title() ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div>
+                        <button type="submit" class="btn">Update</button>
+                    </div>
                 </form>
 
                 <style>
@@ -41,12 +60,18 @@ ob_start();
                 </style>
 
                 <form id="profileFormContact" class="form-group" >
-                    <label for="phone">Contact No</label>
-                    <input type="tel" id="contact_no" name="contact_no" value="<?= $user->profile?->contactNo ?>">
-
-                    <label for="birthday">Birthday</label>
-                    <input type="date" id="dob" name="dob" value="<?=$user->profile?->dob?->format('Y-m-d') ?>">
-
+                    <div>
+                        <label for="phone">Contact No</label>
+                        <input type="tel" id="contact_no" name="contact_no" value="<?= $user->profile?->contactNo ?>">
+                    </div>
+                    <div>
+                        <label for="birthday">Birthday</label>
+                        <input type="date" id="dob" name="dob" value="<?=$user->profile?->dob?->format('Y-m-d') ?>">
+                    </div>
+                    <div>
+                        <span>Status: <span><?= $user->isBlocked ? 'Blocked' : 'Normal' ?></span></span>
+                        <button id="block-user" type="button"><?= $user->isBlocked ? 'Unblock' : 'Block' ?></button>
+                    </div>
                     <button type="submit" class="btn">Update</button>
                 </form>
             </div>
