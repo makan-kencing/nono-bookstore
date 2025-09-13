@@ -40,6 +40,7 @@ $controllers = [
     'App\Controller\Api\UserController',
     'App\Controller\Api\WishlistController',
     'App\Controller\Api\WorkController',
+    'App\Controller\Api\PasswordResetController',
     'App\Controller\Web\Admin\AuthorsController',
     'App\Controller\Web\Admin\BookController',
     'App\Controller\Web\Admin\BooksController',
@@ -64,7 +65,7 @@ $controllers = [
     'App\Controller\Web\SecurityController',
     'App\Controller\Web\SeriesController',
     'App\Controller\Web\WishlistController',
-    'App\Controller\Web\MapController',
+    'App\Controller\Web\ResetPasswordPageController',
 ];
 $router = new Router($pdo, $view);
 foreach ($controllers as $controller) {
