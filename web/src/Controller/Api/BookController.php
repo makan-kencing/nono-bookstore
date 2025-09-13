@@ -100,11 +100,15 @@ readonly class BookController extends ApiController
      * @throws BadRequestException
      */
     #[POST]
-    #[Path('/{bookId}/author/{authorId}')]
+    #[Path('/{bookId}/author')]
     #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
-    public function addAuthor(string $bookId, string $authorId): void
+    public function addAuthor(string $bookId): void
     {
-        $type = AuthorDefinitionType::fromName($_POST['type'] ?? throw new BadRequestException());
+        $json = self::getJsonBody();
+
+        $authorId = (int) ($json['author_id'] ?? throw new BadRequestException());
+        $type = AuthorDefinitionType::fromName($json['type'] ?? throw new BadRequestException());
+
         $this->bookService->addAuthor((int)$bookId, (int)$authorId, $type);
     }
 

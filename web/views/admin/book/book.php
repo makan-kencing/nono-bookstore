@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Core\View;
+use App\Entity\Book\Author\AuthorDefinitionType;
 use App\Entity\Book\Book;
 use App\Entity\Product\Inventory;
 use App\Entity\Product\InventoryLocation;
@@ -92,7 +93,25 @@ ob_start();
                     <div>
                         <h4>Authors</h4>
 
-                        <button id="add-author" type="button">Add</button>
+
+                        <form action="/api/book/<?= $book->id ?>/author" id="add-author" style="display: flex;">
+                            <label for="author-id">New Author</label>
+
+                            <div>
+                                <input type="search" id="author-id" placeholder="Search authors">
+                                <select name="author_id" id="author-id" style="display: block; width: 100%;"
+                                        required></select>
+                            </div>
+
+                            <label for="type"></label>
+                            <select name="type" id="type" required>
+                                <?php foreach (AuthorDefinitionType::cases() as $type): ?>
+                                    <option value="<?= $type->name ?>"><?= $type->title() ?></option>
+                                <?php endforeach; ?>
+                            </select>
+
+                            <button type="submit">Add</button>
+                        </form>
 
                         <table>
                             <thead>
@@ -265,10 +284,6 @@ ob_start();
             );
         });
 
-        $("button#add-author").click(/** @param {jQuery.Event} e */ function (e) {
-            $("dialog.author")[0].showModal();
-        });
-
         $("button#remove-author").click(/** @param {jQuery.Event} e */ function (e) {
             const authorId = e.target.closest("tr").dataset.id;
 
@@ -283,10 +298,6 @@ ob_start();
                     }
                 }
             );
-        });
-
-        $("button#add-stock").click(/** @param {jQuery.Event} e */ function (e) {
-            $("dialog.inventory")[0].showModal();
         });
 
         $("form#edit-inventory").submit(/** @param {jQuery.Event} e */ function (e) {
@@ -308,24 +319,25 @@ ob_start();
             );
         });
 
-        $("form#add-price, form#add-cost, form#add-inventory").submit(/** @param {jQuery.Event} e */ function (e) {
-            e.preventDefault();
+        $("form#add-author, form#add-price, form#add-cost, form#add-inventory").submit(
+            /** @param {jQuery.Event} e */ function (e) {
+                e.preventDefault();
 
-            const data = new FormData(e.target);
+                const data = new FormData(e.target);
 
-            $.ajax(
-                e.target.action,
-                {
-                    method: "POST",
-                    data: JSON.stringify(Object.fromEntries(data.entries())),
-                    success: () => {
-                        window.location.reload();
-                    },
-                    error: (xhr) => {
+                $.ajax(
+                    e.target.action,
+                    {
+                        method: "POST",
+                        data: JSON.stringify(Object.fromEntries(data.entries())),
+                        success: () => {
+                            window.location.reload();
+                        },
+                        error: (xhr) => {
+                        }
                     }
-                }
-            );
-        })
+                );
+            })
 
         $("dialog.book form").submit(/** @param {jQuery.Event} e */ function (e) {
             e.preventDefault();
@@ -346,6 +358,15 @@ ob_start();
                 }
             );
         });
+
+        $("form#add-author input[type=search]").change(/** @param {jQuery.Event} e */ function (e) {
+            $.get(
+                `/api/author/options/${this.value}`,
+                (data) => {
+                    $(this).next("select").html(data);
+                }
+            );
+        })
     </script>
 
 <?php
