@@ -13,7 +13,9 @@ use App\Entity\Product\InventoryLocation;
 use App\Entity\User\UserRole;
 use App\Exception\BadRequestException;
 use App\Exception\ConflictException;
+use App\Exception\ContentTooLargeException;
 use App\Exception\NotFoundException;
+use App\Exception\UnauthorizedException;
 use App\Exception\UnprocessableEntityException;
 use App\Router\AuthRule;
 use App\Router\Method\DELETE;
@@ -183,6 +185,42 @@ readonly class BookController extends ApiController
         $amount = (int) $amount;
 
         $this->bookService->setNewCost((int)$bookId, $amount);
+    }
+
+    /**
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     * @throws ConflictException
+     * @throws BadRequestException
+     * @throws UnprocessableEntityException
+     * @throws ContentTooLargeException
+     */
+    #[POST]
+    #[Path('/{bookId}/image')]
+    #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
+    public function uploadImages(string $bookId): void
+    {
+        $files = $this->normalizeFiles($_FILES["images"]);
+
+        $this->bookService->uploadImage((int) $bookId, ...$files);
+    }
+
+    #[DELETE]
+    #[Path('/{bookId}/image/{fileId}')]
+    #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
+    public function removeImage(string $bookId, string $fileId): void
+    {
+        $this->bookService->removeImage((int) $bookId, (int) $fileId);
+    }
+
+    #[PUT]
+    #[Path('/{bookId}/image/{fileId}')]
+    #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
+    public function updateImageOrder(string $bookId, string $fileId): void
+    {
+        $json = self::getJsonBody();
+
+        $this->bookService->moveImage((int) $bookId, (int) $fileId, (int) $json['image_order']);
     }
 
     /**

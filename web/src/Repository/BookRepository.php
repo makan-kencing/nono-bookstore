@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Book\Author\AuthorDefinition;
 use App\Entity\Book\Book;
+use App\Entity\Book\BookImage;
 use App\Entity\Product\Cost;
 use App\Entity\Product\Inventory;
 use App\Entity\Product\Price;
@@ -230,4 +231,47 @@ readonly class BookRepository extends Repository
 
         $this->insertCost($cost);
     }
+
+    public function insertImage(BookImage $image): void
+    {
+        $stmt = $this->conn->prepare('
+            INSERT INTO book_image (book_id, file_id, image_order)
+            VALUES (:book_id, :file_id, :image_order);
+        ');
+        $stmt->execute([
+            ':book_id' => $image->book->id,
+            ':file_id' => $image->file->id,
+            ':image_order' => $image->imageOrder
+        ]);
+    }
+
+
+    public function updateImageOrder(BookImage $image): void
+    {
+        $stmt = $this->conn->prepare('
+            UPDATE book_image
+            SET image_order = :image_order
+            WHERE book_id = :book_id
+                AND file_id = :file_id
+        ');
+        $stmt->execute([
+            ':book_id' => $image->book->id,
+            ':file_id' => $image->file->id,
+            ':image_order' => $image->imageOrder
+        ]);
+    }
+
+    public function removeImage(BookImage $image): void
+    {
+        $stmt = $this->conn->prepare('
+            DELETE FROM book_image
+            WHERE book_id = :book_id
+                AND file_id = :file_id
+        ');
+        $stmt->execute([
+            ':book_id' => $image->book->id,
+            ':file_id' => $image->file->id
+        ]);
+    }
+
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use function App\Utils\array_move_elem;
+use function App\Utils\array_find_key;
 use App\DTO\Request\BookCreate\BookCreateDTO;
 use App\DTO\Request\BookCreate\BookUpdateDTO;
 use App\DTO\Request\BookSearchDTO;
@@ -16,14 +18,21 @@ use App\Entity\Book\Author\Author;
 use App\Entity\Book\Author\AuthorDefinition;
 use App\Entity\Book\Author\AuthorDefinitionType;
 use App\Entity\Book\Book;
+use App\Entity\Book\BookImage;
 use App\Entity\Book\Category\Category;
 use App\Entity\Book\Work;
+use App\Entity\File;
 use App\Entity\Product\Cost;
 use App\Entity\Product\Inventory;
 use App\Entity\Product\InventoryLocation;
 use App\Entity\Product\Price;
+use App\Exception\BadRequestException;
 use App\Exception\ConflictException;
+use App\Exception\ContentTooLargeException;
 use App\Exception\NotFoundException;
+use App\Exception\UnauthorizedException;
+use App\Exception\UnprocessableEntityException;
+use App\Orm\QueryBuilder;
 use App\Repository\BookRepository;
 use App\Repository\Query\AuthorCriteria;
 use App\Repository\Query\AuthorQuery;
@@ -42,16 +51,21 @@ use PDO;
 use PDOException;
 use Throwable;
 
+/**
+ * @phpstan-import-type PhpFile from FileService
+ */
 readonly class BookService extends Service
 {
     private BookRepository $bookRepository;
     private RatingRepository $ratingRepository;
+    private FileService $fileService;
 
     public function __construct(PDO $pdo)
     {
         parent::__construct($pdo);
         $this->bookRepository = new BookRepository($this->pdo);
         $this->ratingRepository = new RatingRepository($this->pdo);
+        $this->fileService = new FileService($this->pdo);
     }
 
     public function checkIsbnExists(string $isbn): bool
@@ -389,4 +403,98 @@ readonly class BookService extends Service
 
         $this->bookRepository->setNewCost($cost);
     }
+
+    /**
+     * @param int $bookId
+     * @param PhpFile[] ...$files
+     * @return BookImage[]
+     * @throws ConflictException
+     * @throws BadRequestException
+     * @throws UnprocessableEntityException
+     * @throws ContentTooLargeException
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     */
+    public function uploadImage(int $bookId, array ...$files): array
+    {
+        /** @var QueryBuilder<Book> $qb */
+        $qb = new QueryBuilder();
+        $qb->from(Book::class, 'b')
+            ->leftJoin('images', 'bi')
+            ->where(BookCriteria::byId(alias: 'b'))
+            ->bind(':id', $bookId);
+
+        $book = $this->bookRepository->getOne($qb);
+        if ($book === null)
+            throw new NotFoundException();
+
+        $i = max(array_merge(array_map(
+            fn (BookImage $image) => $image->imageOrder,
+            $book->images
+        ), [-1])) + 1;
+
+        $images = [];
+        $this->pdo->beginTransaction();
+
+        try {
+            foreach ($files as $file) {
+                $file = $this->fileService->uploadImage($file);
+
+                $image = new BookImage();
+                $image->file = $file;
+                $image->book = new Book();
+                $image->book->id = $bookId;
+                $image->imageOrder = $i++;
+
+                $this->bookRepository->insertImage($image);
+                $images[] = $image;
+            }
+        } catch (PDOException $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
+        $this->pdo->commit();
+
+        return $images;
+    }
+
+    /**
+     * @throws NotFoundException
+     */
+    public function moveImage(int $bookId, int $fileId, int $targetPosition): void
+    {
+        /** @var QueryBuilder<Book> $qb */
+        $qb = new QueryBuilder();
+        $qb->from(Book::class, 'b')
+            ->join('images', 'bi')
+            ->where(BookCriteria::byId(alias: 'b'))
+            ->bind(':id', $bookId);
+
+        $book = $this->bookRepository->getOne($qb);
+        if ($book === null)
+            throw new NotFoundException();
+
+        $book->normalizeOrder();
+        $key = array_find_key($book->images, fn(BookImage $image) => $image->file->id === $fileId);
+        if ($key === null)
+            throw new NotFoundException();
+
+        array_move_elem($book->images, $key, $targetPosition);
+        $book->normalizeOrder();
+
+        foreach ($book->images as $image)
+            $this->bookRepository->updateImageOrder($image);
+    }
+
+    public function removeImage(int $bookId, int $imageId): void
+    {
+        $image = new BookImage();
+        $image->file = new File();
+        $image->file->id = $imageId;
+        $image->book = new Book();
+        $image->book->id = $bookId;
+
+        $this->bookRepository->removeImage($image);
+    }
+
 }
