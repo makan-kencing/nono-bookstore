@@ -16,84 +16,15 @@ ob_start();
             <div>
                 <h2>Books</h2>
 
-                <form id="search">
-                    <div style="display: flex; align-items: center">
-                        <button id="add-book" type="button">+ Add</button>
-
-                        <button type="submit">Refresh</button>
-
-                        <search style="margin-left: auto; ">
-                            <label for="query">Searching:</label>
-                            <input type="search" name="query" id="query">
-                        </search>
-                    </div>
-
-                    <div id="output-table">
-
-                    </div>
-                </form>
-
+                <?= View::render('_component/_admin_table_controls.php', ['ajaxUrl' => '/api/book/search/']) ?>
             </div>
         </div>
     </main>
 
-    <script>
-        let $searchForm = $("form#search");
-
-        $searchForm.submit(/** @param {jQuery.Event} e */(e) => {
-            e.preventDefault();
-
-            reloadTable();
-        });
-
-        $("search input[name=query]").change(/** @param {jQuery.Event} e */(e) => {
-            reloadTable();
-        })
-
-        function reloadTable() {
-            $.ajax(
-                '/api/book/search/',
-                {
-                    method: 'GET',
-                    data: $searchForm.serialize(),
-                    headers: {
-                        "Accept": "text/html"
-                    },
-                    success: (data) => {
-                        $("#output-table").html(data);
-                    }
-                }
-            );
-        }
-
-        function gotoPreviousPage() {
-            let input = $searchForm[0].querySelector("input[name=page]");
-            input.value = parseInt(input.value) - 1;
-
-            reloadTable();
-        }
-
-        function gotoNextPage() {
-            let input = $searchForm[0].querySelector("input[name=page]");
-            input.value = parseInt(input.value) + 1;
-
-            reloadTable();
-        }
-
-        function gotoPage(page) {
-            let input = $searchForm[0].querySelector("input[name=page]");
-            input.value = page;
-
-            reloadTable();
-        }
-
-        reloadTable();
-    </script>
-
 <?= View::render('admin/book/_add_book_dialog.php') ?>
 
     <script>
-        $("button#add-book").click(/** @param {jQuery.Event} e */(e) => {
+        $("form#search button#add").click(/** @param {jQuery.Event} e */(e) => {
             $("dialog.book")[0].showModal();
         });
 
