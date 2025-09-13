@@ -18,6 +18,7 @@ $template = new Template(
 <link rel="stylesheet" href="/static/styles/Admin/users-table.css">
 <link rel="stylesheet" href="/static/styles/Admin/orders-table.css">
 <link rel="stylesheet" href="/static/styles/Admin/book-styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <?php $template->endFragment(); ?>
 

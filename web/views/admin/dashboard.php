@@ -7,7 +7,72 @@ $title = 'Dashboard';
 ob_start();
 ?>
 
-   <h2>Profile</h2>
+    <div>
+        <div>
+            <canvas id="myChart"></canvas>
+        </div>
+
+        <div>
+            <canvas id="mySecondChart">
+        </div>
+    </div>
+
+
+
+<script>
+    const ctx = document.getElementById('myChart');
+
+    const mixedChart = new Chart(ctx, {
+        data: {
+            datasets: [{
+                type: 'bar',
+                label: 'Total Revenue',
+                data: [<?= implode(', ', array_map(
+                    fn(MonthlySalesDTO $dto) => $dto->revenue / 100,
+                    $monthlySales
+                )) ?>],
+                yAxisID: 'y'
+            }, {
+                type: 'line',
+                label: 'Quantity Sold',
+                data: [<?= implode(', ', array_map(
+                    fn(MonthlySalesDTO $dto) => $dto->quantity,
+                    $monthlySales
+                )) ?>],
+                yAxisID: 'y1'
+            }],
+            labels: [<?= implode(', ', array_map(
+                fn(MonthlySalesDTO $dto) => '\'' . $dto->yearMonth . '\'',
+                $monthlySales
+            )) ?>]
+        },
+        options: {
+            stacked: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Monthly Sales'
+                }
+            },
+            scales: {
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left'
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right'
+                }
+            }
+        }
+    });
+
+
+
+
+</script>
 
 
 
