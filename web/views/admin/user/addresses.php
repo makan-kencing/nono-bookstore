@@ -37,8 +37,6 @@ ob_start();
                             <input type="text" id="country" name="country" value="<?=$addr->country?>">
                         </div>
                     </div>
-
-                <button type="submit" class="btn">Save Address</button>
             </form>
         </div>
 <?php endforeach ?>
