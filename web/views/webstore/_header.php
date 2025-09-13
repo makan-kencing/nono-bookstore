@@ -13,7 +13,7 @@ $context = AuthService::getLoginContext();
     <div>
         <nav class="contents">
             <ul id="store-information" class="bar-list">
-                <li><a href="/stores"><i class="fa-solid fa-location-dot"></i>Stores</a></li>
+                <li><a href="/map"><i class="fa-solid fa-location-dot"></i>Stores</a></li>
                 <li><a href="/about">About</a></li>
             </ul>
 
