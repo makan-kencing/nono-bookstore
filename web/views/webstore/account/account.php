@@ -167,10 +167,10 @@ if ($user->profile?->dob instanceof DateTime) {
             const year = $('#dob-year').val();
             const dob = (day && month && year) ? `${year}-${month}-${day}` : null;
 
-            // ✅ Frontend validation for contact number
+            // Frontend validation for contact number
             const contactRegex = /^[0-9+\-\s]{7,20}$/;
             if (contactNo && !contactRegex.test(contactNo)) {
-                alert("❌ Invalid contact number format.\n\nUse only digits, +, - and spaces. Must be 7–20 characters.");
+                alert("Invalid contact number format.\n\nUse only digits, +, - and spaces. Must be 7–20 characters.");
                 return;
             }
 
@@ -202,11 +202,11 @@ if ($user->profile?->dob instanceof DateTime) {
                 }),
                 success: function (response) {
                     console.log("Profile update success:", response);
-                    alert("✅ Profile updated successfully!");
+                    alert("Profile updated successfully!");
                 },
                 error: function (xhr) {
                     console.error("Profile update failed:", xhr.responseText);
-                    alert("❌ Profile update failed: " + xhr.responseText);
+                    alert("Profile update failed: " + xhr.responseText);
                 }
             });
         });

@@ -8,7 +8,7 @@ assert(isset($user) && $user instanceof User);
 assert(isset($currentMenu) && is_int($currentMenu));
 
 ?>
-
+<link rel="stylesheet" href="/static/styles/Account/sidebar.css">
 <aside class="sidebar">
     <div class="user-info">
         <div class="avatar"><img src="/static/assets/default-user.jpg" alt="User Avatar"></div>
