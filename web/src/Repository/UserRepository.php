@@ -92,4 +92,16 @@ readonly class UserRepository extends Repository
             ':secret' => $secret
         ]);
     }
+
+    public function resetSession(int $userId): void
+    {
+        $stmt = $this->conn->prepare('
+            UPDATE user
+            SET session_flag = UUID()
+            WHERe id = :user_id
+        ');
+        $stmt->execute([
+            ':user_id' => $userId
+        ]);
+    }
 }

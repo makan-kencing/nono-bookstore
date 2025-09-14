@@ -14,6 +14,7 @@ readonly class UserLoginContextDTO extends DTO
 {
     public function __construct(
         public int $id,
+        public string $sessionFlag,
         public string $username,
         public UserRole $role,
         public ?ImageDTO $image
@@ -24,6 +25,7 @@ readonly class UserLoginContextDTO extends DTO
     {
         return new self(
             $user->id ?? throw new UnexpectedValueException('Current logged in user does not have an id.'),
+            $user->sessionFlag,
             $user->username,
             $user->role,
             $user->image !== null ? ImageDTO::fromFile($user->image) : null

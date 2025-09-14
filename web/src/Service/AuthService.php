@@ -129,7 +129,11 @@ readonly class AuthService extends Service
             return null;
         }
 
-        $user = $this->userService->getUserForProfile($old->id);
+        $qb = UserQuery::asProfile();
+        $qb->where(UserCriteria::bySessionFlag(alias: 'u'))
+            ->bind(':session_flag', $old->sessionFlag);
+
+        $user = $this->userRepository->getOne($qb);
         if ($user === null || $user->isBlocked) {
             $this->invalidateSession();
             return null;

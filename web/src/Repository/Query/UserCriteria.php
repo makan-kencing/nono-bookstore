@@ -12,6 +12,11 @@ class UserCriteria
     {
     }
 
+    /**
+     * @param literal-string $param
+     * @param ?string $alias
+     * @return Predicate
+     */
     public static function byId(string $param = ':id', ?string $alias = null): Predicate
     {
         if ($alias === null) $alias = '';
@@ -22,6 +27,7 @@ class UserCriteria
 
     /**
      * @param literal-string $param
+     * @param ?string $alias
      * @return Predicate
      */
     public static function byUsername(string $param = ':username', ?string $alias = null): Predicate
@@ -34,6 +40,7 @@ class UserCriteria
 
     /**
      * @param literal-string $param
+     * @param ?string $alias
      * @return Predicate
      */
     public static function byUsernameLike(string $param = ':username', ?string $alias = null): Predicate
@@ -46,6 +53,7 @@ class UserCriteria
 
     /**
      * @param literal-string $param
+     * @param ?string $alias
      * @return Predicate
      */
     public static function byEmail(string $param = ':email', ?string $alias = null): Predicate
@@ -54,5 +62,18 @@ class UserCriteria
         else $alias .= '.';
 
         return new Predicate('email = ' . $param);
+    }
+
+    /**
+     * @param literal-string $param
+     * @param ?string $alias
+     * @return Predicate
+     */
+    public static function bySessionFlag(string $param = ':session_flag', ?string $alias = null): Predicate
+    {
+        if ($alias === null) $alias = '';
+        else $alias .= '.';
+
+        return new Predicate('session_flag = ' . $param);
     }
 }
