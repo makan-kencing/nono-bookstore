@@ -33,6 +33,8 @@ class User extends Entity
 
     public bool $isBlocked;
 
+    public ?string $totpSecret;
+
     #[OneToOne]
     public ?File $image;
 

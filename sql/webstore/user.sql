@@ -8,6 +8,7 @@ create or replace table user
     role               enum ('USER', 'STAFF', 'ADMIN', 'OWNER') default 'USER' not null,
     is_verified        bit                                      default b'0'   not null,
     is_blocked         bit                                      default b'0'   not null,
+    totp_secret        char(103)                                               null,
     image_id           bigint unsigned                                         null,
     default_address_id bigint unsigned                                         null,
     constraint email
