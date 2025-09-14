@@ -40,6 +40,7 @@ readonly class AdminUserController extends ApiController
      * @throws ForbiddenException
      * @throws UnprocessableEntityException
      * @throws BadRequestException
+     * @throws UnauthorizedException
      */
     #[POST]
     public function addUser(): void
