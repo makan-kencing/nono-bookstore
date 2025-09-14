@@ -24,7 +24,7 @@ abstract readonly class Service
 
     public function getProtocol(): string
     {
-        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1)
+        if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1))
             return 'https://';
         return 'http://';
     }
