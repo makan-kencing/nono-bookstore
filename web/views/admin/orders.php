@@ -1,69 +1,40 @@
 <?php
 declare(strict_types=1);
 
+use App\Core\View;
 use App\Entity\Order\Order;
+use App\Orm\Expr\PageRequest;
 
 /** @var Order[] $orders */
 assert(isset($orders) && is_array($orders));
-
-
 $title = "Orders";
 ob_start();
 ?>
+
+<main>
     <section class="profile-container">
         <div class="profile-card">
-            <div class="table-wrapper">
                 <table class="user-table" id="user-table">
-                    <thead>
-                    <tr>
-                        <th>Num</th>
-                        <th>Username</th>
-                        <th>Ref No</th>
-                        <th>Quantity</th>
-                        <th>Price(RM)</th>
-                        <th>Shipment Status</th>
-                    </tr>
-                    </thead>
                     <tbody>
-                    <?php $num = 1; ?>
-                    <?php foreach ($orders as $order) : ?>
-                        <tr data-id="<?=$order->id?>">
-                            <td><?= $num ?></td>
-                            <td><?= $order->user->username ?></td>
-                            <td><?= $order->invoice->payment->refNo ?></td>
-                            <td><?= count($order->items) ?></td>
-                            <td><?= number_format($order->getTotal()/100,2) ?></td>
-                            <td class="chip">
-                                <span class="chip" data-order-status="<?= strtolower($order->getOrderStatus()->name) ?>">
-                                    <?= $order->getOrderStatus()->toDescription() ?>
-                                </span>
-<!--                                --><?php //if ($order->shipment == null) : ?>
-<!--                                    <span class="chip chip-error">No Shipment</span>-->
-<!--                                --><?php //elseif (!$order->shipment->readyAt) : ?>
-<!--                                    <span class="chip chip-preparing">Preparing</span>-->
-<!--                                --><?php //elseif ($order->shipment->readyAt && !$order->shipment->shippedAt) : ?>
-<!--                                    <span class="chip chip-ready">Ready To Ship</span>-->
-<!--                                --><?php //elseif ($order->shipment->shippedAt && !$order->shipment->arrivedAt) : ?>
-<!--                                    <span class="chip chip-shipped">Shipped</span>-->
-<!--                                --><?php //elseif ($order->shipment->arrivedAt) : ?>
-<!--                                    <span class="chip chip-delivered">Delivered</span>-->
-<!--                                --><?php //else : ?>
-<!--                                    <span class="chip chip-error">Error</span>-->
-<!--                                --><?php //endif; ?>
-                            </td>
-                        </tr>
-                        <?php $num++; ?>
-                    <?php endforeach; ?>
+                    <tr>
+                        <td>
+                            <div>
+                                <h2>Orders</h2>
+                                <?= View::render('_component/_admin_table_controls.php', ['ajaxUrl' => '/api/orderList/search/']) ?>
+                            </div>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
-        </div>
     </section>
-
+    <main>
     <script>
-        $("table.user-table tbody tr").click(/** @param {jQuery.Event} e */ (e) => {
-            window.location = `/admin/order/${e.currentTarget.dataset.id}`;
-        })
+
+
+        // $("table.user-table tbody tr").click(/** @param {jQuery.Event} e */ (e) => {
+        //     window.location = `/admin/order/${e.currentTarget.dataset.id}`;
+        // })
     </script>
 
 <?php

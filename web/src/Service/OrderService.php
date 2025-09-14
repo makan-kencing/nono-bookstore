@@ -2,19 +2,17 @@
 
 namespace App\Service;
 
+use App\DTO\Request\SearchDTO;
 use App\DTO\Response\CategorySalesDTO;
 use App\DTO\Response\MonthlySalesDTO;
+use App\DTO\Response\PageResultDTO;
 use App\Entity\Order\Order;
 use App\Entity\User\User;
-use App\Exception\ForbiddenException;
 use App\Exception\NotFoundException;
 use App\Exception\UnauthorizedException;
 use App\Repository\OrderRepository;
 use App\Repository\Query\OrderCriteria;
 use App\Repository\Query\OrderQuery;
-use App\Repository\Query\ShipmentQuery;
-use App\Router\AuthRule;
-use App\Service\Service;
 use DateTime;
 use PDO;
 
@@ -86,5 +84,31 @@ readonly class OrderService extends Service
             $this->orderRepository->getMonthlySales($from, $to),
             $this->orderRepository->getCategorySales($from, $to)
         ];
+    }
+
+    /**
+     * @param SearchDTO $dto
+     * @return PageResultDTO<User>
+     */
+    public function search(SearchDTO $dto): PageResultDTO
+    {
+        $qb = OrderQuery::orderListings();
+
+        if ($dto->query)
+            $qb->where(OrderCriteria::byId(alias: 'o'))
+                ->bind(':id', (int)$dto->query);
+
+        $qb->page($dto->toPageRequest());
+
+        $this->pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
+        try {
+            return new PageResultDTO(
+                $this->orderRepository->get($qb),
+                $this->orderRepository->count($qb),
+                $dto->toPageRequest()
+            );
+        } finally {
+            $this->pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+        }
     }
 }

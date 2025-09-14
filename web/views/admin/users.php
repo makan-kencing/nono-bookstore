@@ -15,26 +15,20 @@ ob_start();
 ?>
 
     <main>
-
-
-
     <section class="profile-container">
         <div class="profile-card">
-<!--            <div class="table-wrapper">-->
                 <table class="user-table">
                     <tbody>
                     <tr>
                         <td>
-                            <div>
                                 <h2>Users</h2>
                                 <?= View::render('_component/_admin_table_controls.php', ['ajaxUrl' => '/api/user/search/']) ?>
-                            </div>
+
                         </td>
                     </tr>
 
                     </tbody>
                 </table>
-<!--            </div>-->
         </div>
     </section>
     </main>
