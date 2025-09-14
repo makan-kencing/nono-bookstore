@@ -310,7 +310,7 @@ readonly class AuthService extends Service
         assert($user->id !== null);
         $user->hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
         $this->userRepository->update($user);
-        $this->userRepository->resetSession($user->id);
+        $this->invalidateGlobalSession($user);
 
         $this->userTokenRepository->deleteById($userToken->id);
     }
