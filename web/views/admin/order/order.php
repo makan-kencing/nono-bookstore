@@ -143,6 +143,7 @@ ob_start();
                         }
                     },
                     success: () => {
+                        alert("Shipment Status Update Successful");
                         window.location.reload();
                     }
                 });
