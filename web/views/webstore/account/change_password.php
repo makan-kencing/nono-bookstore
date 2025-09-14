@@ -53,7 +53,7 @@ $template = new Template(
         <div id="responseMessage" class="message"></div>
     </div>
 </div>
-<?= View::render('webstore/account/forgot-password.php') ?>
+<?= View::render('_component/_forgot_password_dialog.php') ?>
 <script>
     // Password toggle function
     $(".toggle-password").on("click", function () {
@@ -63,6 +63,12 @@ $template = new Template(
         $input.attr("type", type);
         $(this).toggleClass("fa-eye fa-eye-slash");
     });
+
+    $('.forgot-password, .forgot-link').click(function (e) {
+        e.preventDefault();
+        $('#forgot-password-modal')[0].showModal();
+    });
+
 
     $(document).ready(function () {
         const userId = <?= $user->id ?>;

@@ -47,8 +47,13 @@ ob_start();
             <img src="/static/assets/login-illustration.jpg" alt="Login Illustration">
         </div>
     </div>
-<?= View::render('webstore/account/forgot-password.php') ?>
+<?= View::render('_component/_forgot_password_dialog.php') ?>
     <script>
+        $('.forgot-password').click(function (e) {
+            e.preventDefault();
+            $('#forgot-password-modal')[0].showModal();
+        });
+
         $("form#loginForm").submit(/** @param {jQuery.Event} e */(e) => {
             e.preventDefault();
             console.log(e);

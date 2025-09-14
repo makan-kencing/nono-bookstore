@@ -22,7 +22,7 @@ readonly class ResetPasswordPageController extends WebController
             throw new NotFoundException();
 
         echo $this->render(
-            'webstore/account/reset-password.php',
+            'webstore/reset_password.php',
             [
                 'selector' => $selector,
                 'token' => $token
