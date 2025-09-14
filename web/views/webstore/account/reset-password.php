@@ -63,7 +63,7 @@ $template = new Template(
                 data: JSON.stringify({ token: token, new_password: newPassword }),
                 success: function (res) {
                     container.html(`<p style="color:green;">${res.message || "Password reset successfully"}</p>
-                                <p><a href="/login">Go to login</a></p>`);
+                                <p><a href="/">Go Home</a></p>`);
                 },
                 error: function (err) {
                     let msg = "Error resetting password";
