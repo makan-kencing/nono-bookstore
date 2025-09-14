@@ -61,8 +61,8 @@ readonly class  UserController extends ApiController
      * @throws BadRequestException
      * @throws NotFoundException
      * @throws UnprocessableEntityException
-     * @throws \App\Exception\ForbiddenException
-     * @throws \App\Exception\UnauthorizedException
+     * @throws ForbiddenException
+     * @throws UnauthorizedException
      */
     #[PUT]
     #[Path('/{id}')]
@@ -83,8 +83,8 @@ readonly class  UserController extends ApiController
      * @throws BadRequestException
      * @throws NotFoundException
      * @throws UnprocessableEntityException
-     * @throws \App\Exception\ForbiddenException
-     * @throws \App\Exception\UnauthorizedException
+     * @throws ForbiddenException
+     * @throws UnauthorizedException
      */
     #[PUT]
     #[Path('/update-profile/{id}')]
@@ -113,7 +113,7 @@ readonly class  UserController extends ApiController
         $dto = UserPasswordUpdateDTO::jsonDeserialize(self::getJsonBody());
         $dto->validate();
 
-        $this->userService->updatePassword($dto, (int)$id);
+        $this->authService->changePassword((int) $id, $dto->oldPassword, $dto->newPassword);
 
         header('Content-Type: application/json');
         echo json_encode(['success' => true, 'message' => 'Password updated successfully']);

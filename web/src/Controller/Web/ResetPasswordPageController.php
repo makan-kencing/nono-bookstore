@@ -9,6 +9,9 @@ use App\Router\Path;
 #[Path('/reset-password')]
 readonly class ResetPasswordPageController extends WebController
 {
+    /**
+     * @throws NotFoundException
+     */
     #[GET]
     public function show(): void
     {

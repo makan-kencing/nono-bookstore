@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\DTO\Request;
 
-use App\Entity\User\User;
 use App\Exception\BadRequestException;
 use App\Exception\UnprocessableEntityException;
 use Throwable;
@@ -12,10 +11,9 @@ use Throwable;
 readonly class ResetPasswordDTO extends RequestDTO
 {
     public function __construct(
-        public ?string $token = null,
-        public ?string $newPassword = null,
-    )
-    {
+        public string $token,
+        public string $newPassword,
+    ) {
     }
 
     /**
@@ -27,8 +25,8 @@ readonly class ResetPasswordDTO extends RequestDTO
 
         try {
             return new self(
-                $json['token'] ?? null,
-                $json['new_password'] ?? $json['newPassword'] ?? null,
+                $json['token'],
+                $json['new_password'],
             );
         } catch (Throwable) {
             throw new BadRequestException();
@@ -61,14 +59,5 @@ readonly class ResetPasswordDTO extends RequestDTO
         if ($errors) {
             throw new UnprocessableEntityException($errors);
         }
-    }
-
-    /**
-     * @param User $user
-     * @return void
-     */
-    public function apply(User $user): void
-    {
-        $user->password = password_hash($this->newPassword, PASSWORD_DEFAULT);
     }
 }

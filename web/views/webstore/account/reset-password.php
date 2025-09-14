@@ -57,7 +57,7 @@ $template = new Template(
             $(this).find('button').prop('disabled', true);
 
             $.ajax({
-                url: '/api/password-resets/' + selector,
+                url: '/api/password-reset/' + selector,
                 type: 'PUT',
                 contentType: 'application/json',
                 data: JSON.stringify({ token: token, new_password: newPassword }),

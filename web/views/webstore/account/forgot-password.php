@@ -45,7 +45,7 @@ declare(strict_types=1);
             const email = $('#forgot-email').val();
 
             $.ajax({
-                url: '/api/password-resets',
+                url: '/api/password-reset',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({ email }),

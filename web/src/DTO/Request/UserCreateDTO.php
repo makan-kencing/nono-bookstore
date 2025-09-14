@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\DTO\Request;
 
 use App\DTO\DTO;
+use App\Entity\User\User;
 use App\Entity\User\UserRole;
 use App\Exception\BadRequestException;
 use App\Exception\UnprocessableEntityException;
@@ -62,5 +63,17 @@ readonly class UserCreateDTO extends RequestDTO
 
         if ($rules)
             throw new UnprocessableEntityException($rules);
+    }
+
+    public function toUser(): User
+    {
+        $user = new User();
+        $user->username = $this->username;
+        $user->email = $this->email;
+        $user->hashedPassword = password_hash($this->password, PASSWORD_DEFAULT);
+        $user->role = $this->role;
+        $user->isVerified = false;
+
+        return $user;
     }
 }

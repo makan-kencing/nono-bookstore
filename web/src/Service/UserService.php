@@ -8,13 +8,11 @@ use App\DTO\Request\AddressCreateDTO;
 use App\DTO\Request\SearchDTO;
 use App\DTO\Request\UserAddressDTO;
 use App\DTO\Request\UserCreateDTO;
-use App\DTO\Request\UserPasswordUpdateDTO;
 use App\DTO\Request\UserProfileUpdateDTO;
 use App\DTO\Request\UserUpdateDTO;
 use App\DTO\Response\PageResultDTO;
 use App\DTO\UserLoginContextDTO;
 use App\Entity\File;
-use App\Entity\User\Address;
 use App\Entity\User\User;
 use App\Entity\User\UserProfile;
 use App\Entity\User\UserToken;
@@ -26,8 +24,6 @@ use App\Exception\ForbiddenException;
 use App\Exception\NotFoundException;
 use App\Exception\UnauthorizedException;
 use App\Exception\UnprocessableEntityException;
-use App\Mailer\MailService;
-use App\Repository\FileRepository;
 use App\Repository\Query\AddressCriteria;
 use App\Repository\Query\AddressQuery;
 use App\Repository\Query\UserCriteria;
@@ -39,20 +35,18 @@ use App\Repository\UserProfileRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserTokenRepository;
 use App\Router\AuthRule;
-use DateInterval;
-use DateTime;
 use PDO;
 use PDOException;
-use Random\RandomException;
 
+/**
+ * @phpstan-import-type PhpFile from FileService
+ */
 readonly class UserService extends Service
 {
     private UserRepository $userRepository;
     private UserProfileRepository $userProfileRepository;
     private UserAddressRepository $userAddressRepository;
     private FileService $fileService;
-    private UserTokenRepository $userTokenRepository;
-    private MailService $mailService;
 
     public function __construct(PDO $pdo)
     {
@@ -61,8 +55,6 @@ readonly class UserService extends Service
         $this->userProfileRepository = new UserProfileRepository($pdo);
         $this->userAddressRepository = new UserAddressRepository($pdo);
         $this->fileService = new FileService($this->pdo);
-        $this->userTokenRepository = new UserTokenRepository($pdo);
-        $this->mailService = new MailService();
     }
 
     public function checkUsernameExists(string $username): bool
@@ -112,43 +104,6 @@ readonly class UserService extends Service
         return $this->userRepository->getOne($qb);
     }
 
-    public function getUserForResetPassword(string $email): ?User
-    {
-        $qb = UserQuery::userListings();
-        $qb->where(UserCriteria::byEmail(alias: 'u'))
-            ->bind(':email', $email);
-        return $this->userRepository->getOne($qb);
-    }
-
-    public function getTokenBySelector(string $selector): ?UserToken
-    {
-        $qb = UserTokenQuery::withMinimalDetails();
-        $qb->where(UserTokenCriteria::bySelector() . ' AND ' . UserTokenCriteria::notExpired())
-            ->bind(':selector', $selector);
-        return $this->userTokenRepository->getOne($qb);
-    }
-
-    /**
-     * @param string $expiryInterval
-     * @return array
-     * @throws RandomException
-     * @throws \Exception
-     */
-    private function generateToken(string $expiryInterval): array
-    {
-        $selector = bin2hex(random_bytes(6));
-        $token = bin2hex(random_bytes(32));
-        $hashedToken = password_hash($token, PASSWORD_DEFAULT);
-        $expiresAt = (new DateTime())->add(new DateInterval($expiryInterval));
-
-        return [
-            'selector' => $selector,
-            'token' => $token,
-            'hashedToken' => $hashedToken,
-            'expiresAt' => $expiresAt,
-        ];
-    }
-
     /**
      * @throws ConflictException
      * @throws ForbiddenException
@@ -170,13 +125,7 @@ readonly class UserService extends Service
         if (!AuthRule::HIGHER->check($context->role, $dto->role))
             throw new ForbiddenException();
 
-        $user = new User();
-        $user->username = $dto->username;
-        $user->email = $dto->email;
-        $user->hashedPassword = password_hash($dto->password, PASSWORD_DEFAULT);
-        $user->role = $dto->role;
-        $user->isVerified = false;
-
+        $user = $dto->toUser();
         $this->userRepository->insert($user);
     }
 
@@ -357,37 +306,7 @@ readonly class UserService extends Service
     }
 
     /**
-     * @throws UnauthorizedException
-     * @throws NotFoundException
-     * @throws ForbiddenException
-     * @throws UnprocessableEntityException
-     */
-    public function updatePassword(UserPasswordUpdateDTO $dto, int $userId): void
-    {
-        $context = $this->getSessionContext();
-        if ($context === null)
-            throw new UnauthorizedException();
-
-        $user = $this->getPlainUser($userId);
-        if ($user === null)
-            throw new NotFoundException();
-
-        if (!$this->canModify($context, $user))
-            throw new ForbiddenException();
-
-        if (!password_verify($dto->oldPassword, $user->hashedPassword)) {
-            throw new UnprocessableEntityException([[
-                "field" => "old_password",
-                "type" => "invalid",
-                "reason" => "Old password is incorrect"
-            ]]);
-        }
-
-        $user->hashedPassword = password_hash($dto->newPassword, PASSWORD_DEFAULT);
-        $this->userRepository->update($user);
-    }
-
-    /**
+     * @param PhpFile
      * @throws UnauthorizedException
      * @throws ConflictException
      * @throws BadRequestException
@@ -400,76 +319,6 @@ readonly class UserService extends Service
         $this->userRepository->setProfileImage($file->user->id, $file->id);
 
         return $file;
-    }
-
-    /**
-     * @param string $email
-     * @return void
-     * @throws RandomException
-     */
-    public function requestResetPassword(string $email): void
-    {
-        $user = $this->getUserForResetPassword($email);
-        if ($user === null) return;
-
-        // Delete existing reset tokens
-        $this->userTokenRepository->deleteByUserAndType($user->id, UserTokenType::RESET_PASSWORD->name);
-
-        // Generate new reset token (1 hour validity)
-        $tokenData = $this->generateToken('PT1H');
-
-        $this->userTokenRepository->createToken(
-            $user->id,
-            UserTokenType::RESET_PASSWORD->name,
-            $tokenData['selector'],
-            $tokenData['hashedToken'],
-            $tokenData['expiresAt']
-        );
-
-        $url = "https://localhost/reset-password?selector={$tokenData['selector']}&token={$tokenData['token']}";
-
-        // Send email
-        $subject = "Reset your password";
-        $body = "
-        <p>Hello {$user->username},</p>
-        <p>You requested a password reset. Click the link below to reset your password:</p>
-        <p><a href='$url'>$url</a></p>
-        <p>If you didn’t request this, you can ignore this email.</p>
-    ";
-        $this->mailService->sendMail($user->email, $subject, $body);
-    }
-
-    /**
-     * Reset password using selector + token.
-     *
-     * @throws NotFoundException
-     * @throws UnprocessableEntityException
-     */
-    public function resetPassword(string $selector, string $token, string $newPassword): void
-    {
-        $userToken = $this->getTokenBySelector($selector);
-
-        if ($userToken === null) {
-            throw new NotFoundException;
-        }
-
-        if (!password_verify($token, $userToken->token)) {
-            throw new UnprocessableEntityException([[
-                "field" => "token",
-                "type" => "invalid",
-                "reason" => "Invalid reset token"
-            ]]);
-        }
-
-        $user = $this->getPlainUser($userToken->user->id);
-        if ($user === null) {
-            throw new NotFoundException;
-        }
-
-        $user->hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-        $this->userRepository->update($user);
-
-        $this->userTokenRepository->deleteById($userToken->id);
     }
 
     public function toggleBlock(int $userId): void
@@ -502,27 +351,4 @@ readonly class UserService extends Service
             $this->pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         }
     }
-
-    /**
-     * @param User $user
-     * @return array
-     * @throws RandomException
-     */
-    public function createRememberMeToken(User $user): array
-    {
-        $this->userTokenRepository->deleteByUserAndType($user->id, UserTokenType::REMEMBER_ME->name);
-
-        $tokenData = $this->generateToken('P30D'); // 30-day validity
-
-        $this->userTokenRepository->createToken(
-            $user->id,
-            UserTokenType::REMEMBER_ME->name,
-            $tokenData['selector'],
-            $tokenData['hashedToken'],
-            $tokenData['expiresAt']
-        );
-
-        return $tokenData; // token data to store in cookies
-    }
-
 }

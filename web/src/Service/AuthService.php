@@ -5,29 +5,38 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Core\Clock;
+use App\Core\View;
 use App\DTO\Request\OTPRegisterDTO;
 use App\DTO\Request\UserLoginDTO;
 use App\DTO\Request\UserRegisterDTO;
 use App\DTO\Response\OTPGenerateDTO;
+use App\DTO\Response\UserTokenGenerateDTO;
 use App\DTO\UserLoginContextDTO;
 use App\Entity\User\User;
 use App\Entity\User\UserRole;
+use App\Entity\User\UserToken;
 use App\Entity\User\UserTokenType;
 use App\Exception\ConflictException;
 use App\Exception\ForbiddenException;
 use App\Exception\NotFoundException;
 use App\Exception\UnauthorizedException;
+use App\Mailer\MailService;
 use App\Repository\Query\UserCriteria;
 use App\Repository\Query\UserQuery;
+use App\Repository\Query\UserTokenCriteria;
+use App\Repository\Query\UserTokenQuery;
 use App\Repository\UserRepository;
+use App\Repository\UserTokenRepository;
 use OTPHP\TOTP;
 use PDO;
 use Psr\Clock\ClockInterface;
-use Random\RandomException;
+use UnexpectedValueException;
 
 readonly class AuthService extends Service
 {
     private UserRepository $userRepository;
+    private UserTokenRepository $userTokenRepository;
+    private MailService $mailService;
     private UserService $userService;
     private ClockInterface $clock;
 
@@ -35,6 +44,8 @@ readonly class AuthService extends Service
     {
         parent::__construct($pdo);
         $this->userRepository = new UserRepository($pdo);
+        $this->userTokenRepository = new UserTokenRepository($pdo);
+        $this->mailService = new MailService();
         $this->userService = new UserService($pdo);
         $this->clock = new Clock();
     }
@@ -51,24 +62,11 @@ readonly class AuthService extends Service
         setcookie('remember_me', '', time() - 3600, '/', '', true, true);
     }
 
-    /**
-     * @throws RandomException
-     */
-    public function setSessionAs(User $user, bool $rememberMe = false): void
+    public function invalidateGlobalSession(User|int $user): void
     {
-        $_SESSION['user'] = UserLoginContextDTO::fromUser($user);
+        if ($user instanceof User) $user = $user->id ?? throw new UnexpectedValueException();
 
-        if ($rememberMe) {
-            $tokenData = $this->userService->createRememberMeToken($user);
-            $cookieValue = $tokenData['selector'] . ':' . $tokenData['token'];
-            setcookie('remember_me', $cookieValue, [
-                'expires' => time() + 30 * 24 * 60 * 60,
-                'path' => '/',
-                'httponly' => true,
-                'secure' => true,
-                'samesite' => 'Strict'
-            ]);
-        }
+        $this->userRepository->resetSession($user);
     }
 
     public function generateTotp(): OTPGenerateDTO
@@ -96,13 +94,51 @@ readonly class AuthService extends Service
         return $otp->verify($code);
     }
 
-    /**
-     * @throws RandomException
-     */
+    public function setSessionAs(User $user, bool $rememberMe = false): void
+    {
+        $_SESSION['user'] = UserLoginContextDTO::fromUser($user);
+
+        if ($rememberMe) {
+            $token = $this->createRememberMeToken($user);
+            $cookieValue = $token->selector . ':' . $token->token;
+            setcookie('remember_me', $cookieValue, [
+                'expires' => time() + 30 * 24 * 60 * 60,
+                'path' => '/',
+                'httponly' => true,
+                'secure' => true,
+                'samesite' => 'Strict'
+            ]);
+        }
+    }
+
+    public function createRememberMeToken(User $user): UserToken
+    {
+        assert($user->id !== null);
+        $this->userTokenRepository->deleteByUserAndType($user->id, UserTokenType::REMEMBER_ME);
+
+        $tokenData = UserTokenGenerateDTO::generate('P30D');
+
+        $token = $tokenData->toUserToken($user, UserTokenType::REMEMBER_ME);
+        $this->userTokenRepository->createToken($token);
+
+        return $token;
+    }
+
+    public function getTokenBySelector(string $selector, UserTokenType $type): ?UserToken
+    {
+        $qb = UserTokenQuery::withMinimalDetails();
+        $qb->where(UserTokenCriteria::bySelector()
+            ->and(UserTokenCriteria::byType())
+            ->and(UserTokenCriteria::notExpired()))
+            ->bind(':selector', $selector)
+            ->bind(':type', $type->name);
+        return $this->userTokenRepository->getOne($qb);
+    }
+
     public function loginWithRememberMe(): bool
     {
         [$selector, $token] = explode(':', $_COOKIE['remember_me']);
-        $userToken = $this->userService->getTokenBySelector($selector, UserTokenType::REMEMBER_ME);
+        $userToken = $this->getTokenBySelector($selector, UserTokenType::REMEMBER_ME);
 
         if ($userToken === null)
             return false;
@@ -163,9 +199,6 @@ readonly class AuthService extends Service
         $this->userRepository->insert($user);
     }
 
-    /**
-     * @throws RandomException
-     */
     public function login(UserLoginDTO $dto): LoginResult
     {
         $qb = UserQuery::asProfile();
@@ -196,6 +229,90 @@ readonly class AuthService extends Service
     public function logout(): void
     {
         $this->invalidateSession();
+    }
+
+    /**
+     * @param string $email
+     * @return void
+     */
+    public function requestResetPassword(string $email): void
+    {
+        $qb = UserQuery::withMinimalDetails();
+        $qb->where(UserCriteria::byEmail())
+            ->bind(':email', $email);
+
+        $user = $this->userRepository->getOne($qb);
+        if ($user === null)
+            return;
+
+        assert($user->id !== null);
+        $this->userTokenRepository->deleteByUserAndType($user->id, UserTokenType::RESET_PASSWORD);
+
+        $tokenData = UserTokenGenerateDTO::generate('PT1H');
+
+        $token = $tokenData->toUserToken($user, UserTokenType::RESET_PASSWORD);
+        $this->userTokenRepository->createToken($token);
+
+        $url = $this->getSiteUrl() . "/reset-password?selector=$token->selector&token=$tokenData->token";
+
+        $subject = 'Reset your password';
+        $body = View::render('email/reset_password.php', ['user' => $user, 'url' => $url]);
+        $this->mailService->sendMail($user->email, $subject, $body);
+    }
+
+    /**
+     * @throws ForbiddenException
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     */
+    public function changePassword(int $userId, string $oldPassword, string $newPassword): void
+    {
+        $context = $this->getSessionContext();
+        if ($context === null)
+            throw new UnauthorizedException();
+
+        $user = $this->userService->getPlainUser($userId);
+        if ($user === null)
+            throw new NotFoundException();
+
+        if (!password_verify($oldPassword, $user->hashedPassword))
+            throw new UnauthorizedException();
+
+        if (!$this->userService->canModify($context, $user))
+            throw new ForbiddenException();
+
+        $user->hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        $this->userRepository->update($user);
+        $this->invalidateGlobalSession($user);
+    }
+
+    /**
+     * Reset password using selector + token.
+     *
+     * @throws NotFoundException
+     * @throws UnauthorizedException
+     */
+    public function resetPassword(string $selector, string $token, string $newPassword): void
+    {
+        $userToken = $this->getTokenBySelector($selector, UserTokenType::RESET_PASSWORD);
+        if ($userToken === null)
+            throw new NotFoundException;
+
+        assert($userToken->id !== null);
+        assert($userToken->user->id !== null);
+        if (!password_verify($token, $userToken->token))
+            throw new UnauthorizedException();
+
+        $user = $this->userService->getPlainUser($userToken->user->id);
+        if ($user === null)
+            throw new NotFoundException;
+
+        assert($user->id !== null);
+        $user->hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        $this->userRepository->update($user);
+        $this->userRepository->resetSession($user->id);
+
+        $this->userTokenRepository->deleteById($userToken->id);
     }
 
     /**
