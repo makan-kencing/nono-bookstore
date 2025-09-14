@@ -55,11 +55,11 @@ $context = AuthService::getLoginContext();
     <div>
         <nav class="contents">
             <ul id="store-categories" class="bar-list">
-                <li><a href="">Bestsellers</a></li>
-                <li><a href="">Fiction</a></li>
-                <li><a href="">Non-Fiction</a></li>
-                <li><a href="">Young Adults</a></li>
-                <li><a href="">Children's</a></li>
+                <li><a href="/books/search/?category_id=10">Comics, Graphic</a></li>
+                <li><a href="/books/search/?category_id=2">Fiction</a></li>
+                <li><a href="/books/search/?category_id=7">Non-Fiction</a></li>
+                <li><a href="/books/search/?category_id=9">Young Adults</a></li>
+                <li><a href="/books/search/?category_id=8">Children's</a></li>
             </ul>
         </nav>
     </div>

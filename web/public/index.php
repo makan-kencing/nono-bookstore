@@ -68,6 +68,8 @@ $controllers = [
     'App\Controller\Web\WishlistController',
     'App\Controller\Web\MapController',
     'App\Controller\Web\ResetPasswordPageController',
+    'App\Controller\Web\AboutMeController',
+
 ];
 $router = new Router($pdo, $view);
 foreach ($controllers as $controller) {

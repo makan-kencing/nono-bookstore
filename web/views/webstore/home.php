@@ -64,8 +64,8 @@ $template = new Template(
 
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr)); /* 关键：固定 5 列 */
-            gap: 2rem;  /* 卡片间距 */
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 2rem;
         }
 
         .product-grid .book-card { width: 100%; }
