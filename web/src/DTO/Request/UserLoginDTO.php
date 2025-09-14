@@ -30,7 +30,7 @@ readonly class UserLoginDTO extends RequestDTO
             return new self(
                 $json['email'],
                 $json['password'],
-                $json['remember_me'] ?? false,
+                array_key_exists('remember_me', $json),
                 $json['otp'] ?? null
             );
         } catch (Throwable) {

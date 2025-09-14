@@ -27,7 +27,7 @@ ob_start();
                     </div>
                     <div class="form-options">
                         <label class="remember-me">
-                            <input type="checkbox" id="remember" name="remember">
+                            <input type="checkbox" name="remember_me">
                             Remember me
                         </label>
                         <a href="#" class="forgot-password">Forgot password?</a>
@@ -53,11 +53,7 @@ ob_start();
             e.preventDefault();
             console.log(e);
 
-            const formData = new FormData(e.target);
-            const loginData = Object.fromEntries(formData.entries());
-
-            loginData.rememberMe = document.getElementById('remember').checked;
-            delete loginData.remember;
+            const data = new FormData(e.target);
 
             $.ajax(
                 e.target.action,
@@ -65,7 +61,7 @@ ob_start();
                 method: e.target.method,
                 contentType: "application/json",
                 dataType: "text",
-                data: JSON.stringify(loginData),
+                data: JSON.stringify(Object.fromEntries(data.entries())),
                 error: (xhr) => {
                     switch (xhr.status) {
                         case 401:

@@ -23,6 +23,7 @@ use App\Repository\UserRepository;
 use OTPHP\TOTP;
 use PDO;
 use Psr\Clock\ClockInterface;
+use Random\RandomException;
 
 readonly class AuthService extends Service
 {
@@ -50,9 +51,24 @@ readonly class AuthService extends Service
         setcookie('remember_me', '', time() - 3600, '/', '', true, true);
     }
 
-    public function setSessionAs(User $user): void
+    /**
+     * @throws RandomException
+     */
+    public function setSessionAs(User $user, bool $rememberMe = false): void
     {
         $_SESSION['user'] = UserLoginContextDTO::fromUser($user);
+
+        if ($rememberMe) {
+            $tokenData = $this->userService->createRememberMeToken($user);
+            $cookieValue = $tokenData['selector'] . ':' . $tokenData['token'];
+            setcookie('remember_me', $cookieValue, [
+                'expires' => time() + 30 * 24 * 60 * 60,
+                'path' => '/',
+                'httponly' => true,
+                'secure' => true,
+                'samesite' => 'Strict'
+            ]);
+        }
     }
 
     public function generateTotp(): OTPGenerateDTO
@@ -69,44 +85,63 @@ readonly class AuthService extends Service
         );
     }
 
+    /**
+     * @param non-empty-string $secret
+     * @param non-empty-string $code
+     * @return bool
+     */
     public function verifyTotp(string $secret, string $code): bool
     {
         $otp = TOTP::createFromSecret($secret, $this->clock);
         return $otp->verify($code);
     }
 
-    public function refreshUserContext(): ?UserLoginContextDTO
+    /**
+     * @throws RandomException
+     */
+    public function loginWithRememberMe(): bool
     {
-        $context = self::getLoginContext();
-        if ($context !== null) {
-            $user = $this->userService->getUserForProfile($context->id);
-            if ($user === null || $user->isBlocked) {
-                $this->invalidateSession();
-                return null;
-            }
-            $this->setSessionAs($user);
-            return self::getLoginContext();
-        }
+        [$selector, $token] = explode(':', $_COOKIE['remember_me']);
+        $userToken = $this->userService->getTokenBySelector($selector, UserTokenType::REMEMBER_ME);
 
-        // Check Remember Me cookie
-        if (!empty($_COOKIE['remember_me'])) {
-            [$selector, $token] = explode(':', $_COOKIE['remember_me']);
-            $userToken = $this->userService->getTokenBySelector($selector, UserTokenType::REMEMBER_ME);
+        if ($userToken === null)
+            return false;
 
-            if ($userToken !== null && password_verify($token, $userToken->token)) {
-                $user = $this->userService->getPlainUser($userToken->user->id);
-                if ($user !== null && !$user->isBlocked) {
-                    $this->setSessionAs($user);
-                    return self::getLoginContext();
-                }
-            }
-            // Invalid token, remove cookie
-            setcookie('remember_me', '', time() - 3600, '/', '', true, true);
-        }
+        if (!password_verify($token, $userToken->token))
+            return false;
 
-        return null;
+        assert($userToken->user->id !== null);
+        $user = $this->userService->getPlainUser($userToken->user->id);
+        if ($user === null || $user->isBlocked)
+            return false;
+
+        $this->setSessionAs($user);
+        return true;
     }
 
+    public function refreshUserContext(): ?UserLoginContextDTO
+    {
+        $old = self::getLoginContext();
+        if ($old === null) {
+            if (!empty($_COOKIE['remember_me']))
+                if ($this->loginWithRememberMe())
+                    return self::getLoginContext();
+            return null;
+        }
+
+        $user = $this->userService->getUserForProfile($old->id);
+        if ($user === null || $user->isBlocked) {
+            $this->invalidateSession();
+            return null;
+        }
+
+        $this->setSessionAs($user);
+        return self::getLoginContext();
+    }
+
+    /**
+     * @throws ConflictException
+     */
     public function register(UserRegisterDTO $dto): void
     {
         if ($this->userService->checkUsernameExists($dto->username))
@@ -124,6 +159,9 @@ readonly class AuthService extends Service
         $this->userRepository->insert($user);
     }
 
+    /**
+     * @throws RandomException
+     */
     public function login(UserLoginDTO $dto): LoginResult
     {
         $qb = UserQuery::asProfile();
@@ -146,20 +184,7 @@ readonly class AuthService extends Service
         if (!password_verify($dto->password, $user->hashedPassword))
             return LoginResult::INVALID;
 
-        $this->setSessionAs($user);
-
-        // Remember Me
-        if (!empty($dto->rememberMe)) {
-            $tokenData = $this->userService->createRememberMeToken($user);
-            $cookieValue = $tokenData['selector'] . ':' . $tokenData['token'];
-            setcookie('remember_me', $cookieValue, [
-                'expires' => time() + 30 * 24 * 60 * 60,
-                'path' => '/',
-                'httponly' => true,
-                'secure' => true,
-                'samesite' => 'Strict'
-            ]);
-        }
+        $this->setSessionAs($user, $dto->rememberMe);
 
         return LoginResult::SUCCESS;
     }
@@ -169,11 +194,15 @@ readonly class AuthService extends Service
         $this->invalidateSession();
     }
 
+    /**
+     * @throws UnauthorizedException
+     */
     public function register2FA(OTPRegisterDTO $dto): bool
     {
         $context = $this->getSessionContext();
         if ($context === null)
             throw new UnauthorizedException();
+
         if (!$this->verifyTotp($dto->secret, $dto->code))
             return false;
 
@@ -196,6 +225,7 @@ readonly class AuthService extends Service
         $qb = UserQuery::withMinimalDetails();
         $qb->where(UserCriteria::byId(alias: 'u'))
             ->bind(':id', $context->id);
+
         $user = $this->userRepository->getOne($qb);
         if ($user === null)
             throw new NotFoundException();
