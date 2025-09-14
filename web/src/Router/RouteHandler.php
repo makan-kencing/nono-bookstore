@@ -41,7 +41,7 @@ readonly class RouteHandler
         if ($this->authConstraint === null)
             return true;
 
-        $context = $controller->refreshUserContext();;
+        $context = $controller->getSessionContext();
         if ($context == null) {
             if ($this->authConstraint->redirect)
                 $controller->redirect('/login?redirect=' . urlencode($_SERVER['REQUEST_URI']));
@@ -69,6 +69,7 @@ readonly class RouteHandler
         try {
             $controller = new $this->controller($pdo, $view);
 
+            $controller->refreshUserContext();
             if ($this->authConstraint)
                 if (!$this->handleAuthMiddleware($controller))
                     return;
