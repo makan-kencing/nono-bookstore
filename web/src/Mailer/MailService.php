@@ -30,6 +30,12 @@ readonly class MailService
         );
     }
 
+    /**
+     * @param string $to
+     * @param string $subject
+     * @param string $body
+     * @return bool
+     */
     public function sendMail(string $to, string $subject, string $body): bool
     {
         try {

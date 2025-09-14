@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Core\View;
 use App\Entity\Book\BookImage;
 use App\Entity\Cart\Cart;
 use App\Entity\Cart\CartItem;
@@ -15,6 +16,7 @@ use App\Entity\User\Address;
 use App\Exception\ForbiddenException;
 use App\Exception\PaymentRequiredException;
 use App\Exception\UnprocessableEntityException;
+use App\Mailer\MailService;
 use App\Repository\OrderRepository;
 use DateTime;
 use PDO;
@@ -34,6 +36,8 @@ readonly class CheckoutService extends Service
     private CartService $cartService;
     private InventoryService $inventoryService;
 
+    private MailService $mailService;
+
     public function __construct(PDO $pdo)
     {
         parent::__construct($pdo);
@@ -42,6 +46,7 @@ readonly class CheckoutService extends Service
         $this->inventoryService = new InventoryService($pdo);
         $this->stripe = new StripeClient(getenv('STRIPE_SK_KEY')
             ?: throw new RuntimeException('No STRIPE_SK_KEY'));
+        $this->mailService = new MailService();
     }
 
     /**
@@ -133,6 +138,8 @@ readonly class CheckoutService extends Service
             $this->cartService->clearCart($cart);
 
             $this->pdo->commit();
+
+            $this->sendInvoiceEmail($order);
         } catch (Throwable $e) {
             $this->pdo->rollBack();
             throw $e;
@@ -181,4 +188,16 @@ readonly class CheckoutService extends Service
 
         return $order;
     }
+
+    private function sendInvoiceEmail(Order $order): void
+    {
+        $html = View::render('webstore/pdf/invoice.php', ['order' => $order]);
+
+        $this->mailService->sendMail(
+            $order->user->email,
+            "Invoice for Order #" . $order->refNo,
+            $html
+        );
+    }
+
 }
