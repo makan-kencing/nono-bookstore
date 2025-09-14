@@ -17,7 +17,7 @@ if (getenv('APP_ENV') == 'dev') {
 } else {
     $whoops->pushHandler(function (Throwable $_) {
         http_response_code(500);
-        echo View::render('webstore/error/500.php');
+        echo View::render('webstore/errors/500.php');
 
         return Handler::QUIT;
     });
