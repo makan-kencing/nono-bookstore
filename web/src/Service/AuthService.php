@@ -14,6 +14,8 @@ use App\Entity\User\User;
 use App\Entity\User\UserRole;
 use App\Entity\User\UserTokenType;
 use App\Exception\ConflictException;
+use App\Exception\ForbiddenException;
+use App\Exception\NotFoundException;
 use App\Exception\UnauthorizedException;
 use App\Repository\Query\UserCriteria;
 use App\Repository\Query\UserQuery;
@@ -177,5 +179,33 @@ readonly class AuthService extends Service
 
         $this->userRepository->setTotpSecret($context->id, $dto->secret);
         return true;
+    }
+
+    /**
+     * @param non-empty-string $code
+     * @throws UnauthorizedException
+     * @throws ForbiddenException
+     * @throws NotFoundException
+     */
+    public function unregister2FA(string $code): void
+    {
+        $context = $this->getSessionContext();
+        if ($context === null)
+            throw new UnauthorizedException();
+
+        $qb = UserQuery::withMinimalDetails();
+        $qb->where(UserCriteria::byId(alias: 'u'))
+            ->bind(':id', $context->id);
+        $user = $this->userRepository->getOne($qb);
+        if ($user === null)
+            throw new NotFoundException();
+
+        if ($user->totpSecret === null || strlen($user->totpSecret) === 0)
+            return;
+
+        if (!$this->verifyTotp($user->totpSecret, $code))
+            throw new ForbiddenException();
+
+        $this->userRepository->setTotpSecret($context->id, null);
     }
 }

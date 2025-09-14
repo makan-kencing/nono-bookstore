@@ -80,7 +80,7 @@ readonly class UserRepository extends Repository
         ]);
     }
 
-    public function setTotpSecret(int $userId, string $secret): void
+    public function setTotpSecret(int $userId, ?string $secret): void
     {
         $stmt = $this->conn->prepare('
             UPDATE user

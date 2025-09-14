@@ -9,8 +9,11 @@ use App\DTO\Request\UserLoginDTO;
 use App\DTO\Request\UserRegisterDTO;
 use App\Exception\BadRequestException;
 use App\Exception\ConflictException;
+use App\Exception\ForbiddenException;
+use App\Exception\NotFoundException;
 use App\Exception\UnauthorizedException;
 use App\Exception\UnprocessableEntityException;
+use App\Router\Method\DELETE;
 use App\Router\Method\POST;
 use App\Router\Path;
 use App\Router\RequireAuth;
@@ -85,6 +88,25 @@ readonly class AuthController extends ApiController
 
         if (!$this->authService->register2FA($dto))
             throw new UnauthorizedException();
+
+        http_response_code(204);
+    }
+
+    /**
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     * @throws ForbiddenException
+     * @throws BadRequestException
+     */
+    #[DELETE]
+    #[RequireAuth]
+    #[Path('/2fa')]
+    public function remove2FA(): void
+    {
+        $json = self::getJsonBody();
+
+        $code = $json['code'] ?? throw new BadRequestException();
+        $this->authService->unregister2FA($code);
 
         http_response_code(204);
     }
