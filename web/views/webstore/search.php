@@ -51,12 +51,12 @@ $template = new Template(
                     <summary>Format</summary>
 
                     <?php if ($search->format !== null): ?>
-                        <input type="hidden" name="format" value="<?= $search->format ?>">
+                        <input type="hidden" name="format" value="<?= $search->format->name ?>">
                     <?php endif; ?>
 
                     <ul>
                         <?php foreach (CoverType::cases() as $type): ?>
-                            <li><a><?= $type->title() ?></a></li>
+                            <li><a href="<?= $search->withCoverType($type)->toQueryString() ?>"><?=$type->title()?></a></li>
                         <?php endforeach; ?>
                     </ul>
                 </details>
