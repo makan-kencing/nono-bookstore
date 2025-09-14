@@ -67,6 +67,7 @@ readonly class AuthService extends Service
         if ($user instanceof User) $user = $user->id ?? throw new UnexpectedValueException();
 
         $this->userRepository->resetSession($user);
+        $this->userTokenRepository->deleteByUserAndType($user, UserTokenType::REMEMBER_ME);
     }
 
     public function generateTotp(): OTPGenerateDTO
