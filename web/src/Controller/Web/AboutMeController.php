@@ -2,7 +2,6 @@
 
 namespace App\Controller\Web;
 
-use App\Controller\Web\WebController;
 use App\Router\Method\GET;
 use App\Router\Path;
 
@@ -10,9 +9,8 @@ use App\Router\Path;
 readonly class AboutMeController extends WebController
 {
     #[GET]
-    public function viewMap(): void
+    public function viewAbout(): void
     {
-
-        echo $this->render('webstore/aboutMe.php');
+        echo $this->render('webstore/about.php');
     }
 }
