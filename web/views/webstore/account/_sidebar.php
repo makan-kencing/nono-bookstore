@@ -24,6 +24,7 @@ assert(isset($currentMenu) && is_int($currentMenu));
                     <li><a href="/account" class="<?= $currentMenu === 0 ? 'active-link' : '' ?>">Profile</a></li>
                     <li><a href="/account/addresses" class="<?= $currentMenu === 1 ? 'active-link' : '' ?>">Addresses</a></li>
                     <li><a href="/account/change-password" class="<?= $currentMenu === 2 ? 'active-link' : '' ?>">Change Password</a></li>
+                    <li><a href="/account/2fa" class="<?= $currentMenu === 3 ? 'active-link' : '' ?>">Register 2FA</a></li>
                 </ul>
             </li>
             <li><a href="/orders"><i class="fas fa-clipboard-list"></i> My Purchase</a></li>

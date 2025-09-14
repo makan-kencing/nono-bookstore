@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Api;
 
+use App\DTO\Request\OTPRegisterDTO;
 use App\DTO\Request\UserLoginDTO;
 use App\DTO\Request\UserRegisterDTO;
 use App\Exception\BadRequestException;
@@ -13,6 +14,7 @@ use App\Exception\UnprocessableEntityException;
 use App\Router\Method\POST;
 use App\Router\Path;
 use App\Router\RequireAuth;
+use App\Service\LoginResult;
 
 #[Path('/api')]
 readonly class AuthController extends ApiController
@@ -64,6 +66,25 @@ readonly class AuthController extends ApiController
     public function logout(): void
     {
         $this->authService->logout();
+
+        http_response_code(204);
+    }
+
+    /**
+     * @throws UnauthorizedException
+     * @throws UnprocessableEntityException
+     * @throws BadRequestException
+     */
+    #[POST]
+    #[RequireAuth]
+    #[Path('/register-2fa')]
+    public function register2FA(): void
+    {
+        $dto = OTPRegisterDTO::jsonDeserialize($_POST);
+        $dto->validate();
+
+        if (!$this->authService->register2FA($dto))
+            throw new UnauthorizedException();
 
         http_response_code(204);
     }

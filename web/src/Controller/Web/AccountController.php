@@ -77,7 +77,8 @@ readonly class AccountController extends WebController
      */
     #[GET]
     #[Path('/addresses')]
-    public function viewAddresses(): void{
+    public function viewAddresses(): void
+    {
         $context = $this->getSessionContext();
         if ($context === null)
             throw new UnauthorizedException();
@@ -90,4 +91,28 @@ readonly class AccountController extends WebController
             'webstore/account/addresses.php', ['user' => $user]
         );
     }
+
+    /**
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     */
+    #[GET]
+    #[Path('/2fa')]
+    public function add2FA(): void
+    {
+        $context = $this->getSessionContext();
+        if ($context === null)
+            throw new UnauthorizedException();
+
+        $user = $this->userService->getUserForProfile($context->id);
+        if ($user === null)
+            throw new NotFoundException();
+
+        $otp = $this->authService->generateTotp();
+
+        echo $this->render('webstore/account/add_otp.php',
+            ['user' => $user, 'otp' => $otp]
+        );
+    }
+
 }
