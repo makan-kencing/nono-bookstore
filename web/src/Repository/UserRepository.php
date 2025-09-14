@@ -79,4 +79,17 @@ readonly class UserRepository extends Repository
             ':user_id' => $userId
         ]);
     }
+
+    public function setTotpSecret(int $userId, string $secret): void
+    {
+        $stmt = $this->conn->prepare('
+            UPDATE user
+            SET totp_secret = :secret
+            WHERE id = :user_id
+        ');
+        $stmt->execute([
+            ':user_id' => $userId,
+            ':secret' => $secret
+        ]);
+    }
 }

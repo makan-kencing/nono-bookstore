@@ -46,8 +46,14 @@ readonly class AuthController extends ApiController
         $dto = UserLoginDTO::jsonDeserialize(self::getJsonBody());
         $dto->validate();
 
-        if (!$this->authService->login($dto))
-            throw new UnauthorizedException();
+        switch ($this->authService->login($dto)) {
+            case LoginResult::INVALID:
+                throw new UnauthorizedException();
+            case LoginResult::TWO_FACTOR_REQUIRED:
+                throw new UnauthorizedException(['2fa' => true]);
+            case LoginResult::SUCCESS:
+                break;
+        }
 
         http_response_code(200);
     }
