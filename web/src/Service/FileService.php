@@ -20,8 +20,6 @@ use RuntimeException;
  */
 readonly class FileService extends Service
 {
-    public const UPLOAD_DIR = '/var/www/webapp/public/uploads/';
-
     public const ACCEPTABLE_IMAGES = [
         'image/jpeg',
         'image/png',
@@ -29,11 +27,13 @@ readonly class FileService extends Service
     ];
 
     private FileRepository $fileRepository;
+    private string $uploadDir;
 
     public function __construct(PDO $pdo)
     {
         parent::__construct($pdo);
         $this->fileRepository = new FileRepository($pdo);
+        $this->uploadDir = getenv('APP_UPLOAD_DIR');
     }
 
     public function uuidv4(): string
@@ -82,10 +82,10 @@ readonly class FileService extends Service
         $this->validateImage($file);
 
         $filename = $this->uuidv4() . '.' . pathinfo($file['name'], PATHINFO_EXTENSION);
-        $filepath = self::UPLOAD_DIR . $filename;
+        $filepath = $this->uploadDir . $filename;
 
-        if (!file_exists(self::UPLOAD_DIR))
-            mkdir(self::UPLOAD_DIR, 0777, true);
+        if (!file_exists($this->uploadDir))
+            mkdir($this->uploadDir, 0777, true);
 
         if (!move_uploaded_file($file['tmp_name'], $filepath))
             throw new ConflictException();
@@ -116,6 +116,8 @@ readonly class FileService extends Service
             throw new UnprocessableEntityException(['message' => 'Unsupported filetype. Only supports: ' . implode(', ', self::ACCEPTABLE_IMAGES)]);
 
         $parsed = getimagesize($file['tmp_name']);
+        if (!$parsed)
+            throw new UnprocessableEntityException();
 
         if (!in_array($parsed['mime'], self::ACCEPTABLE_IMAGES))
             throw new UnprocessableEntityException(['message' => 'Unsupported filetype. Only supports: ' . implode(', ', self::ACCEPTABLE_IMAGES)]);
