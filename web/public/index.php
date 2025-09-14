@@ -10,11 +10,11 @@ use App\Exception\WebException;
 use App\Exception\Wrapper\WebExceptionWrapper;
 use App\Router\Router;
 
-date_default_timezone_set(getenv('TIMEZONE'));
-session_start();
-
 $view = new View();
 $view::$viewPath = __DIR__ . "/../views";
+
+date_default_timezone_set(getenv('TIMEZONE'));
+session_start();
 
 $pdo = new PDO(
     'mysql:dbname=' . getenv('DATABASE_NAME') . ';host=' . getenv('DATABASE_HOST') . ';port=' . getenv('DATABASE_PORT'),
