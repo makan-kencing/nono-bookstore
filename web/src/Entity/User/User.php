@@ -35,6 +35,8 @@ class User extends Entity
 
     public ?string $totpSecret;
 
+    public string $sessionFlag;
+
     #[OneToOne]
     public ?File $image;
 

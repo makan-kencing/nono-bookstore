@@ -9,10 +9,13 @@ create or replace table user
     is_verified        bit                                      default b'0'   not null,
     is_blocked         bit                                      default b'0'   not null,
     totp_secret        char(103)                                               null,
+    session_flag       uuid                                     default uuid() not null,
     image_id           bigint unsigned                                         null,
     default_address_id bigint unsigned                                         null,
     constraint email
         unique (email),
+    constraint session_flag
+        unique (session_flag),
     constraint username
         unique (username),
     constraint user_ibfk_1
