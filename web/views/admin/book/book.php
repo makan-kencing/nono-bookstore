@@ -204,7 +204,7 @@ ob_start();
                                         <form id="add-inventory"
                                               action="/admin/book/<?= $book->id ?>/stock"
                                               style="display: contents">
-                                            <td><?= $inventory->location->title() ?></td>
+                                            <td><?= $location->title() ?></td>
                                             <td>
                                                 <label>
                                                     <input type="hidden" name="location" value="<?= $location->name ?>">
