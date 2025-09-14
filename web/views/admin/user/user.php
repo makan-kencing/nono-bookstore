@@ -118,7 +118,8 @@ ob_start();
                     },
                     success:(data, textStatus, jqXHR)=>{
                         console.log(data, textStatus, jqXHR)
-                        prompt("Done update");
+                        alert("Done update");
+                        window.location.reload();
                     }
                 }
             );
@@ -145,7 +146,8 @@ ob_start();
                     },
                     success:(data, textStatus, jqXHR)=>{
                         console.log(data, textStatus, jqXHR)
-                        prompt("Done update");
+                        alert("Done update");
+                        window.location.reload();
                     }
                 }
             );
