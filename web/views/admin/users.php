@@ -15,53 +15,29 @@ ob_start();
 ?>
 
     <main>
-        <div>
-            <h2>Users</h2>
 
-            <?= View::render('_component/_admin_table_controls.php', ['ajaxUrl' => '/api/user/search/']) ?>
-        </div>
-    </main>
+
 
     <section class="profile-container">
         <div class="profile-card">
-            <div class="table-toolbar">
-                <button class="add btn btn-primary">+ Add</button>
-            </div>
-
-            <div class="table-wrapper">
+<!--            <div class="table-wrapper">-->
                 <table class="user-table">
-                    <thead>
-                    <tr>
-                        <th>Num</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Verified</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
                     <tbody>
+                    <tr>
+                        <td>
+                            <div>
+                                <h2>Users</h2>
+                                <?= View::render('_component/_admin_table_controls.php', ['ajaxUrl' => '/api/user/search/']) ?>
+                            </div>
+                        </td>
+                    </tr>
 
                     </tbody>
                 </table>
-
-                <div>
-                    Page <?= $page->page ?> of <?= (int) (($count - 1) / $page->pageSize) + 1 ?>
-                    Showing <?= min($page->pageSize, count($users)) ?> of <?= $count ?>
-                </div>
-
-                <div>
-                    <?php if ($page->page > 1 ): ?>
-                        <a style="float: left" href="/admin/users?page=<?= $page->page - 1 ?>&page_size=<?= $page->pageSize ?>">Previous</a>
-                    <?php endif; ?>
-
-                    <?php if ($count > $page->page * $page->pageSize): ?>
-                        <a style="float: right" href="/admin/users?page=<?= $page->page + 1 ?>&page_size=<?= $page->pageSize ?>">Next</a>
-                    <?php endif; ?>
-                </div>
-            </div>
+<!--            </div>-->
         </div>
     </section>
+    </main>
 
 <?= View::render('admin/_component/_add_user_dialog.php'); ?>
 
@@ -76,7 +52,7 @@ ob_start();
             const data = new FormData(e.target);
 
             $.ajax(
-                e.target.action,
+                '/api/user',
                 {
                     method: 'POST',
                     contentType: "application/json",
@@ -89,6 +65,9 @@ ob_start();
                                 break;
                             case 403:
                                 alert("You do not have permission to create this user.");
+                                break;
+                            case 409:
+                                alert("username or email is taken .");
                                 break;
                             case 422:
                                 alert("Your email method error.");
@@ -103,7 +82,6 @@ ob_start();
                 }
             );
         });
-
 
     </script>
 
