@@ -8,6 +8,8 @@ assert(isset($ajaxUrl) && is_string($ajaxUrl));
 
 <form id="search">
     <div style="display: flex; align-items: center">
+
+
         <button id="add" type="button">+ Add</button>
 
         <button type="submit">Refresh</button>

@@ -22,6 +22,7 @@ $dialog = new Template(
 ?>
 
 <?php $dialog->start(); ?>
+
 <div>
     <label for="username">Username</label>
     <input type="text" id="username" name="username">
@@ -45,4 +46,5 @@ $dialog = new Template(
         <?php endforeach; ?>
     </select>
 </div>
+
 <?= $dialog->end() ?>
