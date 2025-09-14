@@ -2,6 +2,7 @@
 
 namespace App\Controller\Web;
 
+use App\Exception\NotFoundException;
 use App\Router\Method\GET;
 use App\Router\Path;
 
@@ -14,9 +15,8 @@ readonly class ResetPasswordPageController extends WebController
         $selector = $_GET['selector'] ?? '';
         $token = $_GET['token'] ?? '';
 
-        if (!$selector || !$token) {
-            die('Invalid reset link');
-        }
+        if (!$selector || !$token)
+            throw new NotFoundException();
 
         echo $this->render(
             'webstore/account/reset-password.php',

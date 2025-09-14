@@ -7,11 +7,13 @@ namespace App\Controller\Api;
 use App\Core\View;
 use App\DTO\Request\ResetPasswordDTO;
 use App\Exception\BadRequestException;
+use App\Exception\UnprocessableEntityException;
 use App\Router\Method\POST;
 use App\Router\Method\PUT;
 use App\Router\Path;
 use App\Service\UserService;
 use PDO;
+use Random\RandomException;
 
 #[Path('/api/password-resets')]
 readonly class PasswordResetController extends ApiController
@@ -24,15 +26,19 @@ readonly class PasswordResetController extends ApiController
         $this->userService = new UserService($pdo);
     }
 
+    /**
+     * @throws BadRequestException
+     * @throws RandomException
+     * @throws UnprocessableEntityException
+     */
     #[POST]
     public function requestReset(): void
     {
         $data = self::getJsonBody();
-        $email = $data['email'] ?? null;
+        $email = $data['email'] ?? throw new BadRequestException();
 
-        if ($email === null || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new BadRequestException;
-        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL))
+            throw new UnprocessableEntityException();
 
         $this->userService->requestResetPassword($email);
 
