@@ -43,6 +43,7 @@ use DateInterval;
 use DateTime;
 use PDO;
 use PDOException;
+use Random\RandomException;
 
 readonly class UserService extends Service
 {
@@ -125,6 +126,27 @@ readonly class UserService extends Service
         $qb->where(UserTokenCriteria::bySelector() . ' AND ' . UserTokenCriteria::notExpired())
             ->bind(':selector', $selector);
         return $this->userTokenRepository->getOne($qb);
+    }
+
+    /**
+     * @param string $expiryInterval
+     * @return array
+     * @throws RandomException
+     * @throws \Exception
+     */
+    private function generateToken(string $expiryInterval): array
+    {
+        $selector = bin2hex(random_bytes(6));
+        $token = bin2hex(random_bytes(32));
+        $hashedToken = password_hash($token, PASSWORD_DEFAULT);
+        $expiresAt = (new DateTime())->add(new DateInterval($expiryInterval));
+
+        return [
+            'selector' => $selector,
+            'token' => $token,
+            'hashedToken' => $hashedToken,
+            'expiresAt' => $expiresAt,
+        ];
     }
 
     /**
@@ -383,43 +405,37 @@ readonly class UserService extends Service
     /**
      * @param string $email
      * @return void
-     * @throws \Random\RandomException
+     * @throws RandomException
      */
     public function requestResetPassword(string $email): void
     {
         $user = $this->getUserForResetPassword($email);
-        if ($user === null)
-            return;
+        if ($user === null) return;
 
-        // delete existing reset tokens
+        // Delete existing reset tokens
         $this->userTokenRepository->deleteByUserAndType($user->id, UserTokenType::RESET_PASSWORD->name);
 
-        // generate selector + token
-        $selector = bin2hex(random_bytes(6));
-        $token = bin2hex(random_bytes(32));
-        $hashedToken = password_hash($token, PASSWORD_DEFAULT);
-        $expiresAt = (new DateTime())->add(new DateInterval('PT1H')); // 1 hour validity
+        // Generate new reset token (1 hour validity)
+        $tokenData = $this->generateToken('PT1H');
 
-        // insert
-        $this->userTokenRepository->insertToken(
+        $this->userTokenRepository->createToken(
             $user->id,
             UserTokenType::RESET_PASSWORD->name,
-            $selector,
-            $hashedToken,
-            $expiresAt
+            $tokenData['selector'],
+            $tokenData['hashedToken'],
+            $tokenData['expiresAt']
         );
 
-        // create links
-        $url = "https://localhost" . "/reset-password?selector=$selector&token=$token";
+        $url = "https://localhost/reset-password?selector={$tokenData['selector']}&token={$tokenData['token']}";
 
-        // send email
+        // Send email
         $subject = "Reset your password";
         $body = "
-            <p>Hello {$user->username},</p>
-            <p>You requested a password reset. Click the below links to reset your password:</p>
-            <p><a href='$url'>$url</a></p>
-            <p>If you didn’t request this, you can ignore this email.</p>
-        ";
+        <p>Hello {$user->username},</p>
+        <p>You requested a password reset. Click the link below to reset your password:</p>
+        <p><a href='$url'>$url</a></p>
+        <p>If you didn’t request this, you can ignore this email.</p>
+    ";
         $this->mailService->sendMail($user->email, $subject, $body);
     }
 
@@ -450,11 +466,9 @@ readonly class UserService extends Service
             throw new NotFoundException;
         }
 
-        // update password
         $user->hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
         $this->userRepository->update($user);
 
-        // delete token
         $this->userTokenRepository->deleteById($userToken->id);
     }
 
@@ -488,4 +502,27 @@ readonly class UserService extends Service
             $this->pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         }
     }
+
+    /**
+     * @param User $user
+     * @return array
+     * @throws RandomException
+     */
+    public function createRememberMeToken(User $user): array
+    {
+        $this->userTokenRepository->deleteByUserAndType($user->id, UserTokenType::REMEMBER_ME->name);
+
+        $tokenData = $this->generateToken('P30D'); // 30-day validity
+
+        $this->userTokenRepository->createToken(
+            $user->id,
+            UserTokenType::REMEMBER_ME->name,
+            $tokenData['selector'],
+            $tokenData['hashedToken'],
+            $tokenData['expiresAt']
+        );
+
+        return $tokenData; // token data to store in cookies
+    }
+
 }

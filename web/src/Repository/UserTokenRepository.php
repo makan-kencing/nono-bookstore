@@ -8,7 +8,7 @@ use PDO;
 
 readonly class UserTokenRepository extends Repository
 {
-    public function insertToken(int $userId, string $type, string $selector, string $hashedToken, DateTime $expiresAt): void
+    public function createToken(int $userId, string $type, string $selector, string $hashedToken, DateTime $expiresAt): void
     {
         $stmt = $this->conn->prepare('
             INSERT INTO user_token(user_id, type, selector, token, expires_at)

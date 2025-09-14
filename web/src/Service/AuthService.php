@@ -12,6 +12,7 @@ use App\DTO\Response\OTPGenerateDTO;
 use App\DTO\UserLoginContextDTO;
 use App\Entity\User\User;
 use App\Entity\User\UserRole;
+use App\Entity\User\UserTokenType;
 use App\Exception\ConflictException;
 use App\Exception\UnauthorizedException;
 use App\Repository\Query\UserCriteria;
@@ -43,6 +44,8 @@ readonly class AuthService extends Service
     public function invalidateSession(): void
     {
         unset($_SESSION['user']);
+        // Remove remember me cookie
+        setcookie('remember_me', '', time() - 3600, '/', '', true, true);
     }
 
     public function setSessionAs(User $user): void
@@ -53,7 +56,6 @@ readonly class AuthService extends Service
     public function generateTotp(): OTPGenerateDTO
     {
         $otp = TOTP::generate($this->clock);
-
         $otp->setLabel('Novelty N Nonsense');
 
         return new OTPGenerateDTO(
@@ -65,47 +67,48 @@ readonly class AuthService extends Service
         );
     }
 
-    /**
-     * @param non-empty-string $secret
-     * @param non-empty-string $code
-     * @return bool
-     */
     public function verifyTotp(string $secret, string $code): bool
     {
         $otp = TOTP::createFromSecret($secret, $this->clock);
-
         return $otp->verify($code);
     }
 
     public function refreshUserContext(): ?UserLoginContextDTO
     {
-        // TODO: check remember me
-
-        $old = self::getLoginContext();
-        if ($old === null)
-            return null;
-
-        $user = $this->userService->getUserForProfile($old->id);
-        if ($user === null || $user->isBlocked) {
-            $this->invalidateSession();
-            return null;
+        $context = self::getLoginContext();
+        if ($context !== null) {
+            $user = $this->userService->getUserForProfile($context->id);
+            if ($user === null || $user->isBlocked) {
+                $this->invalidateSession();
+                return null;
+            }
+            $this->setSessionAs($user);
+            return self::getLoginContext();
         }
 
-        $this->setSessionAs($user);
-        return self::getLoginContext();
+        // Check Remember Me cookie
+        if (!empty($_COOKIE['remember_me'])) {
+            [$selector, $token] = explode(':', $_COOKIE['remember_me']);
+            $userToken = $this->userService->getTokenBySelector($selector, UserTokenType::REMEMBER_ME);
+
+            if ($userToken !== null && password_verify($token, $userToken->token)) {
+                $user = $this->userService->getPlainUser($userToken->user->id);
+                if ($user !== null && !$user->isBlocked) {
+                    $this->setSessionAs($user);
+                    return self::getLoginContext();
+                }
+            }
+            // Invalid token, remove cookie
+            setcookie('remember_me', '', time() - 3600, '/', '', true, true);
+        }
+
+        return null;
     }
 
-    /**
-     * @param UserRegisterDTO $dto
-     * @return void
-     * @throws ConflictException
-     */
     public function register(UserRegisterDTO $dto): void
     {
-        // TODO: add conflict message
         if ($this->userService->checkUsernameExists($dto->username))
             throw new ConflictException([]);
-
         if ($this->userService->checkEmailExists($dto->email))
             throw new ConflictException([]);
 
@@ -129,12 +132,10 @@ readonly class AuthService extends Service
         if ($user !== null && $user->totpSecret !== null && strlen($user->totpSecret) !== 0) {
             if ($dto->otp === null || strlen($dto->otp) === 0)
                 return LoginResult::TWO_FACTOR_REQUIRED;
-
             if (!$this->verifyTotp($user->totpSecret, $dto->otp))
                 return LoginResult::TWO_FACTOR_REQUIRED;
         }
 
-        // prevent timing attack even if its a failed login
         if ($user === null || $user->isBlocked) {
             password_verify($dto->password, 'placeholder');
             return LoginResult::INVALID;
@@ -143,12 +144,21 @@ readonly class AuthService extends Service
         if (!password_verify($dto->password, $user->hashedPassword))
             return LoginResult::INVALID;
 
-
-        // TODO: implement remember me tokens
-
-        // TODO: log the login success / failure event
-
         $this->setSessionAs($user);
+
+        // Remember Me
+        if (!empty($dto->rememberMe)) {
+            $tokenData = $this->userService->createRememberMeToken($user);
+            $cookieValue = $tokenData['selector'] . ':' . $tokenData['token'];
+            setcookie('remember_me', $cookieValue, [
+                'expires' => time() + 30 * 24 * 60 * 60,
+                'path' => '/',
+                'httponly' => true,
+                'secure' => true,
+                'samesite' => 'Strict'
+            ]);
+        }
+
         return LoginResult::SUCCESS;
     }
 
@@ -157,15 +167,11 @@ readonly class AuthService extends Service
         $this->invalidateSession();
     }
 
-    /**
-     * @throws UnauthorizedException
-     */
     public function register2FA(OTPRegisterDTO $dto): bool
     {
         $context = $this->getSessionContext();
         if ($context === null)
             throw new UnauthorizedException();
-
         if (!$this->verifyTotp($dto->secret, $dto->code))
             return false;
 
