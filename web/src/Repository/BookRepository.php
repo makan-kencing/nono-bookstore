@@ -232,9 +232,12 @@ readonly class BookRepository extends Repository
         $stmt = $this->conn->prepare('
             UPDATE price
             SET thru_date = CURRENT_TIMESTAMP
-            WHERE thru_date IS NULL;
+            WHERE book_id = :book_id
+                AND thru_date IS NULL;
         ');
-        $stmt->execute();
+        $stmt->execute([
+            ':book_id' => $price->book->id
+        ]);
 
         $this->insertPrice($price);
     }
@@ -260,9 +263,12 @@ readonly class BookRepository extends Repository
         $stmt = $this->conn->prepare('
             UPDATE price
             SET thru_date = CURRENT_TIMESTAMP
-            WHERE thru_date IS NULL;
+            WHERE book_id = :book_id
+                AND thru_date IS NULL;
         ');
-        $stmt->execute();
+        $stmt->execute([
+            ':book_id' => $cost->book->id
+        ]);
 
         $this->insertCost($cost);
     }
