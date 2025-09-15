@@ -61,6 +61,15 @@ class Cart extends Entity
         );
     }
 
+    public function getNumberOfItems(): int
+    {
+        return array_reduce(
+            $this->items,
+            fn(int $carry, CartItem $item) => $carry + $item->quantity,
+            0
+        );
+    }
+
 
     /**
      * @param Order $order

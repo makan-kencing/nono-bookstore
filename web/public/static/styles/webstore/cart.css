@@ -1,0 +1,70 @@
+.cart {
+    display: flex;
+    align-items: start;
+    gap: 2rem;
+
+    > * {
+        border: 1px black solid;
+
+        padding: 1rem;
+    }
+
+    section {
+        flex-grow: 1;
+
+        display: flex;
+        flex-flow: column;
+        gap: 1rem;
+
+        table {
+            height: 1px;
+            border-collapse: collapse;
+            width: 100%;
+
+            thead, tbody {
+                th, td {
+                    border-bottom: 1px black solid;
+                }
+
+                th:first-child,
+                td:first-child {
+                    max-width: 100px;
+                }
+
+                td:first-child,
+                td:nth-child(2) {
+                    padding: 1rem;
+                }
+
+                th:last-child,
+                td:last-child {
+                    text-align: right;
+                }
+            }
+
+            tfoot {
+                text-align: right;
+            }
+
+            img {
+                object-fit: cover;
+                height: 200px;
+            }
+
+            form {
+                display: flex;
+                flex-flow: column;
+
+                height: 100%;
+            }
+        }
+    }
+
+    aside {
+        width: max-content;
+
+        display: flex;
+        flex-flow: column;
+        gap: 1rem;
+    }
+}
