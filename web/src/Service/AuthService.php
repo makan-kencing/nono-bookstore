@@ -279,7 +279,7 @@ readonly class AuthService extends Service
         if (!password_verify($oldPassword, $user->hashedPassword))
             throw new UnauthorizedException();
 
-        if (!$this->userService->canModify($context, $user))
+        if (!$this->userService->canModifyAs($context, $user))
             throw new ForbiddenException();
 
         $user->hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);

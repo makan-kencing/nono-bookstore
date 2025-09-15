@@ -15,8 +15,6 @@ use App\DTO\UserLoginContextDTO;
 use App\Entity\File;
 use App\Entity\User\User;
 use App\Entity\User\UserProfile;
-use App\Entity\User\UserToken;
-use App\Entity\User\UserTokenType;
 use App\Exception\BadRequestException;
 use App\Exception\ConflictException;
 use App\Exception\ContentTooLargeException;
@@ -28,12 +26,9 @@ use App\Repository\Query\AddressCriteria;
 use App\Repository\Query\AddressQuery;
 use App\Repository\Query\UserCriteria;
 use App\Repository\Query\UserQuery;
-use App\Repository\Query\UserTokenCriteria;
-use App\Repository\Query\UserTokenQuery;
 use App\Repository\UserAddressRepository;
 use App\Repository\UserProfileRepository;
 use App\Repository\UserRepository;
-use App\Repository\UserTokenRepository;
 use App\Router\AuthRule;
 use PDO;
 use PDOException;
@@ -75,9 +70,31 @@ readonly class UserService extends Service
         return $this->userRepository->count($qb) != 0;
     }
 
-    public function canModify(User|UserLoginContextDTO $editor, User $target): bool
+    /**
+     * @throws NotFoundException
+     */
+    public function canModifyAs(User|UserLoginContextDTO $editor, User|int $target): bool
     {
+        if (is_int($target))
+            $target = $this->getPlainUser($target);
+
+        if ($target === null)
+            throw new NotFoundException();
+
         return $editor->id === $target->id || AuthRule::HIGHER->check($editor->role, $target->role);
+    }
+
+    /**
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     */
+    public function canModify(User|int $target): bool
+    {
+        $editor = $this->getSessionContext();
+        if ($editor === null)
+            throw new UnauthorizedException();
+
+        return $this->canModifyAs($editor, $target);
     }
 
     public function getPlainUser(int $id): ?User
@@ -144,7 +161,7 @@ readonly class UserService extends Service
         if ($user === null)
             throw new NotFoundException();
 
-        if (!$this->canModify($context, $user))
+        if (!$this->canModifyAs($context, $user))
             throw new ForbiddenException();
 
         $dto->update($user);
@@ -167,7 +184,7 @@ readonly class UserService extends Service
         if ($user == null)
             throw new NotFoundException();
 
-        if (!$this->canModify($context, $user))
+        if (!$this->canModifyAs($context, $user))
             throw new ForbiddenException();
 
         try {
@@ -209,7 +226,7 @@ readonly class UserService extends Service
             throw new ConflictException(['message' => 'Email already exists']);
 
 
-        if (!$this->canModify($context, $user))
+        if (!$this->canModifyAs($context, $user))
             throw new ForbiddenException();
 
         if ($user->profile === null) {
@@ -265,7 +282,7 @@ readonly class UserService extends Service
         if ($address === null)
             throw new NotFoundException();
 
-        if (!$this->canModify($context, $address->user))
+        if (!$this->canModifyAs($context, $address->user))
             throw new ForbiddenException();
 
         $dto->update($address);
@@ -291,7 +308,7 @@ readonly class UserService extends Service
         if ($address === null)
             throw new NotFoundException();
 
-        if (!$this->canModify($context, $address->user))
+        if (!$this->canModifyAs($context, $address->user))
             throw new ForbiddenException();
 
         $this->userAddressRepository->deleteAddress($address->id);
@@ -316,24 +333,26 @@ readonly class UserService extends Service
         if ($address === null)
             throw new NotFoundException();
 
-        if (!$this->canModify($context, $address->user))
+        if (!$this->canModifyAs($context, $address->user))
             throw new ForbiddenException();
 
         $this->userAddressRepository->setDefault($address);
     }
 
     /**
-     * @param PhpFile
-     * @throws UnauthorizedException
-     * @throws ConflictException
+     * @param int $userId
+     * @param PhpFile $file
+     * @return File
      * @throws BadRequestException
-     * @throws UnprocessableEntityException
+     * @throws ConflictException
      * @throws ContentTooLargeException
+     * @throws UnauthorizedException
+     * @throws UnprocessableEntityException
      */
-    public function uploadProfileImage(array $file): File
+    public function uploadProfileImage(int $userId, array $file): File
     {
         $file = $this->fileService->uploadImage($file);
-        $this->userRepository->setProfileImage($file->user->id, $file->id);
+        $this->userRepository->setProfileImage($userId, $file->id);
 
         return $file;
     }

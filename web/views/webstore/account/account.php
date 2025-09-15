@@ -190,7 +190,7 @@ if ($user->profile?->dob instanceof DateTime) {
         $(form).find("label[for=profile-image]").text("Saving");
 
         $.ajax(
-            "/api/user/profile/image",
+            "/api/user/<?= $user->id ?>/profile/image",
             {
                 method: "POST",
                 data: data,

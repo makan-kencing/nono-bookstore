@@ -125,14 +125,19 @@ readonly class  UserController extends ApiController
      * @throws BadRequestException
      * @throws UnprocessableEntityException
      * @throws ContentTooLargeException
+     * @throws NotFoundException
+     * @throws ForbiddenException
      */
     #[POST]
-    #[Path('/profile/image')]
-    public function setProfileImage(): void
+    #[Path('/{userId}/profile/image')]
+    public function setProfileImage(string $userId): void
     {
         $file = $_FILES['profile_image'];
 
-        $file = $this->userService->uploadProfileImage($file);
+        if (!$this->userService->canModify((int) $userId))
+            throw new ForbiddenException();
+
+        $file = $this->userService->uploadProfileImage((int) $userId, $file);
 
         header('Content-Type: application/json');
         echo json_encode(ImageUploadedDTO::fromFile($file));
