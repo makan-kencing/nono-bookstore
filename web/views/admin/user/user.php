@@ -18,13 +18,25 @@ ob_start();
         <div class="profile-card" style="width: 100%">
             <h2>Account Profile</h2>
 
-            <div class="avatar-section" style="display: flex; justify-content: center;">
-                <?php if($user->image!=null): ?>
-                <img src="<?= $user->image->filepath?>" alt="<?=$user->image->alt?>" style="height: 400px; border-radius: 100%; aspect-ratio: 1; object-fit: cover">
-                <?php else: ?>
-                <i class="fa-regular fa-circle-user"></i>
-                <?php endif; ?>
-            </div>
+
+
+                <form class="image-upload" enctype="multipart/form-data">
+                    <div class="avatar-section" style="display: flex; justify-content: center;">
+                        <?php if($user->image!=null): ?>
+                            <img src="<?= $user->image->filepath?>" alt="<?=$user->image->alt?>" style="height: 400px; border-radius: 100%; aspect-ratio: 1; object-fit: cover">
+                        <?php else: ?>
+                            <i class="fa-regular fa-circle-user"></i>
+                        <?php endif; ?>
+                    </div>
+
+                    <input type="file" accept="image/png, image/jpeg, image/webp" name="profile_image" id="profile-image" hidden>
+
+                    <label for="profile-image" class="select-image-btn">Select Image</label>
+
+                    <p class="file-info">File size: maximum 5 MB</p>
+                    <p class="file-info">File extension: JPEG, PNG, WEBP</p>
+                </form>
+
 
             <div class="form-grid">
 
@@ -190,6 +202,35 @@ ob_start();
                 }
             );
         });
+
+        $("form.image-upload input[type=file]").change(/** @param {jQuery.Event} e */ function (e) {
+            const form = this.closest("form");
+
+            const data = new FormData(form);
+
+            $(form).find("label[for=profile-image]").text("Saving");
+
+            $.ajax(
+                "/api/user/<?= $user->id ?>/profile/image",
+                {
+                    method: "POST",
+                    data: data,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: (data) => {
+                        $(form).find("img")
+                            .attr("src", data.filepath)
+                            .attr("alt", data.alt);
+                        $(form).find("label[for=profile-image]")
+                            .text("Saved");
+                    },
+                    error: (xhr) => {
+                        console.error(xhr);
+                    }
+                }
+            );
+        })
     </script>
 
 <?php
