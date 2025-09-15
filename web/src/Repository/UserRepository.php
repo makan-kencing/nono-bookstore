@@ -19,7 +19,7 @@ readonly class UserRepository extends Repository
         $stmt->bindValue(':email', $user->email);
         $stmt->bindValue(':hashed_password', $user->hashedPassword);
         $stmt->bindValue(':role', $user->role->name);
-        $stmt->bindValue(':is_verified', $user->isVerified);
+        $stmt->bindValue(':is_verified', $user->isVerified ? 1 : 0, \PDO::PARAM_INT);
         $stmt->execute();
     }
 
@@ -40,7 +40,7 @@ readonly class UserRepository extends Repository
         $stmt->bindValue(':email', $user->email);
         $stmt->bindValue(':hashed_password', $user->hashedPassword);
         $stmt->bindValue(':role', $user->role->name);
-        $stmt->bindValue(':is_verified', $user->isVerified);
+        $stmt->bindValue(':is_verified', $user->isVerified ? 1 : 0, \PDO::PARAM_INT);
         $stmt->execute();
     }
 
