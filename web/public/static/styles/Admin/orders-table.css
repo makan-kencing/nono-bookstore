@@ -178,3 +178,50 @@
     font-weight: 600;
 }
 
+/* Center the whole module on the page */
+.order-center {
+    width: 100%;
+    padding: 24px 16px;                /* breathing space at page edges */
+    box-sizing: border-box;
+}
+
+/* The transparent, raised frame */
+.glass-frame {
+    max-width: 1200px;                 /* keep it nicely narrow and centered */
+    margin: 0 auto;                    /* <— centers the frame */
+    padding: 20px;                     /* inner space so content doesn’t touch edges */
+
+    /* glassy/transparent look */
+    background: rgba(255, 255, 255, 0.10);     /* subtle transparency (tweak to taste) */
+    backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+
+    /* raised feel */
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.18),
+        0 2px 6px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+
+    border-radius: 16px;
+}
+
+/* Optional: keep your inner layout tidy inside the frame */
+.order-row > div {
+    /* your original flex container can remain; this just ensures it doesn’t overflow */
+    max-width: 100%;
+}
+
+/* Make sure tables/images don’t overflow the frame on small screens */
+.glass-frame table,
+.glass-frame img,
+.glass-frame .table-wrapper {
+    max-width: 100%;
+}
+
+/* Responsive padding tweaks so the frame “moves” toward center on small screens too */
+@media (max-width: 768px) {
+    .glass-frame { padding: 16px; }
+}
+
+
