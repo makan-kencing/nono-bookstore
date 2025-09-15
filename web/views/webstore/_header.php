@@ -16,17 +16,22 @@ $context = AuthService::getLoginContext();
         <ul id="store-account" class="bar-list">
             <?php if ($context): ?>
                 <li class="dropdown">
-                    <a href="/account">
-                        <i class="fa-solid fa-circle-user"></i>
+                    <a class="account" href="/account">
                         <?= htmlspecialchars($context->username) ?>
+                        <?php if ($context->image !== null): ?>
+                            <img src="<?= $context->image->filepath ?>" alt="<?= $context->image->alt ?>">
+                        <?php else: ?>
+                            <i class="fa-solid fa-circle-user"></i>
+                        <?php endif; ?>
+
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="/account">My Account</a></li>
-                        <li><a href="/orders">My Orders</a></li>
+                        <li><a href="/account"><i class="fa-solid fa-user"></i> My Account</a></li>
+                        <li><a href="/orders"><i class="fa-solid fa-box-open"></i> My Orders</a></li>
                         <?php if ($context->isStaff()): ?>
-                            <li><a href="/admin">Admin Dashboard</a></li>
+                            <li><a href="/admin"><i class="fa-solid fa-shield-halved"></i> Admin Dashboard</a></li>
                         <?php endif; ?>
-                        <li><a href="/logout">Logout</a></li>
+                        <li><a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
                     </ul>
                 </li>
             <?php else: ?>

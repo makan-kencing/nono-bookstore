@@ -59,6 +59,20 @@ header {
                 display: block;
                 position: relative;
 
+                .account {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+
+                    img {
+                        height: 25px;
+                        width: 25px;
+                        border: 1px solid;
+                        border-radius: 100%;
+                        object-fit: cover;
+                    }
+                }
+
                 &:not(:hover) .dropdown-menu {
                     display: none;
                 }
@@ -66,15 +80,16 @@ header {
 
             .dropdown-menu {
                 position: absolute;
-                min-width: 180px;
-                padding: 10px 0;
+                right: 0;
+                width: max-content;
+                padding: 0.5rem 0;
 
                 li {
                     list-style: none;
 
                     a {
                         display: block;
-                        padding: 8px 15px;
+                        padding: 0.5rem 1rem;
                     }
                 }
             }
