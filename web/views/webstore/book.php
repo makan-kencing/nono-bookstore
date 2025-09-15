@@ -95,7 +95,7 @@ $template = new Template(
                         <?php $inventory = $book->getClosestStock() ?>
                         <?php $total = $book->getTotalInStock() ?>
                         <div id="product-stocks">
-                            <?php if ($inventory != null): ?>
+                            <?php if ($total > 0): ?>
                                 <p><i class="fa-solid fa-check"></i>
                                     In stock.
                                     <?php if ($total < 50): ?>
@@ -193,12 +193,6 @@ $template = new Template(
                     <td><?= $book->language ?></td>
                 </tr>
             </table>
-        </section>
-
-        <section id="review">
-            <h3>Reviews</h3>
-
-            <div></div>
         </section>
     </main>
 <?= $template->end() ?>
