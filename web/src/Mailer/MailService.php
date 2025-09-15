@@ -7,27 +7,27 @@ use PHPMailer\PHPMailer\PHPMailer;
 
 readonly class MailService
 {
-    private PHPMailer $mailer;
-
     /**
      * @throws Exception
      */
-    public function __construct()
+    public function makeMailer(): PHPMailer
     {
-        $this->mailer = new PHPMailer(true);
+        $mailer = new PHPMailer(true);
 
-        $this->mailer->isSMTP();
-        $this->mailer->Host = getenv('MAIL_HOST');
-        $this->mailer->SMTPAuth = true;
-        $this->mailer->Username = getenv('MAIL_USERNAME');
-        $this->mailer->Password = getenv('MAIL_PASSWORD');
-        $this->mailer->SMTPSecure = getenv('MAIL_ENCRYPTION') ?: PHPMailer::ENCRYPTION_STARTTLS;
-        $this->mailer->Port = (int)getenv('MAIL_PORT');
+        $mailer->isSMTP();
+        $mailer->Host = getenv('MAIL_HOST');
+        $mailer->SMTPAuth = true;
+        $mailer->Username = getenv('MAIL_USERNAME');
+        $mailer->Password = getenv('MAIL_PASSWORD');
+        $mailer->SMTPSecure = getenv('MAIL_ENCRYPTION') ?: PHPMailer::ENCRYPTION_STARTTLS;
+        $mailer->Port = (int)getenv('MAIL_PORT');
 
-        $this->mailer->setFrom(
+        $mailer->setFrom(
             getenv('MAIL_FROM_ADDRESS'),
             getenv('MAIL_FROM_NAME')
         );
+
+        return $mailer;
     }
 
     /**
@@ -39,14 +39,17 @@ readonly class MailService
     public function sendMail(string $to, string $subject, string $body): bool
     {
         try {
-            $this->mailer->clearAllRecipients();
-            $this->mailer->addAddress($to);
+            $mailer = $this->makeMailer();
 
-            $this->mailer->isHTML(true);
-            $this->mailer->Subject = $subject;
-            $this->mailer->Body = $body;
+            $mailer->clearAllRecipients();
+            $mailer->addAddress($to);
 
-            return $this->mailer->send();
+            $mailer->isHTML(true);
+            $mailer->Subject = $subject;
+            $mailer->Body = $body;
+            $mailer->addCustomHeader('X-PM-Message-Stream', 'outbound');
+
+            return $mailer->send();
         } catch (Exception $e) {
             error_log("Mailer Error: {$e->getMessage()}");
             return false;
