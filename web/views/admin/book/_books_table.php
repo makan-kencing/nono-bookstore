@@ -45,7 +45,7 @@ $template = new Template(
     $image = $item->images[0] ?? null;
     ?>
 
-    <tr>
+    <tr data-id="<?= $item->id ?>" onclick="window.location = `/admin/book/${this.dataset.id}`">
         <td>
             <?= $i++ ?>
         </td>
