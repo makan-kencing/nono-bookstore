@@ -10,7 +10,7 @@ declare(strict_types=1);
             <i class="fa-regular fa-envelope"></i>
         </div>
         <div class="title-container">
-            <h2>Reset Password</h2>
+            <h2>Forgot Password</h2>
         </div>
         <button type="button" class="close-btn" aria-label="Close">
             <i class="fa-solid fa-xmark"></i>
