@@ -70,10 +70,10 @@ readonly class AuthService extends Service
         $this->userTokenRepository->deleteByUserAndType($user, UserTokenType::REMEMBER_ME);
     }
 
-    public function generateTotp(): OTPGenerateDTO
+    public function generateTotp(User $user): OTPGenerateDTO
     {
         $otp = TOTP::generate($this->clock);
-        $otp->setLabel('Novelty N Nonsense');
+        $otp->setLabel('Novelty N Nonsense. ' . $user->email);
 
         return new OTPGenerateDTO(
             $otp->getSecret(),
