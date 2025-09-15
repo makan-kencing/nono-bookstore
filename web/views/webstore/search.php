@@ -137,8 +137,10 @@ $template = new Template(
 
             <div class="page">
                 <?php if ($page->hasPreviousPage()): ?>
+                    <a href="<?= $search->query ?? '' ?><?= $search->withPage(1)->toQueryString() ?>"><<</a>
                     <a href="<?= $search->query ?? '' ?><?= $search->withPage($search->page - 1)->toQueryString() ?>"><</a>
                 <?php else: ?>
+                    <span><<</span>
                     <span><</span>
                 <?php endif; ?>
 
@@ -152,8 +154,10 @@ $template = new Template(
 
                 <?php if ($page->hasNextPage()): ?>
                     <a href="<?= $search->query ?? '' ?><?= $search->withPage($search->page + 1)->toQueryString() ?>">></a>
+                    <a href="<?= $search->query ?? '' ?><?= $search->withPage($page->getTotalPage())->toQueryString() ?>">>></a>
                 <?php else: ?>
                     <span>></span>
+                    <span>>></span>
                 <?php endif; ?>
             </div>
         </section>
