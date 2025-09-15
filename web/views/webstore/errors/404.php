@@ -12,10 +12,17 @@ $template = new Template(
 ?>
 
 <?php $template->start(); ?>
-<main style="display: flex; flex-flow: column; justify-content: center; align-items: center; height: 60vh;">
-    <div>
-        <h2>Oops, you reached a dead end</h2>
-        <p>Let's <a href="/">go back</a> shall we?</p>
+
+<main>
+    <div style="display:flex; align-items:center; justify-content:center; gap:40px;">
+        <div>
+            <h2>Oops, you reached a dead end</h2>
+            <p>Let's <a href="/">go back</a> shall we?</p>
+        </div>
+        <div>
+            <img src="/static/assets/404-illustration.jpg" alt="404"
+                 style="max-width:350px; width:100%;">
+        </div>
     </div>
 </main>
 <?= $template->end(); ?>
