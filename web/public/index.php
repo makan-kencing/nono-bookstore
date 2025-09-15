@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+if (!getenv('TIMEZONE'))
+    require __DIR__ . '/../config/config.php';
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../config/error_handler.php';
 
@@ -27,8 +29,7 @@ $pdo = new PDO(
 
 $controllers = [
     'App\Controller\Api\AddressController',
-    'App\Controller\Api\AdminOrderController',
-    'App\Controller\Api\AdminUserController',
+    'App\Controller\Api\OrderController',
     'App\Controller\Api\AuthController',
     'App\Controller\Api\AuthorController',
     'App\Controller\Api\BookController',

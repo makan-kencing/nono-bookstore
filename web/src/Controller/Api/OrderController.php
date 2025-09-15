@@ -24,7 +24,7 @@ use PDO;
 
 #[Path('/api/orderList')]
 #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
-readonly class AdminOrderController extends ApiController
+readonly class OrderController extends ApiController
 {
 
     private OrderService $orderService;
@@ -35,9 +35,6 @@ readonly class AdminOrderController extends ApiController
     }
 
     /**
-     * @throws ForbiddenException
-     * @throws BadRequestException
-     * @throws UnprocessableEntityException
      * @throws NotFoundException
      * @throws UnauthorizedException
      */
