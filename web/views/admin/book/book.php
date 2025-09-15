@@ -124,7 +124,11 @@ ob_start();
                                 <label for="author-id"></label>
 
                                 <div style="width: 100%">
-                                    <input type="search" id="author-id" placeholder="Search authors">
+                                    <div style="display: flex;">
+                                        <input type="search" id="author-id" placeholder="Search authors"
+                                               onchange="fetchAuthorOptions.call(this)">
+                                        <button id="add-new-author" type="button"><i class="fa-solid fa-plus"></i></button>
+                                    </div>
                                     <select name="author_id" id="author-id" style="width: 100%;" required></select>
                                 </div>
 
@@ -431,15 +435,6 @@ ob_start();
                 }
             );
         });
-
-        $("form#add-author input[type=search]").change(/** @param {jQuery.Event} e */ function (e) {
-            $.get(
-                `/api/author/options/${this.value}`,
-                (data) => {
-                    $(this).next("select").html(data);
-                }
-            );
-        })
     </script>
 
 <?php
