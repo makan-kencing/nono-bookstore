@@ -7,27 +7,24 @@ use App\Core\View;
 $title = 'Books';
 ob_start();
 ?>
-    <main>
-        <div style="display: flex">
-            <div>
-                <?= View::render('admin/book/_sidebar.php', ['currentMenu' => 1]) ?>
-            </div>
+<main>
+    <div style="display: flex">
+<!--        --><?php //= View::render('admin/book/_sidebar.php', ['currentMenu' => 0]) ?>
+        <aside>
 
-            <div>
-                <h2>Books</h2>
+        </aside>
 
-                <?= View::render('_component/_admin_table_controls.php', ['ajaxUrl' => '/api/book/search/']) ?>
-            </div>
-        </div>
-    </main>
+        <section>
+            <h2>Books</h2>
+
+            <?= View::render('_component/_admin_table_controls.php', ['ajaxUrl' => '/api/book/search/', 'addAction' => '$(\'dialog.book\')[0].showModal()']) ?>
+        </section>
+    </div>
+</main>
 
 <?= View::render('admin/book/_add_book_dialog.php') ?>
 
     <script>
-        $("form#search button#add").click(/** @param {jQuery.Event} e */(e) => {
-            $("dialog.book")[0].showModal();
-        });
-
         $("dialog.book form").submit(/** @param {jQuery.Event} e */ function (e) {
             e.preventDefault();
 

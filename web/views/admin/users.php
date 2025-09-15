@@ -5,42 +5,38 @@ use App\Core\View;
 use App\Entity\User\User;
 use App\Orm\Expr\PageRequest;
 
-/** @var User[] $users */
 assert(isset($users) && is_array($users));
 assert(isset($page) && $page instanceof PageRequest);
 assert(isset($count) && is_int($count));
+/** @var User[] $users */
 
 $title = 'Users';
 ob_start();
 ?>
 
     <main>
-    <section class="profile-container">
-        <div class="profile-card">
-                <table class="user-table">
-                    <tbody>
-                    <tr>
-                        <td>
-                                <h2>Users</h2>
-                                <?= View::render('_component/_admin_table_controls.php', ['ajaxUrl' => '/api/user/search/']) ?>
+        <div >
+            <aside>
 
-                        </td>
-                    </tr>
+            </aside>
 
-                    </tbody>
-                </table>
+            <section>
+                <h2>Users</h2>
+                <?= View::render('_component/_admin_table_controls.php', ['ajaxUrl' => '/api/user/search/', 'addAction' => '$(\'dialog.add-user\')[0].showModal();']) ?>
+            </section>
         </div>
-    </section>
     </main>
+    <link rel="stylesheet" href="/static/styles/Admin/users-table.css">
+
 
 <?= View::render('admin/_component/_add_user_dialog.php'); ?>
 
     <script>
-        $("form#search button#add").click(/** @param {jQuery.Event} e */ (e) => {
-            $("dialog.add-user")[0].showModal();
+        $("form#search button#add").click(/** @param {jQuery.Event} e */(e) => {
+
         });
 
-        $("dialog.add-user > form").submit(/** @param {jQuery.Event} e */ (e) => {
+        $("dialog.add-user > form").submit(/** @param {jQuery.Event} e */(e) => {
             e.preventDefault();
 
             const data = new FormData(e.target);
@@ -76,7 +72,6 @@ ob_start();
                 }
             );
         });
-
     </script>
 
 <?php

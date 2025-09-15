@@ -14,7 +14,7 @@ assert(isset($body) && is_string($body));
 
 ?>
 
-<table id="data-tables">
+<table>
     <thead>
         <?= $header ?>
     </thead>
@@ -24,7 +24,7 @@ assert(isset($body) && is_string($body));
     <tfoot>
     <tr>
         <td colspan="100%">
-            <div style="display: flex; align-items: center; gap: 1rem">
+            <div>
                 <div style="margin-right: auto;">
                     <?= $page->getStartIndex() + 1 ?> - <?= $page->getEndIndex() + 1 ?>
                     / <?= $page->total ?>

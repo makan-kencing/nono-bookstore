@@ -20,6 +20,7 @@ $template = new Template(
 
 <?php $template->startFragment('header'); ?>
 <th></th>
+<th></th>
 <th>Username</th>
 <th>Email</th>
 <th>Role</th>
@@ -33,6 +34,13 @@ $template = new Template(
 <?php foreach ($page->items as $user): ?>
     <tr data-id="<?= $user->id ?>" onclick="window.location = `/admin/user/${this.dataset.id}`">
         <td class="mono"><?= $i++ ?></td>
+        <td>
+            <?php if ($user->image !== null): ?>
+                <img src="<?= $user->image->filepath ?>" alt="<?= $user->image->alt ?>">
+            <?php else: ?>
+                <img src="" alt="">
+            <?php endif; ?>
+        </td>
         <td><?= $user->username ?></td>
         <td><?= $user->email ?></td>
         <td><?= $user->role->name ?></td>

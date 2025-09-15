@@ -15,10 +15,11 @@ $template = new Template(
 <?php $template->startFragment('header'); ?>
 
 <link rel="stylesheet" href="/static/styles/Admin/adminPage.css">
-<link rel="stylesheet" href="/static/styles/Admin/users-table.css">
 <link rel="stylesheet" href="/static/styles/Admin/orders-table.css">
 <link rel="stylesheet" href="/static/styles/Admin/book-styles.css">
+<link rel="stylesheet" href="/static/styles/admin.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/static/js/search-table.js"></script>
 
 <?php $template->endFragment(); ?>
 

@@ -67,6 +67,15 @@ $template = new Template(
                     </div>
                 </div>
             <?php endforeach; ?>
+
+            <?php if (count($orders) == 0): ?>
+                <div style="border: 1px solid lightgray; border-radius: 2rem">
+                    <p>No orders~</p>
+
+                    <a href="/">Start shopping.</a
+
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 </main>
