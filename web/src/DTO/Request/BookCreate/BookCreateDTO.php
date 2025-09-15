@@ -147,8 +147,11 @@ readonly class BookCreateDTO extends RequestDTO
             $this->authors
         );
         $book->inventories = $this->toInventories($book);
+        $book->prices = [];
         $book->prices[] = $this->toPrice($book);
-        $book->costs[] = $this->toCost($book);
+        $book->costs = [];
+        if (($cost = $this->toCost($book)) !== null)
+            $book->costs[] = $cost;
         $book->deletedAt = null;
 
         return $book;
@@ -166,8 +169,11 @@ readonly class BookCreateDTO extends RequestDTO
         return $price;
     }
 
-    public function toCost(Book $book): Cost
+    public function toCost(Book $book): ?Cost
     {
+        if ($this->initialCost === null)
+            return null;
+
         $cost = new Cost();
         $cost->book = $book;
         $cost->amount = $this->initialCost;
