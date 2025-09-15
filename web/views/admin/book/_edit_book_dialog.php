@@ -27,11 +27,65 @@ $dialog = new Template(
 
 <?php $dialog->startFragment('scripts'); ?>
 <script>
+
+
+    $("dialog.book button#add-title").click(/** @param {jQuery.Event} e */ function (e) {
+        let search = $(this).prev("input[type=search]")[0];
+
+        $.ajax(
+            `/api/work/title/${search.value}`,
+            {
+                method: "POST",
+                success: (data) => {
+                    const option = document.createElement("option");
+                    option.value = data.id;
+                    option.textContent = data.title;
+
+                    $(this).prev("input[type=search]").val(data.title);
+                    $(this).parent().next("select")[0].replaceChildren(option);
+                },
+                error: (xhr) => {
+                    console.error(xhr);
+                    switch (xhr.status) {
+                        case 409:
+                            alert("The title already exists.");
+                    }
+                }
+            }
+        );
+    });
+
+    $("button#add-new-author").click(/** @param {jQuery.Event} e */ function (e) {
+        let search = $(this).prev("input[type=search]")[0];
+
+        $.ajax(
+            `/api/author/name/${search.value}`,
+            {
+                method: "POST",
+                success: (data) => {
+                    const option = document.createElement("option");
+                    option.value = data.id;
+                    option.textContent = data.name;
+
+                    $(this).prev("input[type=search]").val(data.name);
+                    $(this).parent().next("select")[0].replaceChildren(option);
+                },
+                error: (xhr) => {
+                    console.error(xhr);
+                    switch (xhr.status) {
+                        case 409:
+                            alert("The author already exists.");
+                    }
+                }
+            }
+        );
+    });
+
     function fetchWorkOptions() {
         $.get(
             `/api/work/options/${this.value}`,
             (data) => {
-                $(this).next("select").html(data);
+                $(this).parent().next("select").html(data);
             }
         );
     }
@@ -40,7 +94,7 @@ $dialog = new Template(
         $.get(
             `/api/author/options/${this.value}`,
             (data) => {
-                $(this).next("select").html(data);
+                $(this).parent().next("select").html(data);
             }
         );
     }
@@ -55,8 +109,11 @@ $dialog = new Template(
 
     <div>
         <label for="title">Title*</label>
-        <input type="search" id="title" placeholder="Search titles" value="<?= $book->work->title ?>"
-               onchange="fetchWorkOptions.call(this)">
+        <div style="display: flex">
+            <input type="search" id="title" placeholder="Search titles"
+                   onchange="fetchWorkOptions.call(this)">
+            <button id="add-title" type="button"><i class="fa-solid fa-plus"></i></button>
+        </div>
         <select name="work[id]" id="title" style="display: block; width: 100%;" required>
             <option value="<?= $book->work->id ?>"><?= $book->work->title ?></option>
         </select>

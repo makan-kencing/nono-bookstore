@@ -97,7 +97,7 @@ $dialog = new Template(
                     option.value = data.id;
                     option.textContent = data.name;
 
-                    $(this).prev("input[type=search]").val(data.title);
+                    $(this).prev("input[type=search]").val(data.name);
                     $(this).parent().next("select")[0].replaceChildren(option);
                 },
                 error: (xhr) => {
