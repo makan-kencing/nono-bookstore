@@ -43,7 +43,7 @@ input[type="email"],
 input[type="password"] {
     width: 80%;
     padding: 8px 8px;
-    border: 1px solid var(--border-gray-300);
+    border: 1px solid #d1d5db;
     border-radius: 6px;
     font-size: 16px;
     color: #1f2937;
@@ -52,25 +52,25 @@ input[type="password"] {
 input[type="text"]::placeholder,
 input[type="email"]::placeholder,
 input[type="password"]::placeholder {
-    color: var(--text-gray-500);
+    color: #6b7280;
 }
 
 input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="password"]:focus {
     outline: none;
-    border-color: var(--primary-blue);
+    border-color: #2563eb;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
 .terms-policy {
     margin-bottom: 24px;
     font-size: 14px;
-    color: var(--text-gray-600);
+    color: #4b5563;
 }
 
 .terms-policy a {
-    color: var(--primary-blue);
+    color: #2563eb;
     text-decoration: none;
     font-weight: 500;
 }
@@ -82,7 +82,7 @@ input[type="password"]:focus {
 button {
     width: 80%;
     padding: 12px 20px;
-    background-color: var(--primary-blue);
+    background-color: #2563eb;
     color: #fff;
     border: none;
     border-radius: 6px;
@@ -93,7 +93,7 @@ button {
 }
 
 button:hover {
-    background-color: var(--primary-blue-dark);
+    background-color: #1e40af;
 }
 
 /* Responsive adjustments */
@@ -103,12 +103,12 @@ button:hover {
     }
 
     .left-section {
-        flex: 0.5; /* Adjust flex basis for better image fit */
+        flex: 0.5;
     }
 
     .right-section {
-        flex: 0.5; /* Adjust flex basis */
-        padding: 48px 64px; /* More padding on larger screens */
+        flex: 0.5;
+        padding: 48px 64px;
     }
 }
 
@@ -118,45 +118,41 @@ input[data-email-taken="0"] + .hint,
     display: none;
 }
 
-/* show hint when "1" (optional explicit rule) */
 .password-wrapper input[data-match="1"] ~ .hint {
     display: block;
 }
 
-/* visual for the input error (optional) */
 input[data-match="1"],
 input[data-username-taken="1"],
 input[data-email-taken="1"] {
-    border-color: var(--red-500);
+    border-color: #ef4444;
     box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.12);
 }
 
 .hint {
     font-size: 14px;
-    color: var(--red-500);
+    color: #ef4444;
     margin-top: 4px;
 }
 
 .return-login {
     margin-top: 10px;
     font-size: 15px;
-    color: var(--text-gray-500);
+    color: #6b7280;
 }
 
 .return-login a {
-    color: var(--primary-blue);
+    color: #2563eb;
     text-decoration: none;
     font-weight: 500;
 }
 
-/* Let flex children shrink so they don't force horizontal overflow */
 .left-section,
 .right-section {
     flex: 1 1 0;
     min-width: 0;
 }
 
-/* Prevent images from overflowing their columns */
 .register-container img {
     max-width: 100%;
     height: auto;
@@ -178,11 +174,10 @@ input[data-email-taken="1"] {
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    color: var(--text-gray-500);
+    color: #6b7280;
     font-size: 16px;
 }
 
 .password-wrapper i:hover {
-    color: var(--primary-blue);
+    color: #2563eb;
 }
-
