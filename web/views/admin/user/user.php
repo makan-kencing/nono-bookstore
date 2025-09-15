@@ -33,17 +33,20 @@ ob_start();
                          style="height: 400px; border-radius: 100%; aspect-ratio: 1; object-fit: cover">
                 </div>
 
-                <div style="display: flex; flex-flow: column; align-items: center">
-                    <input type="file" accept="image/png, image/jpeg, image/webp" name="profile_image"
-                           id="profile-image" hidden>
+                <?php if ($hasPermission): ?>
+                    <div style="display: flex; flex-flow: column; align-items: center">
+                        <input type="file" accept="image/png, image/jpeg, image/webp" name="profile_image"
+                               id="profile-image" hidden>
 
-                    <label for="profile-image" style="background-color: #fff; border: 1px solid #dbdbdb; padding: 8px 15px; cursor: pointer; margin-bottom: 15px;">
-                        Select Image
-                    </label>
+                        <label for="profile-image"
+                               style="background-color: #fff; border: 1px solid #dbdbdb; padding: 8px 15px; cursor: pointer; margin-bottom: 15px;">
+                            Select Image
+                        </label>
 
-                    <p class="file-info">File size: maximum 5 MB</p>
-                    <p class="file-info">File extension: JPEG, PNG, WEBP</p>
-                </div>
+                        <p class="file-info">File size: maximum 5 MB</p>
+                        <p class="file-info">File extension: JPEG, PNG, WEBP</p>
+                    </div>
+                <?php endif; ?>
             </form>
 
             <div class="form-grid">
@@ -241,6 +244,9 @@ ob_start();
                     error: (xhr) => {
                         console.error(xhr);
                         switch (xhr.status) {
+                            case 403:
+                                alert("You do not have permission to set this user profile image.");
+                                break;
                             case 413:
                                 alert("The file image is too large.");
                                 break;
