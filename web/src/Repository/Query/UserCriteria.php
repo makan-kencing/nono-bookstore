@@ -76,4 +76,12 @@ class UserCriteria
 
         return new Predicate('session_flag = ' . $param);
     }
+
+    public static function notSoftDeleted(?string $alias = null): Predicate
+    {
+        if ($alias === null) $alias = '';
+        else $alias .= '.';
+
+        return new Predicate($alias . 'deleted_at IS NULL');
+    }
 }

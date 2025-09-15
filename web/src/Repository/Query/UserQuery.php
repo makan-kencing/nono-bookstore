@@ -15,7 +15,8 @@ class UserQuery
     public static function withMinimalDetails(): QueryBuilder
     {
         $qb = new QueryBuilder();
-        $qb->from(User::class, 'u');
+        $qb->from(User::class, 'u')
+            ->where(UserCriteria::notSoftDeleted('u'));
 
         return $qb;
     }
@@ -27,7 +28,8 @@ class UserQuery
     {
         $qb = new QueryBuilder();
         $qb->from(User::class, 'u')
-            ->leftJoin('addresses', 'ad');
+            ->leftJoin('addresses', 'ad')
+            ->where(UserCriteria::notSoftDeleted('u'));
 
         return $qb;
     }
@@ -40,7 +42,8 @@ class UserQuery
         $qb = new QueryBuilder();
         $qb->from(User::class, 'u')
             ->leftJoin('profile', 'up')
-            ->leftJoin('image', 'i');
+            ->leftJoin('image', 'i')
+            ->where(UserCriteria::notSoftDeleted('u'));
 
         return $qb;
     }
@@ -58,7 +61,8 @@ class UserQuery
             ->leftJoin($qb->createJoin('orders', 'o')
                 ->leftJoin('items', 'it')
                 ->leftJoin("adjustments", "adj")
-                ->leftJoin("shipment", "s"));
+                ->leftJoin("shipment", "s"))
+            ->where(UserCriteria::notSoftDeleted('u'));
         return $qb;
     }
 }
