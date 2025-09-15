@@ -18,8 +18,12 @@ ob_start();
         <div class="profile-card" style="width: 100%">
             <h2>Account Profile</h2>
 
-            <div class="avatar-section">
+            <div class="avatar-section" style="display: flex; justify-content: center;">
+                <?php if($user->image!=null): ?>
+                <img src="<?= $user->image->filepath?>" alt="<?=$user->image->alt?>" style="height: 400px; border-radius: 100%; aspect-ratio: 1; object-fit: cover">
+                <?php else: ?>
                 <i class="fa-regular fa-circle-user"></i>
+                <?php endif; ?>
             </div>
 
             <div class="form-grid">

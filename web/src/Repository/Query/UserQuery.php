@@ -54,6 +54,7 @@ class UserQuery
         $qb->from(User::class, 'u')
             ->leftJoin('profile', 'up')
             ->leftJoin('addresses', 'ad')
+            ->leftJoin('image', 'i')
             ->leftJoin($qb->createJoin('orders', 'o')
                 ->leftJoin('items', 'it')
                 ->leftJoin("adjustments", "adj")
