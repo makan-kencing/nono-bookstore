@@ -125,7 +125,7 @@ ob_start();
                 {
                     method: e.target.method,
                     contentType: "application/json",
-                    dataType: "text",
+                    dataType: "json",
                     data: JSON.stringify(Object.fromEntries(data.entries())),
                     error: (jqXHR, textStatus, errorThrown) => {
                         console.error(jqXHR, textStatus, errorThrown)
@@ -137,7 +137,7 @@ ob_start();
 
                         // redirect to log in after 3 secs
                         setTimeout(() => {
-                            window.location.href = "/login?redirect=<?= urlencode($_GET['redirect'] ?? '') ?>";
+                            window.location.href = `/register/redirect?selector=${data.selector}&token=${data.token}`;
                         }, 3000);
                     }
                 }

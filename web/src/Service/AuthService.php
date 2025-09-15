@@ -27,7 +27,9 @@ use App\Repository\Query\UserTokenCriteria;
 use App\Repository\Query\UserTokenQuery;
 use App\Repository\UserRepository;
 use App\Repository\UserTokenRepository;
+use OTPHP\HOTP;
 use OTPHP\TOTP;
+use ParagonIE\ConstantTime\Base32;
 use PDO;
 use Psr\Clock\ClockInterface;
 use UnexpectedValueException;
@@ -181,9 +183,12 @@ readonly class AuthService extends Service
     }
 
     /**
+     * @param UserRegisterDTO $dto
+     * @return array
      * @throws ConflictException
+     * @throws \Random\RandomException
      */
-    public function register(UserRegisterDTO $dto): void
+    public function register(UserRegisterDTO $dto): array
     {
         if ($this->userService->checkUsernameExists($dto->username))
             throw new ConflictException([]);
@@ -198,6 +203,9 @@ readonly class AuthService extends Service
         $user->isVerified = false;
 
         $this->userRepository->insert($user);
+
+        // Return tokens so controller can handle redirect
+        return $this->sendEmailVerification($user);
     }
 
     public function login(UserLoginDTO $dto): LoginResult
@@ -221,6 +229,10 @@ readonly class AuthService extends Service
 
         if (!password_verify($dto->password, $user->hashedPassword))
             return LoginResult::INVALID;
+
+        if (!$user->isVerified) {
+            return LoginResult::INVALID;
+        }
 
         $this->setSessionAs($user, $dto->rememberMe);
 
@@ -359,5 +371,89 @@ readonly class AuthService extends Service
             throw new ForbiddenException();
 
         $this->userRepository->setTotpSecret($context->id, null);
+    }
+
+    /**
+     * @param User $user
+     * @return array
+     * @throws \Random\RandomException
+     */
+    public function sendEmailVerification(User $user): array
+    {
+        assert($user->id !== null);
+
+        $this->userTokenRepository->deleteByUserAndType($user->id, UserTokenType::CONFIRM_EMAIL);
+
+        $random = random_bytes(10);
+        $secret = Base32::encode($random);
+        $counter = 0;
+
+        $hotp = HOTP::create($secret, $counter, 'sha1', 6);
+        $otp = $hotp->at($counter);
+
+        $tokenData = UserTokenGenerateDTO::generate('PT15M');
+        $token = $tokenData->toUserToken($user, UserTokenType::CONFIRM_EMAIL);
+        $this->userTokenRepository->createToken($token);
+
+        $url = $this->getSiteUrl() . "/email-verify?selector={$token->selector}&token={$tokenData->token}";
+
+        $subject = 'Verify your email';
+        $body = View::render('email/verify_email.php', [
+            'user' => $user,
+            'otp'  => $otp
+        ]);
+        $this->mailService->sendMail($user->email, $subject, $body);
+
+        $_SESSION['email_verify_secret']  = $secret;
+        $_SESSION['email_verify_counter'] = $counter;
+
+        // return for redirect
+        return [$token, $tokenData];
+    }
+
+    /**
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     */
+    public function verifyEmailOTP(string $selector, string $token, string $code): void
+    {
+        $userToken = $this->getTokenBySelector($selector, UserTokenType::CONFIRM_EMAIL);
+        if ($userToken === null) {
+            throw new NotFoundException();
+        }
+
+        assert($userToken->user->id !== null);
+
+        if (!password_verify($token, $userToken->token)) {
+            throw new UnauthorizedException();
+        }
+
+        $secret = $_SESSION['email_verify_secret'] ?? null;
+        $counter = $_SESSION['email_verify_counter'] ?? 0;
+        if ($secret === null) {
+            throw new UnauthorizedException();
+        }
+
+        $hotp = HOTP::create($secret, $counter, 'sha1', 6);
+
+        if (!$hotp->verify($code, $counter)) {
+            throw new UnauthorizedException();
+        }
+
+        $user = $this->userService->getPlainUser($userToken->user->id);
+        if ($user === null) {
+            throw new NotFoundException();
+        }
+
+        $user->isVerified = true;
+        $this->userRepository->update($user);
+
+        // Refresh session
+        if (isset($_SESSION['user']) && $_SESSION['user']->id === $user->id) {
+            $this->setSessionAs($user);
+        }
+
+        $this->userTokenRepository->deleteById($userToken->id);
+        unset($_SESSION['email_verify_secret'], $_SESSION['email_verify_counter']);
     }
 }
