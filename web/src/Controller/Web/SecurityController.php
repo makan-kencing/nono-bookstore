@@ -26,7 +26,7 @@ readonly class SecurityController extends WebController
     public function register(): void
     {
         if (!array_key_exists('redirect', $_GET)) {
-            $this->redirect('/register?redirect=' . urlencode($_SERVER['HTTP_REFERER']));
+            $this->redirect('/register?redirect=' . urlencode($_SERVER['HTTP_REFERER'] ?? '/'));
             return;
         }
 
