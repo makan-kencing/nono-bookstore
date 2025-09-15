@@ -148,7 +148,7 @@ readonly class AuthService extends Service
             return false;
 
         assert($userToken->user->id !== null);
-        $user = $this->userService->getPlainUser($userToken->user->id);
+        $user = $this->userService->getUserForProfile($userToken->user->id);
         if ($user === null || $user->isBlocked)
             return false;
 
