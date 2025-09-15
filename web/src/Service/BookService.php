@@ -511,7 +511,7 @@ readonly class BookService extends Service
         try {
             $this->bookRepository->insertWork($work);
             return $work;
-        } catch (PDOException) {
+        } catch (PDOException $e) {
             /** @var QueryBuilder<Work> $qb */
             $qb = new QueryBuilder();
             $qb->from(Work::class, 'w')
