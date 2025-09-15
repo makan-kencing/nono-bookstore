@@ -39,8 +39,6 @@ The website would then be accessible from https://localhost
 
 ### XAMPP
 
-
-
 Run the command inside of [/web](./web) directory. (cd if not already in it)
 
 ```shell
