@@ -20,8 +20,8 @@ session_start();
 
 $pdo = new PDO(
     'mysql:dbname=' . getenv('DATABASE_NAME') . ';host=' . getenv('DATABASE_HOST') . ';port=' . getenv('DATABASE_PORT'),
-    getenv('DATABASE_USER') ?: throw new RuntimeException('DATABASE_USER not defined'),
-    getenv('DATABASE_PASSWORD') ?: throw new RuntimeException('DATABASE_PASSWORD not defined'),
+    getenv('DATABASE_USER') ?? throw new RuntimeException('DATABASE_USER not defined'),
+    getenv('DATABASE_PASSWORD') ?? throw new RuntimeException('DATABASE_PASSWORD not defined'),
     [
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
     ]
