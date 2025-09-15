@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 use App\Core\Template;
 use App\Entity\User\UserRole;
+use App\Exception\UnauthorizedException;
+use App\Router\AuthRule;
+use App\Service\AuthService;
 
 // params
 $id = $id ?? '';
 $classes = $classes ?? [];
+
+$context = AuthService::getLoginContext();
+if ($context === null)
+    throw new UnauthorizedException();
 
 /**
  * @var literal-string $id
@@ -42,6 +49,7 @@ $dialog = new Template(
     <label for="role">Role</label>
     <select id="role" name="role">
         <?php foreach (UserRole::cases() as $role): ?>
+            <?php if (!AuthRule::HIGHER->check($context->role, $role)) continue; ?>
             <option value="<?= $role->name ?>"><?= $role->title() ?></option>
         <?php endforeach; ?>
     </select>
