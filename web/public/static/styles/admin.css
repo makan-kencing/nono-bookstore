@@ -8,6 +8,9 @@ main {
     > div {
         width: 100%;
 
+        display: flex;
+        gap: 1rem;
+
         aside {
             width: max-content;
         }

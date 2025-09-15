@@ -114,10 +114,6 @@ nav a:hover {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
-.address-form {
-    grid-column: span 2;
-}
-
 label {
     display: block;
     margin: 0.8rem 0 0.3rem;

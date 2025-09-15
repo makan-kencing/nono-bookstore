@@ -19,12 +19,13 @@ $hasPermission = AuthRule::HIGHER->check($context->role, $user->role);
 
 ob_start();
 ?>
-    <div style="display: flex; flex-flow: row; ">
-        <div>
+<main>
+    <div>
+        <aside>
             <?= View::render('admin/user/_sidebar.php', ['currentMenu' => 'User Details', 'user' => $user]) ?>
-        </div>
+        </aside>
 
-        <div class="profile-card" style="width: 100%">
+        <section class="profile-card" style="width: 100%">
             <h2>Account Profile</h2>
             <form class="image-upload" enctype="multipart/form-data">
                 <div class="avatar-section" style="display: flex; justify-content: center;">
@@ -108,8 +109,9 @@ ob_start();
                     <?php endif; ?>
                 </form>
             </div>
-        </div>
+        </section>
     </div>
+</main>
 
     <script>
         $("button#block-user").click(/** @param {jQuery.Event} e */(e) => {
