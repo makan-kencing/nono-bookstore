@@ -103,9 +103,8 @@ ob_start();
                                 <tr>
                                     <th>Num</th>
                                     <th>Book</th>
-
+                                    <th>Price(RM)</th>
                                     <th>Quantity</th>
-
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -114,6 +113,7 @@ ob_start();
                                     <tr>
                                         <td><?= $num++ ?></td>
                                         <td><?= View::render('admin/_component/_line_item.php', ['item' => $item]) ?></td>
+                                        <td><?=number_format($item->getSubtotal()/100,2)?></td>
                                         <td><?=$item->quantity?></td>
                                     </tr>
                                 <?php endforeach; ?>

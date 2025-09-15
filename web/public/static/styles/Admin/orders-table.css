@@ -82,6 +82,26 @@
     border-radius: 999px;
     font-size: .85rem;
     line-height: 1;
+
+    &[data-order-status="no-shipment"] {
+        background: #f8d7da; color: #842029;
+    }
+
+    &[data-order-status="preparing"] {
+        background: #fff3cd; color: #8a6d3b;
+    }
+
+    &[data-order-status="ready"] {
+        background: #e7f1ff; color: #0b5ed7;
+    }
+
+    &[data-order-status="shipped"] {
+        background: #d1e7dd; color: #0f5132;
+    }
+
+    &[data-order-status="arrived"] {
+        background: #d1e7dd; color: #0f5132;
+    }
 }
 
 /* responsive: stack columns on small screens */
