@@ -75,9 +75,9 @@ assert(isset($order) && $order instanceof Order);
         <?php foreach ($order->items as $item): ?>
             <tr>
                 <td><?= htmlspecialchars($item->book->work->title) ?></td>
-                <td><?= (int)$item->quantity ?></td>
-                <td>RM <?= number_format($item->unitPrice, 2) ?></td>
-                <td>RM <?= number_format($item->unitPrice * $item->quantity, 2) ?></td>
+                <td><?= $item->quantity ?></td>
+                <td>RM <?= number_format($item->unitPrice / 100, 2) ?></td>
+                <td>RM <?= number_format($item->getSubtotal() / 100, 2) ?></td>
             </tr>
         <?php endforeach; ?>
         </tbody>
