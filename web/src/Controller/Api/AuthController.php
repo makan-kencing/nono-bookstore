@@ -34,13 +34,9 @@ readonly class AuthController extends ApiController
         $dto = UserRegisterDTO::jsonDeserialize(self::getJsonBody());
         $dto->validate();
 
-        [$token, $tokenData] = $this->authService->register($dto);
+        $this->authService->register($dto);
 
         http_response_code(201);
-        echo json_encode([
-            'selector' => $token->selector,
-            'token' => $tokenData->token
-        ]);
     }
 
     /**
@@ -113,26 +109,5 @@ readonly class AuthController extends ApiController
         $this->authService->unregister2FA($code);
 
         http_response_code(204);
-    }
-
-    /**
-     * @throws BadRequestException
-     * @throws UnauthorizedException
-     * @throws NotFoundException
-     */
-    #[POST]
-    #[Path('/email-verify')]
-    public function emailVerify(): void
-    {
-        $json = self::getJsonBody();
-
-        $selector = $json['selector'] ?? throw new BadRequestException(['selector missing']);
-        $token    = $json['token'] ?? throw new BadRequestException(['token missing']);
-        $code     = $json['otp'] ?? throw new BadRequestException(['otp missing']);
-
-        $this->authService->verifyEmailOTP($selector, $token, $code);
-
-        http_response_code(200);
-        echo json_encode(["success" => true]);
     }
 }
