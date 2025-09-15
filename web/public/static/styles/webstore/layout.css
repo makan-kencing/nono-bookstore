@@ -165,6 +165,7 @@ main {
         .product-item {
             display: flex;
             flex-flow: column;
+            gap: 0.5rem;
 
             .product-image {
                 display: flex;
