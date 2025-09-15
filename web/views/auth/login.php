@@ -65,7 +65,7 @@ ob_start();
                 {
                 method: e.target.method,
                 contentType: "application/json",
-                dataType: "json",
+                dataType: "text",
                 data: JSON.stringify(Object.fromEntries(data.entries())),
                 error: (xhr) => {
                     switch (xhr.status) {

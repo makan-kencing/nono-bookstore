@@ -42,34 +42,4 @@ readonly class SecurityController extends WebController
         http_response_code(303);
         header('Location: ' . $_SERVER['HTTP_REFERER']);
     }
-
-    #[GET]
-    #[Path('/register/redirect')]
-    public function registerRedirect(): void
-    {
-        $selector = $_GET['selector'] ?? null;
-        $token    = $_GET['token'] ?? null;
-
-        if (!$selector || !$token) {
-            http_response_code(400);
-            echo "Missing selector or token";
-            return;
-        }
-
-        // Redirect to the email verification page
-        $this->redirect("/email-verify?selector={$selector}&token={$token}");
-    }
-
-    #[GET]
-    #[Path('/email-verify')]
-    public function emailVerify(): void
-    {
-        $selector = $_GET['selector'] ?? '';
-        $token    = $_GET['token'] ?? '';
-
-        echo $this->render('auth/email_verify.php', [
-            'selector' => $selector,
-            'token' => $token,
-        ]);
-    }
 }

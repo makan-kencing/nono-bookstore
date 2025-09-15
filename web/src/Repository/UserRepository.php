@@ -6,7 +6,6 @@ namespace App\Repository;
 
 use App\Entity\File;
 use App\Entity\User\User;
-use PDO;
 
 readonly class UserRepository extends Repository
 {
@@ -22,7 +21,6 @@ readonly class UserRepository extends Repository
         $stmt->bindValue(':role', $user->role->name);
         $stmt->bindValue(':is_verified', $user->isVerified);
         $stmt->execute();
-        $user->id = (int)$this->conn->lastInsertId();
     }
 
     public function update(User $user): void
@@ -42,7 +40,7 @@ readonly class UserRepository extends Repository
         $stmt->bindValue(':email', $user->email);
         $stmt->bindValue(':hashed_password', $user->hashedPassword);
         $stmt->bindValue(':role', $user->role->name);
-        $stmt->bindValue(':is_verified', $user->isVerified ? 1 : 0, PDO::PARAM_INT);
+        $stmt->bindValue(':is_verified', $user->isVerified);
         $stmt->execute();
     }
 
