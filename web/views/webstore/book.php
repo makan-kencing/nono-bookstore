@@ -16,6 +16,12 @@ $template = new Template(
 
 ?>
 
+<?php $template->startFragment('header'); ?>
+
+<link rel="stylesheet" href="/static/styles/webstore/book.css">
+
+<?php $template->endFragment(); ?>
+
 <?php $template->start() ?>
     <main>
         <section id="book-listing">

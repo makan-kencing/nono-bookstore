@@ -11,6 +11,12 @@ $template = new Template(
 
 ?>
 
+<?php $template->startFragment('header'); ?>
+
+<link rel="stylesheet" href="/static/styles/webstore/about.css">
+
+<?php $template->endFragment(); ?>
+
 <?php $template->start() ?>
 <main>
     <section>
