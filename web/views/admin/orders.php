@@ -11,10 +11,11 @@ ob_start();
 ?>
 
     <main>
-    <div>
-        <h2>Orders</h2>
-        <?= View::render('_component/_admin_table_controls.php', ['ajaxUrl' => '/api/orderList/search/']) ?>
-    </div>
+        <aside></aside>
+        <section>
+            <h2>Orders</h2>
+            <?= View::render('_component/_admin_table_controls.php', ['ajaxUrl' => '/api/orderList/search/']) ?>
+        </section>
     <main>
 
 <?php
