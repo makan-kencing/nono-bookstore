@@ -41,7 +41,7 @@ $template = new Template(
                 <?php foreach ($book->images as $image) : ?>
                     <div style="order: <?= $image->imageOrder ?>; display: flex;">
                         <img src="<?= $image->file->filepath ?>" alt="<?= $image->file->alt ?>"
-                             style="height: max-content">
+                             style="height: 300px;">
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -93,10 +93,12 @@ $template = new Template(
                 </div>
 
                 <div id="product-ordering">
-                    <?php $inventory = $book->getClosestStock() ?>
                     <?php $total = $book->getTotalInStock() ?>
                     <div id="product-stocks">
                         <?php if ($total > 0): ?>
+                            <?php $inventory = $book->getClosestStock(); ?>
+                            <?php assert($inventory !== null); ?>
+
                             <p><i class="fa-solid fa-check"></i>
                                 In stock.
                                 <?php if ($total < 50): ?>
