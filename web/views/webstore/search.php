@@ -36,7 +36,7 @@ $template = new Template(
 <?php $template->start(); ?>
 <main>
     <form class="search">
-        <div>
+        <aside class="filters">
             <a href="<?= (new BookSearchDTO())->toQueryString() ?>">Reset Filters</a>
 
             <details>
@@ -75,7 +75,7 @@ $template = new Template(
                 <div>
                     <div>
                         <label for="min-price">Min</label>
-                        <input type="number" name="min_price" id="min-price" step="0.01"
+                        <input type="number" name="min_price" id="min-price" step="0.01" size="4"
                             <?php if ($search->minPrice): ?>
                                value="<?= number_format((int)$search->minPrice / 100, 2) ?>">
                         <?php endif; ?>
@@ -83,7 +83,7 @@ $template = new Template(
 
                     <div>
                         <label for="max-price">Max</label>
-                        <input type="number" name="max_price" id="max-price" step="0.01"
+                        <input type="number" name="max_price" id="max-price" step="0.01" size="4"
                             <?php if ($search->maxPrice): ?>
                                 value="<?= number_format((int)$search->maxPrice / 100, 2) ?>"
                             <?php endif; ?>
@@ -93,10 +93,10 @@ $template = new Template(
 
                 <button type="submit">Set</button>
             </details>
-        </div>
+        </aside>
 
-        <div style="font-size: 0.8rem; display: flex; flex-flow: column; gap: 2rem;">
-            <div style="display: flex; align-items: stretch; gap: 1rem;">
+        <section class="contents">
+            <div class="controls">
                 <div style="margin-right: auto;">
                     <?= $page->getStartIndex() + 1 ?> - <?= $page->getEndIndex() + 1 ?>
                     of <?= $page->total ?> for <span style="font-weight: bold"><?= $search->query ?></span>
@@ -129,34 +129,34 @@ $template = new Template(
                 </label>
             </div>
 
-            <div class="product-grid"
-            ">
+            <div class="product-grid">
             <?php foreach ($page->items as $book): ?>
                 <?= View::render('webstore/_component/_search_book_item.php', ['book' => $book]) ?>
             <?php endforeach; ?>
-        </div>
+            </div>
 
-        <div style="display: flex; justify-content: center; gap: 1rem; font-size: 1rem;">
-            <?php if ($page->hasPreviousPage()): ?>
-                <a href="<?= $search->query ?? '' ?><?= $search->withPage($search->page - 1)->toQueryString() ?>"><</a>
-            <?php else: ?>
-                <span><</span>
-            <?php endif; ?>
-
-            <?php foreach ($page->getSlidingPageWindow() as $pageRequest): ?>
-                <?php if ($pageRequest->page === $page->pageRequest->page): ?>
-                    <span><?= $pageRequest->page ?></span>
+            <div class="page">
+                <?php if ($page->hasPreviousPage()): ?>
+                    <a href="<?= $search->query ?? '' ?><?= $search->withPage($search->page - 1)->toQueryString() ?>"><</a>
                 <?php else: ?>
-                    <a href="<?= $search->query ?? '' ?><?= $search->withPage($pageRequest->page)->toQueryString() ?>"><?= $pageRequest->page ?></a>
+                    <span><</span>
                 <?php endif; ?>
-            <?php endforeach; ?>
 
-            <?php if ($page->hasNextPage()): ?>
-                <a href="<?= $search->query ?? '' ?><?= $search->withPage($search->page + 1)->toQueryString() ?>">></a>
-            <?php else: ?>
-                <span>></span>
-            <?php endif; ?>
-        </div>
+                <?php foreach ($page->getSlidingPageWindow() as $pageRequest): ?>
+                    <?php if ($pageRequest->page === $page->pageRequest->page): ?>
+                        <span><?= $pageRequest->page ?></span>
+                    <?php else: ?>
+                        <a href="<?= $search->query ?? '' ?><?= $search->withPage($pageRequest->page)->toQueryString() ?>"><?= $pageRequest->page ?></a>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+
+                <?php if ($page->hasNextPage()): ?>
+                    <a href="<?= $search->query ?? '' ?><?= $search->withPage($search->page + 1)->toQueryString() ?>">></a>
+                <?php else: ?>
+                    <span>></span>
+                <?php endif; ?>
+            </div>
+        </section>
     </form>
 </main>
 
