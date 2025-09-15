@@ -206,6 +206,11 @@ if ($user->profile?->dob instanceof DateTime) {
                 },
                 error: (xhr) => {
                     console.error(xhr);
+                    switch (xhr.status) {
+                        case 413:
+                            alert("The file image is too large.");
+                            break;
+                    }
                 }
             }
         );
