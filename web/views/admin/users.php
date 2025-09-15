@@ -66,6 +66,7 @@ ob_start();
                     },
                     success: (data, textStatus, jqXHR) => {
                         console.log(data, textStatus, jqXHR);
+                        alert("Add user successful.");
                         e.target.closest('dialog').close();
                         window.location.reload();
                     }

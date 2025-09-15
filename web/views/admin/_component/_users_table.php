@@ -93,6 +93,7 @@ $template = new Template(
                     }
                 },
                 success: () => {
+                    alert("Delete successful.");
                     row.remove();
                 }
             }
