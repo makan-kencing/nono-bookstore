@@ -7,6 +7,7 @@ use App\Entity\Book\Author\AuthorDefinition;
 use App\Entity\Book\Book;
 
 assert(isset($book) && $book instanceof Book);
+$book->normalizeOrder();
 $work = $book->work;
 
 $template = new Template(
@@ -24,12 +25,22 @@ $template = new Template(
 
 <?php $template->start() ?>
     <main>
+        <nav class="breadcrumb">
+            <a href="/">Home</a>
+            >
+            <a href="/books/search">Books</a>
+            <?php if ($category = $work->getPrimaryCategory() ?? null): ?>
+                >
+                <?= $category->category->name ?>
+            <?php endif; ?>
+        </nav>
+
         <section id="book-listing">
             <div id="book-preview" class="carousel">
                 <div class="carousel-images">
                     <?php foreach ($book->images as $image) : ?>
                         <div style="order: <?= $image->imageOrder ?>; display: flex;">
-                            <img src="<?= $image->file->filepath ?>" alt="<?= $image->file->alt ?>">
+                            <img src="<?= $image->file->filepath ?>" alt="<?= $image->file->alt ?>" style="height: max-content">
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -39,30 +50,17 @@ $template = new Template(
                 <h2><?= $work->title ?></h2>
 
                 <div>by
-                    <ul class="comma-list">
-                        <?php usort(
-                            $book->authors,
-                            function (AuthorDefinition $o1, AuthorDefinition $o2) {
-                                if ($o1->type === null) return -1;
-                                if ($o2->type === null) return 1;
-                                return $o1->type->compareTo($o2->type);
-                            }
-                        )?>
-                        <?php foreach ($book->authors as $author) : ?>
-                            <li>
-                                <a href="/author/<?= $author->author->slug ?>"><?= $author->author->name ?></a>
-                                <?php if ($author->type !== null): ?>
-                                    (<?= $author->type->title() ?>)
-                                <?php endif; ?>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
+                    <?=
+                    implode(', ', array_map(
+                        fn(AuthorDefinition $author) => "<span>{$author->author->name}</span>",
+                        $book->authors
+                    ))
+                    ?>
                 </div>
 
                 <?php if ($work->series) : ?>
                     <p>
-                        <a href="/series/<?= $work->series->series->slug ?>">
-                            Part of: <?= $work->series->series->name ?></a>
+                        <span>Part of: <?= $work->series->series->name ?></span>
                     </p>
                 <?php endif; ?>
             </div>
@@ -151,7 +149,7 @@ $template = new Template(
         </section>
 
         <section id="book-details">
-            <h3>Details</h3>
+            <h3>Product Details</h3>
 
             <table>
                 <tr>

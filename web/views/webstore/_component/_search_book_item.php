@@ -31,7 +31,7 @@ $image = $book->images[0] ?? null;
 
         <div>by
             <?=
-            implode(',', array_map(
+            implode(', ', array_map(
                 fn(AuthorDefinition $author) => "<span>{$author->author->name}</span>",
                 $book->authors
             ))
