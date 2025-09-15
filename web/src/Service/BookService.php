@@ -500,9 +500,6 @@ readonly class BookService extends Service
         $this->bookRepository->removeImage($image);
     }
 
-    /**
-     * @throws ConflictException
-     */
     public function createWorkFromTitle(string $title): Work
     {
         $work = new Work();
@@ -515,13 +512,18 @@ readonly class BookService extends Service
             $this->bookRepository->insertWork($work);
             return $work;
         } catch (PDOException) {
-            throw new ConflictException();
+            /** @var QueryBuilder<Work> $qb */
+            $qb = new QueryBuilder();
+            $qb->from(Work::class, 'w')
+                ->where('slug = :slug')
+                ->bind(':slug', $work->slug);
+
+            $work = $this->bookRepository->getOne($qb);
+            assert($work !== null);
+            return $work;
         }
     }
 
-    /**
-     * @throws ConflictException
-     */
     public function createAuthorFromName(string $name): Author
     {
         $author = new Author();
@@ -534,7 +536,15 @@ readonly class BookService extends Service
             $this->bookRepository->insertAuthor($author);
             return $author;
         } catch (PDOException) {
-            throw new ConflictException();
+            /** @var QueryBuilder<Author> $qb */
+            $qb = new QueryBuilder();
+            $qb->from(Author::class, 'a')
+                ->where('slug = :slug')
+                ->bind(':slug', $author->slug);
+
+            $author = $this->bookRepository->getOne($qb);
+            assert($author !== null);
+            return $author;
         }
     }
 }

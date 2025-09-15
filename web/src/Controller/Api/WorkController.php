@@ -60,14 +60,18 @@ readonly class WorkController extends ApiController
             echo "<option value='$item->id'>$item->title</option>";
     }
 
-    /**
-     * @throws ConflictException
-     */
     #[POST]
     #[Path('/title/{title}')]
     #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function createFromTitle(string $title): void
     {
-        $this->bookService->createWorkFromTitle($title);
+        $work = $this->bookService->createWorkFromTitle($title);
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'id' => $work->id,
+            'slug' => $work->slug,
+            'title' => $work->title
+        ]);
     }
 }

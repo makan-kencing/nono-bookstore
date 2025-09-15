@@ -6,6 +6,8 @@ create or replace table work
     title              varchar(255)    not null,
     author_id          bigint unsigned null,
     default_edition_id bigint unsigned null,
+    constraint slug
+        unique (slug),
     constraint work_ibfk_1
         foreign key (author_id) references author (id),
     constraint work_ibfk_2

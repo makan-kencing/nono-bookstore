@@ -6,6 +6,7 @@ namespace App\Controller\Api;
 
 use App\Core\View;
 use App\DTO\Request\SearchDTO;
+use App\Entity\Book\Author\Author;
 use App\Entity\User\UserRole;
 use App\Exception\ConflictException;
 use App\Router\AuthRule;
@@ -40,14 +41,18 @@ readonly class AuthorController extends ApiController
             echo "<option value='$item->id'>$item->name</option>";
     }
 
-    /**
-     * @throws ConflictException
-     */
     #[POST]
     #[Path('/name/{name}')]
     #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function createFromName(string $name): void
     {
-        $this->bookService->createAuthorFromName($name);
+        $author = $this->bookService->createAuthorFromName($name);
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'id' => $author->id,
+            'slug' => $author->slug,
+            'name' => $author->name
+        ]);
     }
 }

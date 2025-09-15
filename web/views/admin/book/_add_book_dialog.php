@@ -66,8 +66,13 @@ $dialog = new Template(
             `/api/work/title/${search.value}`,
             {
                 method: "POST",
-                success: () => {
-                    fetchWorkOptions.call(search);
+                success: (data) => {
+                    const option = document.createElement("option");
+                    option.value = data.id;
+                    option.textContent = data.title;
+
+                    $(this).prev("input[type=search]").val(data.title);
+                    $(this).parent().next("select")[0].replaceChildren(option);
                 },
                 error: (xhr) => {
                     console.error(xhr);
@@ -78,7 +83,7 @@ $dialog = new Template(
                 }
             }
         );
-    })
+    });
 
     $("dialog.book button#add-new-author").click(/** @param {jQuery.Event} e */ function (e) {
         let search = $(this).prev("input[type=search]")[0];
@@ -87,8 +92,13 @@ $dialog = new Template(
             `/api/author/name/${search.value}`,
             {
                 method: "POST",
-                success: () => {
-                    fetchAuthorOptions.call(search);
+                success: (data) => {
+                    const option = document.createElement("option");
+                    option.value = data.id;
+                    option.textContent = data.name;
+
+                    $(this).prev("input[type=search]").val(data.title);
+                    $(this).parent().next("select")[0].replaceChildren(option);
                 },
                 error: (xhr) => {
                     console.error(xhr);
@@ -99,7 +109,7 @@ $dialog = new Template(
                 }
             }
         );
-    })
+    });
 
     function fetchWorkOptions() {
         $.get(
