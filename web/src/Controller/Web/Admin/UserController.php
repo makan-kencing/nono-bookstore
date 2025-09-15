@@ -37,7 +37,8 @@ readonly class UserController extends WebController
     public function viewProfile(string $id): void
     {
         $qb = UserQuery::userListings()
-            ->where(UserCriteria::byId(alias: 'u'))
+            ->where(UserCriteria::notSoftDeleted()
+                ->and(UserCriteria::byId(alias: 'u')))
             ->bind(':id', $id);
         $user = $this->userRepository->getOne($qb);
 
@@ -52,7 +53,8 @@ readonly class UserController extends WebController
     public function viewUserAddresses(string $id): void
     {
         $qb = UserQuery::userListings()
-            ->where(UserCriteria::byId(alias: 'u'))
+            ->where(UserCriteria::notSoftDeleted()
+                ->and(UserCriteria::byId(alias: 'u')))
             ->bind(':id', $id);
         $user = $this->userRepository->getOne($qb);
 
@@ -67,7 +69,8 @@ readonly class UserController extends WebController
     public function viewUserOrders(string $id): void
     {
         $qb = UserQuery::userListings()
-            ->where(UserCriteria::byId(alias: 'u'))
+            ->where(UserCriteria::notSoftDeleted()
+                ->and(UserCriteria::byId(alias: 'u')))
             ->bind(':id', $id);
         $user = $this->userRepository->getOne($qb);
 

@@ -167,7 +167,8 @@ readonly class AuthService extends Service
         }
 
         $qb = UserQuery::asProfile();
-        $qb->where(UserCriteria::bySessionFlag(alias: 'u'))
+        $qb->where(UserCriteria::notSoftDeleted()
+            ->and(UserCriteria::bySessionFlag(alias: 'u')))
             ->bind(':session_flag', $old->sessionFlag);
 
         $user = $this->userRepository->getOne($qb);
@@ -203,7 +204,8 @@ readonly class AuthService extends Service
     public function login(UserLoginDTO $dto): LoginResult
     {
         $qb = UserQuery::asProfile();
-        $qb->where(UserCriteria::byEmail(alias: 'u'))
+        $qb->where(UserCriteria::notSoftDeleted()
+            ->and(UserCriteria::byEmail(alias: 'u')))
             ->bind(':email', $dto->email);
         $user = $this->userRepository->getOne($qb);
 
@@ -239,7 +241,8 @@ readonly class AuthService extends Service
     public function requestResetPassword(string $email): void
     {
         $qb = UserQuery::withMinimalDetails();
-        $qb->where(UserCriteria::byEmail())
+        $qb->where(UserCriteria::notSoftDeleted()
+            ->and(UserCriteria::byEmail()))
             ->bind(':email', $email);
 
         $user = $this->userRepository->getOne($qb);
@@ -345,7 +348,8 @@ readonly class AuthService extends Service
             throw new UnauthorizedException();
 
         $qb = UserQuery::withMinimalDetails();
-        $qb->where(UserCriteria::byId(alias: 'u'))
+        $qb->where(UserCriteria::notSoftDeleted()
+            ->and(UserCriteria::byId(alias: 'u')))
             ->bind(':id', $context->id);
 
         $user = $this->userRepository->getOne($qb);

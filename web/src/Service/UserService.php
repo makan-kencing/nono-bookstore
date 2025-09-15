@@ -55,7 +55,8 @@ readonly class UserService extends Service
     public function checkUsernameExists(string $username): bool
     {
         $qb = UserQuery::withMinimalDetails()
-            ->where(UserCriteria::byUsername())
+            ->where(UserCriteria::notSoftDeleted()
+                ->and(UserCriteria::byUsername()))
             ->bind(':username', $username);
 
         return $this->userRepository->count($qb) != 0;
@@ -64,7 +65,8 @@ readonly class UserService extends Service
     public function checkEmailExists(string $email): bool
     {
         $qb = UserQuery::withMinimalDetails()
-            ->where(UserCriteria::byEmail())
+            ->where(UserCriteria::notSoftDeleted()
+                ->and(UserCriteria::byEmail()))
             ->bind(':email', $email);
 
         return $this->userRepository->count($qb) != 0;
@@ -100,7 +102,8 @@ readonly class UserService extends Service
     public function getPlainUser(int $id): ?User
     {
         $qb = UserQuery::withMinimalDetails();
-        $qb->where(UserCriteria::byId(alias: 'u'))
+        $qb->where(UserCriteria::notSoftDeleted()
+            ->and(UserCriteria::byId(alias: 'u')))
             ->bind(':id', $id);
         return $this->userRepository->getOne($qb);
     }
@@ -108,7 +111,8 @@ readonly class UserService extends Service
     public function getUserForProfile(int $id): ?User
     {
         $qb = UserQuery::asProfile();
-        $qb->where(UserCriteria::byId(alias: 'u'))
+        $qb->where(UserCriteria::notSoftDeleted()
+            ->and(UserCriteria::byId(alias: 'u')))
             ->bind(':id', $id);
         return $this->userRepository->getOne($qb);
     }
@@ -116,7 +120,8 @@ readonly class UserService extends Service
     public function getUserForAddressesBook(int $id): ?User
     {
         $qb = UserQuery::withAddress();
-        $qb->where(UserCriteria::byId(alias: 'u'))
+        $qb->where(UserCriteria::notSoftDeleted()
+            ->and(UserCriteria::byId(alias: 'u')))
             ->bind(':id', $id);
         return $this->userRepository->getOne($qb);
     }
@@ -391,7 +396,9 @@ readonly class UserService extends Service
     {
         $qb = UserQuery::userListings();
 
-        $predicates = UserCriteria::byUsernameLike(alias: 'u');
+        $predicates = UserCriteria::notSoftDeleted('u');
+
+        $predicates = $predicates->and(UserCriteria::byUsernameLike(alias: 'u'));
         $qb->bind(':username', '%' . ($dto->query ?? '') . '%');
 
         $qb->where($predicates);
