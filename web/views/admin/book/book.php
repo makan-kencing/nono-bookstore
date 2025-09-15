@@ -116,7 +116,7 @@ ob_start();
                         </table>
                     </div>
 
-                    <div>
+                    <div class="secondary-information">
                         <div>
                             <h4>Authors</h4>
 

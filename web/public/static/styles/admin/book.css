@@ -87,10 +87,12 @@ main {
                 }
             }
 
-            form {
-                display: flex;
-                justify-content: stretch;
-                align-items: stretch;
+            .secondary-information {
+                form {
+                    display: flex;
+                    justify-content: stretch;
+                    align-items: stretch;
+                }
             }
         }
     }

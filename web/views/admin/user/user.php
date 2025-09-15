@@ -19,99 +19,104 @@ $hasPermission = AuthRule::HIGHER->check($context->role, $user->role);
 
 ob_start();
 ?>
-<main>
-    <div>
-        <aside>
-            <?= View::render('admin/user/_sidebar.php', ['currentMenu' => 'User Details', 'user' => $user]) ?>
-        </aside>
+    <main>
+        <div>
+            <aside>
+                <?= View::render('admin/user/_sidebar.php', ['currentMenu' => 'User Details', 'user' => $user]) ?>
+            </aside>
 
-        <section class="profile-card" style="width: 100%">
-            <h2>Account Profile</h2>
-            <form class="image-upload" enctype="multipart/form-data">
-                <div class="avatar-section" style="display: flex; justify-content: center;">
-                    <img src="<?= $user->image?->filepath ?? '/static/assets/user.png' ?>"
-                         alt="<?= $user->image?->alt ?? '' ?>"
-                         style="height: 400px; border-radius: 100%; aspect-ratio: 1; object-fit: cover">
-                </div>
-
-                <?php if ($hasPermission): ?>
-                    <div style="display: flex; flex-flow: column; align-items: center">
-                        <input type="file" accept="image/png, image/jpeg, image/webp" name="profile_image"
-                               id="profile-image" hidden>
-
-                        <label for="profile-image"
-                               style="background-color: #fff; border: 1px solid #dbdbdb; padding: 8px 15px; cursor: pointer; margin-bottom: 15px;">
-                            Select Image
-                        </label>
-
-                        <p class="file-info">File size: maximum 5 MB</p>
-                        <p class="file-info">File extension: JPEG, PNG, WEBP</p>
-                    </div>
-                <?php endif; ?>
-            </form>
-
-            <div class="form-grid">
-
-                <form id="profileForm" class="form-group">
-                    <div>
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username" data-username-taken="0"
-                               value="<?= $user->username ?>">
-                        <span class="hint" style="color: red">Username taken</span>
-                    </div>
-
-                    <div>
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" value="<?= $user->email ?>">
-                    </div>
-
-                    <div>
-                        <label for="role">Role</label>
-                        <select id="role" name="role">
-                            <?php foreach (UserRole::cases() as $role): ?>
-                                <option id="role" name="role" value="<?= $role->name ?>"
-                                    <?= $role === $user->role ? 'selected' : '' ?>>
-                                    <?= $role->title() ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+            <section class="profile-card" style="width: 100%">
+                <h2>Account Profile</h2>
+                <form class="image-upload" enctype="multipart/form-data">
+                    <div class="avatar-section" style="display: flex; justify-content: center;">
+                        <img src="<?= $user->image?->filepath ?? '/static/assets/user.png' ?>"
+                             alt="<?= $user->image?->alt ?? '' ?>"
+                             style="height: 400px; border-radius: 100%; aspect-ratio: 1; object-fit: cover">
                     </div>
 
                     <?php if ($hasPermission): ?>
-                        <div>
-                            <button type="submit" class="btn">Update</button>
+                        <div style="display: flex; flex-flow: column; align-items: center">
+                            <input type="file" accept="image/png, image/jpeg, image/webp" name="profile_image"
+                                   id="profile-image" hidden>
+
+                            <label for="profile-image"
+                                   style="background-color: #fff; border: 1px solid #dbdbdb; padding: 8px 15px; cursor: pointer; margin-bottom: 15px;">
+                                Select Image
+                            </label>
+
+                            <p class="file-info">File size: maximum 5 MB</p>
+                            <p class="file-info">File extension: JPEG, PNG, WEBP</p>
                         </div>
                     <?php endif; ?>
                 </form>
 
-                <style>
-                    [data-username-taken='0'] + span.hint {
-                        display: none;
-                    }
-                </style>
+                <div class="form-grid">
 
-                <form id="profileFormContact" class="form-group">
-                    <div>
-                        <label for="phone">Contact No</label>
-                        <input type="tel" id="contact_no" name="contact_no" value="<?= $user->profile?->contactNo ?>">
-                    </div>
-                    <div>
-                        <label for="birthday">Birthday</label>
-                        <input type="date" id="dob" name="dob" value="<?= $user->profile?->dob?->format('Y-m-d') ?>">
-                    </div>
-                    <div>
-                        <span>Status: <span><?= $user->isBlocked ? 'Blocked' : 'Normal' ?></span></span>
-                        <button id="block-user" type="button"><?= $user->isBlocked ? 'Unblock' : 'Block' ?></button>
-                    </div>
+                    <form id="profileForm" class="form-group">
+                        <div>
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" data-username-taken="0"
+                                   value="<?= $user->username ?>">
+                            <span class="hint" style="color: red">Username taken</span>
+                        </div>
 
-                    <?php if ($hasPermission): ?>
-                        <button type="submit" class="btn">Update</button>
-                    <?php endif; ?>
-                </form>
-            </div>
-        </section>
-    </div>
-</main>
+                        <div>
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" value="<?= $user->email ?>">
+                        </div>
+
+                        <div>
+                            <label for="role">Role</label>
+                            <select id="role" name="role">
+                                <?php foreach (UserRole::cases() as $role): ?>
+                                    <option id="role" name="role" value="<?= $role->name ?>"
+                                        <?= $role === $user->role ? 'selected' : '' ?>>
+                                        <?= $role->title() ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <?php if ($hasPermission): ?>
+                            <div>
+                                <button type="submit" class="btn">Update</button>
+                            </div>
+                        <?php endif; ?>
+                    </form>
+
+                    <style>
+                        [data-username-taken='0'] + span.hint {
+                            display: none;
+                        }
+                    </style>
+
+                    <form id="profileFormContact" class="form-group">
+                        <div>
+                            <label for="phone">Contact No</label>
+                            <input type="tel" id="contact_no" name="contact_no"
+                                   value="<?= $user->profile?->contactNo ?>">
+                        </div>
+                        <div>
+                            <label for="birthday">Birthday</label>
+                            <input type="date" id="dob" name="dob"
+                                   value="<?= $user->profile?->dob?->format('Y-m-d') ?>">
+                        </div>
+                        <div>
+                            <span>Status: <span><?= $user->isBlocked ? 'Blocked' : 'Normal' ?></span></span>
+
+                            <?php if ($hasPermission && ($user->id !== $context->id)): ?>
+                                <button id="block-user" type="button"><?= $user->isBlocked ? 'Unblock' : 'Block' ?></button>
+                            <?php endif; ?>
+                        </div>
+
+                        <?php if ($hasPermission): ?>
+                            <button type="submit" class="btn">Update</button>
+                        <?php endif; ?>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </main>
 
     <script>
         $("button#block-user").click(/** @param {jQuery.Event} e */(e) => {
@@ -140,8 +145,8 @@ ob_start();
                                 alert("Block failed.");
                         }
                     },
-                    success: (data, textStatus, jqXHR) => {
-                        alert("Block user")
+                    success: () => {
+                        alert("User blocked");
                         window.location.reload();
                     }
                 }

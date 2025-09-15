@@ -108,7 +108,7 @@ readonly class AccountController extends WebController
         if ($user === null)
             throw new NotFoundException();
 
-        $otp = $this->authService->generateTotp();
+        $otp = $this->authService->generateTotp($user);
 
         echo $this->render('webstore/account/add_otp.php',
             ['user' => $user, 'otp' => $otp]

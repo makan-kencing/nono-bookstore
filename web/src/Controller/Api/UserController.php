@@ -66,6 +66,7 @@ readonly class  UserController extends ApiController
      * @throws UnauthorizedException
      */
     #[POST]
+    #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function addUser(): void
     {
         $dto = UserCreateDTO::jsonDeserialize(self::getJsonBody());
@@ -83,6 +84,7 @@ readonly class  UserController extends ApiController
      */
     #[DELETE]
     #[Path('/{id}')]
+    #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function delUser(string $id): void
     {
         try {
@@ -105,6 +107,7 @@ readonly class  UserController extends ApiController
      */
     #[PUT]
     #[Path('/{id}')]
+    #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function updateUser(string $id): void
     {
         $dto = UserUpdateDTO::jsonDeserialize(self::getJsonBody());
@@ -183,6 +186,11 @@ readonly class  UserController extends ApiController
     }
 
 
+    /**
+     * @throws ForbiddenException
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     */
     #[PUT]
     #[Path('/{id}/block/toggle')]
     public function toggleBlock(string $id): void

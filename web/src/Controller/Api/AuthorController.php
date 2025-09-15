@@ -30,6 +30,7 @@ readonly class AuthorController extends ApiController
 
     #[GET]
     #[Path('/options/{query}')]
+    #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function getOptions(string $query): void
     {
         $dto = new SearchDTO($query);

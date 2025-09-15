@@ -40,6 +40,7 @@ readonly class OrderController extends ApiController
      */
     #[PUT]
     #[Path('/{id}')]
+    #[RequireAuth([UserRole::STAFF], rule: AuthRule::HIGHER_OR_EQUAL, redirect: false)]
     public function updateShipmentStatus(string $id): void
     {
         $this->orderService->updateShipment((int)$id);

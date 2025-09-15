@@ -33,7 +33,7 @@ assert(isset($body) && is_string($body));
                 <div>
                     <label>
                         Records per page
-                        <select name="page_size" onchange="reloadTable()">
+                        <select name="page_size" onchange="table.submit()">
                             <?php $sizes = [10, 25, 50] ?>
                             <?php foreach ($sizes as $size): ?>
                                 <option value="<?= $size ?>"
