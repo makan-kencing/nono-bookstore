@@ -200,7 +200,7 @@ ob_start();
 
 <?php
 
-$title = 'Order Order';
+$title = 'Order Details';
 $content = ob_get_clean();
 
 echo View::render(
