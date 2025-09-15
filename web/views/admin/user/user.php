@@ -104,7 +104,7 @@ ob_start();
                         <div>
                             <span>Status: <span><?= $user->isBlocked ? 'Blocked' : 'Normal' ?></span></span>
 
-                            <?php if ($hasPermission): ?>
+                            <?php if ($hasPermission && ($user->id !== $context->id)): ?>
                                 <button id="block-user" type="button"><?= $user->isBlocked ? 'Unblock' : 'Block' ?></button>
                             <?php endif; ?>
                         </div>
