@@ -28,11 +28,9 @@ ob_start();
         <h2>Account Profile</h2>
                 <form class="image-upload" enctype="multipart/form-data">
                     <div class="avatar-section" style="display: flex; justify-content: center;">
-                        <?php if($user->image!=null): ?>
-                            <img src="<?= $user->image->filepath?>" alt="<?=$user->image->alt?>" style="height: 400px; border-radius: 100%; aspect-ratio: 1; object-fit: cover">
-                        <?php else: ?>
-                            <i class="fa-regular fa-circle-user"></i>
-                        <?php endif; ?>
+                            <img src="<?= $user->image?->filepath ?? '/static/assets/user.png' ?>"
+                                 alt="<?=$user->image?->alt ?? '' ?>"
+                                 style="height: 400px; border-radius: 100%; aspect-ratio: 1; object-fit: cover">
                     </div>
 
                     <input type="file" accept="image/png, image/jpeg, image/webp" name="profile_image" id="profile-image" hidden>
