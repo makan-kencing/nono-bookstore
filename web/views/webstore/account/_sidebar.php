@@ -2,20 +2,25 @@
 
 declare(strict_types=1);
 
-use App\Entity\User\User;
+use App\Exception\UnauthorizedException;
+use App\Service\AuthService;
 
-assert(isset($user) && $user instanceof User);
 assert(isset($currentMenu) && is_int($currentMenu));
+
+$context = AuthService::getLoginContext();
+if ($context === null)
+    throw new UnauthorizedException();
+
 
 ?>
 <link rel="stylesheet" href="/static/styles/Account/sidebar.css">
 <aside class="sidebar">
     <div class="user-info">
         <div class="avatar">
-            <?php if (empty($user->image?->filepath)): ?>
+            <?php if ($context->image == null): ?>
                 <img src="/static/assets/default-user.jpg" alt="Default Avatar">
             <?php else: ?>
-                <img src="<?= htmlspecialchars($user->image->filepath) ?>" alt="Profile Image" class="qr-code">
+                <img src="<?= htmlspecialchars($context->image->filepath) ?>" alt="Profile Image" class="qr-code">
             <?php endif; ?>
         </div>
         <div class="user-details">

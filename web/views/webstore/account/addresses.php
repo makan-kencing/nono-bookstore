@@ -25,73 +25,70 @@ $addressDialog = new Template(
 <link rel="stylesheet" href="/static/styles/Account/profile.css">
 
 
-<main>
-
-    <div class="profile-container">
-        <?= View::render('webstore/account/_sidebar.php', ['user' => $user, 'currentMenu' => 1]); ?>
+<div class="profile-container">
+    <?= View::render('webstore/account/_sidebar.php', ['user' => $user, 'currentMenu' => 1]); ?>
 
 
-        <!-- right side -->
-        <div style="border: 1px gray solid; width: 100%;">
-            <!-- header -->
-            <div style="display: flex; align-items: center; padding: 1rem;">
-                <h2 style="margin-right: auto">My Addresses</h2>
+    <!-- right side -->
+    <div style="border: 1px gray solid; width: 100%;">
+        <!-- header -->
+        <div style="display: flex; align-items: center; padding: 1rem;">
+            <h2 style="margin-right: auto">My Addresses</h2>
 
-                <button id="add-address" style="padding: 0.3rem 1rem;">+ Add New Address</button>
-            </div>
+            <button id="add-address" style="padding: 0.3rem 1rem;">+ Add New Address</button>
+        </div>
 
-            <!-- address section -->
-            <div style="padding: 0.5rem 1rem;">
-                <h3>Address</h3>
+        <!-- address section -->
+        <div style="padding: 0.5rem 1rem;">
+            <h3>Address</h3>
 
-                <!-- addresses -->
-                <div style="margin-top: 1rem; display: flex; flex-flow: column; gap: 1rem; align-items: stretch">
-                    <?php foreach ($user->addresses as $address) : ?>
-                        <?php $isDefault = $address->id === $user->defaultAddress?->id ?>
-                        <form style="display: flex; gap: 1rem;">
-                            <input type="hidden" name="id" value="<?= $address->id ?>">
-                            <input type="hidden" name="name" value="<?= $address->name ?>">
-                            <input type="hidden" name="phone_number" value="<?= $address->phoneNumber ?>">
-                            <input type="hidden" name="address1" value="<?= $address->address1 ?>">
-                            <input type="hidden" name="address2" value="<?= $address->address2 ?? '' ?>">
-                            <input type="hidden" name="address3" value="<?= $address->address3 ?? '' ?>">
-                            <input type="hidden" name="state" value="<?= $address->state ?>">
-                            <input type="hidden" name="postcode" value="<?= $address->postcode ?>">
-                            <input type="hidden" name="country" value="<?= $address->country ?>">
-                            <input type="hidden" name="default" value="<?= $isDefault ? 1 : 0 ?>">
+            <!-- addresses -->
+            <div style="margin-top: 1rem; display: flex; flex-flow: column; gap: 1rem; align-items: stretch">
+                <?php foreach ($user->addresses as $address) : ?>
+                    <?php $isDefault = $address->id === $user->defaultAddress?->id ?>
+                    <form style="display: flex; gap: 1rem;">
+                        <input type="hidden" name="id" value="<?= $address->id ?>">
+                        <input type="hidden" name="name" value="<?= $address->name ?>">
+                        <input type="hidden" name="phone_number" value="<?= $address->phoneNumber ?>">
+                        <input type="hidden" name="address1" value="<?= $address->address1 ?>">
+                        <input type="hidden" name="address2" value="<?= $address->address2 ?? '' ?>">
+                        <input type="hidden" name="address3" value="<?= $address->address3 ?? '' ?>">
+                        <input type="hidden" name="state" value="<?= $address->state ?>">
+                        <input type="hidden" name="postcode" value="<?= $address->postcode ?>">
+                        <input type="hidden" name="country" value="<?= $address->country ?>">
+                        <input type="hidden" name="default" value="<?= $isDefault ? 1 : 0 ?>">
 
-                            <!-- left -->
+                        <!-- left -->
+                        <div>
+                            <h4><?= $address->name ?></h4> | <?= $address->phoneNumber ?>
+                            <p><?= implode(', ', [$address->address1, $address->address2, $address->address3]) ?></p>
+                            <p><?= implode(', ', [$address->state, $address->postcode, $address->country]) ?></p>
+
+                            <?php if ($isDefault): ?>
+                                <p>Default</p>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- right -->
+                        <div style="margin-left: auto; ">
                             <div>
-                                <h4><?= $address->name ?></h4> | <?= $address->phoneNumber ?>
-                                <p><?= implode(', ', [$address->address1, $address->address2, $address->address3]) ?></p>
-                                <p><?= implode(', ', [$address->state, $address->postcode, $address->country]) ?></p>
-
-                                <?php if ($isDefault): ?>
-                                    <p>Default</p>
-                                <?php endif; ?>
-                            </div>
-
-                            <!-- right -->
-                            <div style="margin-left: auto; ">
-                                <div>
-                                    <button type="button" id="edit-address">Edit</button>
-
-                                    <?php if (!$isDefault): ?>
-                                        <button type="button" id="delete-address">Delete</button>
-                                    <?php endif; ?>
-                                </div>
+                                <button type="button" id="edit-address">Edit</button>
 
                                 <?php if (!$isDefault): ?>
-                                    <button type="button" id="set-default-address">Set as default</button>
+                                    <button type="button" id="delete-address">Delete</button>
                                 <?php endif; ?>
                             </div>
-                        </form>
-                    <?php endforeach; ?>
-                </div>
+
+                            <?php if (!$isDefault): ?>
+                                <button type="button" id="set-default-address">Set as default</button>
+                            <?php endif; ?>
+                        </div>
+                    </form>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>
-</main>
+</div>
 
 <?php $addressDialog->start(); ?>
 <input type="hidden" name="id">
@@ -219,12 +216,12 @@ $addressDialog = new Template(
         );
     });
 
-    $('button#delete-address').click(/** @param {jQuery.Event} e */ function (e) {
-        data = new FormData(e.target.closest("form"));
+    $('button#delete-address').click(/** @param {jQuery.Event} e */ function (e){
+        data=new FormData(e.target.closest("form"));
 
         $.ajax(
-            `/api/address/${data.get("id")}/delete`, {
-                method: 'DELETE',
+            `/api/address/${data.get("id")}/delete`,{
+                method:'DELETE',
                 success: () => {
                     window.location.reload();
                 },

@@ -11,10 +11,10 @@ body {
 
     gap: 2rem;
 
-    > * {
+    > :not(dialog) {
         width: 100%;
 
-        > * {
+        > :not(dialog) {
             max-width: var(--content-width);
             width: 100%;
         }
