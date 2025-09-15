@@ -51,6 +51,19 @@ class BookCriteria
      * @param ?string $alias
      * @return Predicate
      */
+    public static function byFormat(string $param = ':format', ?string $alias = null): Predicate
+    {
+        if ($alias === null) $alias = '';
+        else $alias .= '.';
+
+        return new Predicate($alias . 'cover_type = ' . $param);
+    }
+
+    /**
+     * @param literal-string $param
+     * @param ?string $alias
+     * @return Predicate
+     */
     public static function byPublisher(string $param = ':publisher', ?string $alias = null): Predicate
     {
         if ($alias === null) $alias = '';

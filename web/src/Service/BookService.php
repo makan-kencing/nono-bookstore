@@ -162,6 +162,11 @@ readonly class BookService extends Service
             $qb->bind(':category_id', $dto->categoryId);
         }
 
+        if ($dto->format !== null) {
+            $predicates = $predicates->and(BookCriteria::byFormat(alias: 'b'));
+            $qb->bind(':format', $dto->format->name);
+        }
+
         if ($dto->minPrice !== null && $dto->maxPrice !== null) {
             $predicates = $predicates->and(PriceCriteria::byAmountBetween(alias: 'p'));
             $qb->bind(':min', $dto->minPrice);
