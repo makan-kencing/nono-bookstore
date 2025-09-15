@@ -81,7 +81,8 @@ readonly class BookService extends Service
     {
         $qb = BookQuery::asBookDetails();
         $qb->where(BookCriteria::byIsbn(alias: 'b')
-            ->and(BookCriteria::notSoftDeleted(alias: 'b')))
+            ->and(BookCriteria::notSoftDeleted(alias: 'b'))
+            ->and(BookCriteria::notSoftDeleted(alias: 'wb')))
             ->bind(':isbn', $isbn);
 
         $book = $this->bookRepository->getOne($qb);
