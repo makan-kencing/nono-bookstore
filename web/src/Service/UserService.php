@@ -186,6 +186,7 @@ readonly class UserService extends Service
      * @throws ForbiddenException
      * @throws NotFoundException
      * @throws UnauthorizedException
+     * @throws ConflictException
      */
     public function updateUserProfile(UserProfileUpdateDTO $dto, int $id): void
     {
@@ -195,18 +196,34 @@ readonly class UserService extends Service
 
         $user = $this->getUserForProfile($id);
         if ($user === null)
-            throw new NotFoundException;
+            throw new NotFoundException();
+
+        if ($dto->username !== null
+            && $user->username !== $dto->username
+            && $this->checkUsernameExists($dto->username))
+            throw new ConflictException(['message' => 'Username already exists']);
+
+        if ($dto->email !== null
+            && $user->email !== $dto->email
+            && $this->checkEmailExists($dto->email))
+            throw new ConflictException(['message' => 'Email already exists']);
+
 
         if (!$this->canModify($context, $user))
             throw new ForbiddenException();
 
         if ($user->profile === null) {
             $user->profile = new UserProfile();
+            $user->profile->dob = null;
+            $user->profile->contactNo = null;
             $user->profile->user = $user;
-            $dto->updateProfile($user->profile);
+
+            $dto->update($user);
+            $this->userRepository->update($user);
             $this->userProfileRepository->insert($user->profile);
         } else {
-            $dto->updateProfile($user->profile);
+            $dto->update($user);
+            $this->userRepository->update($user);
             $this->userProfileRepository->update($user->profile);
         }
     }

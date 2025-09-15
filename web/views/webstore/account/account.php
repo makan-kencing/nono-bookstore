@@ -13,19 +13,35 @@ $template = new Template(
     ['title' => 'Account']
 );
 
-// extract DOB
-$dobDay = $dobMonth = $dobYear = '';
-
+$dobYear = $dobMonth = $dobDay = 0;
 if ($user->profile?->dob instanceof DateTime) {
-    $dobYear = $user->profile->dob->format('Y');
-    $dobMonth = $user->profile->dob->format('m');
-    $dobDay = $user->profile->dob->format('d');
+    $dobYear = (int)$user->profile->dob->format('Y');
+    $dobMonth = (int)$user->profile->dob->format('m');
+    $dobDay = (int)$user->profile->dob->format('d');
 }
 
 ?>
 
-<?php $template->start(); ?>
+<?php $template->startFragment('header'); ?>
+
 <link rel="stylesheet" href="/static/styles/Account/profile.css">
+
+<style>
+    .validity {
+        display: none;
+        margin-left: 1rem;
+
+        color: red !important;
+    }
+
+    input[data-taken='1'] + .validity {
+        display: inline;
+    }
+</style>
+
+<?php $template->endFragment(); ?>
+
+<?php $template->start(); ?>
 
 <div class="profile-container">
     <?= View::render('webstore/account/_sidebar.php', ['user' => $user, 'currentMenu' => 0]); ?>
@@ -39,32 +55,57 @@ if ($user->profile?->dob instanceof DateTime) {
         <div class="profile-body">
             <form id="profile-form" class="profile-form">
                 <div class="form-row">
-                    <label>Username</label>
+                    <label for="username">Username</label>
                     <div class="form-field">
-                        <input type="text" id="username" value="<?= $user->username ?? '' ?>">
+                        <input type="text" id="username" name="username" value="<?= $user->username ?? '' ?>">
+                        <span class="validity">Username is taken</span>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <label for="email">Email</label>
                     <div class="form-field">
-                        <input type="email" id="email" value="<?= $user->email ?? '' ?>">
+                        <input type="email" id="email" name="email" value="<?= $user->email ?? '' ?>">
+                        <span class="validity">Email is taken</span>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <label for="contact">Contact Number</label>
                     <div class="form-field">
-                        <input type="text" id="contact" value="<?= $user->profile->contactNo ?? '' ?>">
+                        <input type="text" id="contact" name="contact_no" pattern="[0-9+\-\s]{7,20}"
+                               value="<?= $user->profile->contactNo ?? '' ?>">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <label>Date of birth</label>
                     <div class="form-field dob-selects">
-                        <select id="dob-day" data-selected="<?= $dobDay ?>"></select>
-                        <select id="dob-month" data-selected="<?= $dobMonth ?>"></select>
-                        <select id="dob-year" data-selected="<?= $dobYear ?>"></select>
+                        <select name="day">
+                            <option value="">Day</option>
+                            <?php for ($day = 1; $day <= 31; $day++): ?>
+                                <option
+                                    value="<?= $day ?>" <?= $day === $dobDay ? 'selected' : '' ?>><?= $day ?></option>
+                            <?php endfor; ?>
+                        </select>
+                        <select name="month">
+                            <option value="">Month</option>
+                            <?php $months = ["January", "February", "March", "April", "May", "June", "July",
+                                "August", "September", "October", "November", "December"]; ?>
+                            <?php foreach ($months as $month => $text): ?>
+                                <option
+                                    value="<?= $month + 1 ?>" <?= ($month + 1) === $dobMonth ? 'selected' : '' ?>><?= $text ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <select name="year">
+                            <option value="">Year</option>
+                            <?php $thisYear = (int)(new DateTime())->format('Y') ?>
+                            <?php for ($month = 0; $month < 100; $month++): ?>
+                                <?php $year = $thisYear - $month ?>
+                                <option
+                                    value="<?= $year ?>" <?= $year === $dobYear ? 'selected' : '' ?>><?= $year ?></option>
+                            <?php endfor; ?>
+                        </select>
                     </div>
                 </div>
 
@@ -91,9 +132,59 @@ if ($user->profile?->dob instanceof DateTime) {
 </div>
 
 <script>
-    $("form.image-upload input[type=file]").change(/** @param {jQuery.Event} e */ function (e) {
+    $("input[name=username]").change(/** @param {jQuery.Event} e */ function (e) {
+        if (this.value === this.defaultValue) {
+            this.setCustomValidity("")
+            this.dataset.taken = "0";
+            return;
+        }
 
+        $.ajax(
+            `/api/user/username/${this.value}`,
+            {
+                method: "GET",
+                success: (data) => {
+                    if (data.exists) {
+                        this.setCustomValidity("Username is already taken.")
+                        this.dataset.taken = "1";
+                    }
+                    else {
+                        this.setCustomValidity("");
+                        this.dataset.taken = "0";
+                    }
+                }
+            }
+        )
+    });
+
+    $("input[name=email]").change(/** @param {jQuery.Event} e */ function (e) {
+        if (this.value === this.defaultValue) {
+            this.setCustomValidity("");
+            this.dataset.taken = "0";
+            return;
+        }
+
+        $.ajax(
+            `/api/user/email/${this.value}`,
+            {
+                method: "GET",
+                success: (data) => {
+                    if (data.exists) {
+                        this.setCustomValidity("Email is already taken.")
+                        this.dataset.taken = "1";
+                    }
+                    else {
+                        this.setCustomValidity("");
+                        this.dataset.taken = "0";
+                    }
+                }
+            }
+        )
+    });
+
+    $("form.image-upload input[type=file]").change(/** @param {jQuery.Event} e */ function (e) {
         const form = this.closest("form");
+
         const data = new FormData(form);
 
         $(form).find("label[for=profile-image]").text("Saving");
@@ -120,96 +211,36 @@ if ($user->profile?->dob instanceof DateTime) {
         );
     })
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const daySelect = document.getElementById('dob-day');
-        const monthSelect = document.getElementById('dob-month');
-        const yearSelect = document.getElementById('dob-year');
+    $('.profile-form').submit(/** @param {jQuery.Event} e */ function (e) {
+        e.preventDefault();
 
-        const selectedDay = daySelect.dataset.selected;
-        const selectedMonth = monthSelect.dataset.selected;
-        const selectedYear = yearSelect.dataset.selected;
+        const data = new FormData(e.target);
+        data.append('dob', `${data.get('year')}-${data.get('month')}-${data.get('day')}`);
 
-        // Day
-        daySelect.innerHTML = '<option value="">Day</option>';
-        for (let i = 1; i <= 31; i++) {
-            daySelect.innerHTML += `<option value="${i}" ${i == selectedDay ? 'selected' : ''}>${i}</option>`;
-        }
-
-        // Month
-        const months = ["January", "February", "March", "April", "May", "June", "July",
-            "August", "September", "October", "November", "December"];
-        monthSelect.innerHTML = '<option value="">Month</option>';
-        months.forEach((month, index) => {
-            const value = index + 1;
-            monthSelect.innerHTML += `<option value="${value}" ${value == selectedMonth ? 'selected' : ''}>${month}</option>`;
-        });
-
-        // Year
-        const currentYear = new Date().getFullYear();
-        yearSelect.innerHTML = '<option value="">Year</option>';
-        for (let i = currentYear; i >= currentYear - 100; i--) {
-            yearSelect.innerHTML += `<option value="${i}" ${i == selectedYear ? 'selected' : ''}>${i}</option>`;
-        }
-    });
-
-    $(document).ready(function () {
-        const userId = <?= $user->id ?>;
-
-        $('.profile-form').on('submit', function (e) {
-            e.preventDefault();
-
-            const username = $('#username').val().trim();
-            const email = $('#email').val().trim();
-            const contactNo = $('#contact').val().trim();
-
-            const day = $('#dob-day').val();
-            const month = $('#dob-month').val();
-            const year = $('#dob-year').val();
-            const dob = (day && month && year) ? `${year}-${month}-${day}` : null;
-
-            // Frontend validation for contact number
-            const contactRegex = /^[0-9+\-\s]{7,20}$/;
-            if (contactNo && !contactRegex.test(contactNo)) {
-                alert("Invalid contact number format.\n\nUse only digits, +, - and spaces. Must be 7–20 characters.");
-                return;
-            }
-
-            // Update user (username + email)
-            $.ajax({
-                url: `/api/user/${userId}`,
-                type: 'PUT',
+        // Update user (username + email)
+        $.ajax(
+            "/api/user/update-profile/<?= $user->id ?>",
+            {
+                method: 'PUT',
                 contentType: 'application/json',
-                data: JSON.stringify({
-                    username: username,
-                    email: email
-                }),
-                success: function (response) {
-                    console.log("User update success:", response);
-                },
-                error: function (xhr) {
-                    console.error("User update failed:", xhr.responseText);
-                }
-            });
-
-            // Update user profile (contactNo + dob)
-            $.ajax({
-                url: `/api/user/update-profile/${userId}`,
-                type: 'PUT',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    contact_no: contactNo,
-                    dob: dob
-                }),
-                success: function (response) {
-                    console.log("Profile update success:", response);
+                data: JSON.stringify(Object.fromEntries(data.entries())),
+                success: () => {
                     alert("Profile updated successfully!");
                 },
-                error: function (xhr) {
-                    console.error("Profile update failed:", xhr.responseText);
-                    alert("Profile update failed: " + xhr.responseText);
+                error: (xhr) => {
+                    switch (xhr.status) {
+                        case 409:
+                            if (xhr.responseText.includes("Email"))
+                                $("input[name=email]")[0].setCustomValidity("Email is already taken.")
+                            if (xhr.responseText.includes("Username"))
+                                $("input[name=username]")[0].setCustomValidity("Username is already taken.");
+                            break;
+                        default:
+                            alert("Profile update failed: " + xhr.responseText);
+                    }
                 }
-            });
-        });
+            }
+        );
     });
 </script>
 

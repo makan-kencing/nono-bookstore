@@ -13,10 +13,11 @@ use function App\Utils\array_get;
 readonly class UserProfileUpdateDTO extends RequestDTO
 {
     public function __construct(
+        public ?string $username = null,
+        public ?string $email = null,
         public ?string   $contactNo = null,
         public ?DateTime $dob = null,
-    )
-    {
+    ) {
     }
 
     /**
@@ -26,20 +27,11 @@ readonly class UserProfileUpdateDTO extends RequestDTO
     {
         assert(is_array($json));
         try {
-            $contactNo = array_get($json, 'contact_no');
-            $dobString = array_get($json, 'dob');
-            $dob = null;
-
-            if ($dobString) {
-                $dob = DateTime::createFromFormat('Y-m-d', $dobString);
-                if (!$dob) {
-                    throw new BadRequestException(); // invalid date format
-                }
-            }
-
             return new self(
-                $contactNo,
-                $dob
+                $json['username'] ?? null ?: null,
+                $json['email'] ?? null ?: null,
+                $json['contact_no'] ?? null ?: null,
+                DateTime::createFromFormat('Y-m-d', $json['dob']) ?: null
             );
         } catch (Throwable) {
             throw new BadRequestException();
@@ -52,6 +44,13 @@ readonly class UserProfileUpdateDTO extends RequestDTO
     public function validate(): void
     {
         $rules = [];
+
+        if (!filter_var($this->email, FILTER_VALIDATE_EMAIL))
+            $rules[] = [
+                "field" => "email",
+                "type" => "email",
+                "reason" => "Invalid email format"
+            ];
 
         if ($this->contactNo !== null && !preg_match('/^[0-9+\-\s]{7,20}$/', $this->contactNo)) {
             $rules[] = [
@@ -69,19 +68,31 @@ readonly class UserProfileUpdateDTO extends RequestDTO
             ];
         }
 
-        if ($rules) {
+        if ($rules)
             throw new UnprocessableEntityException($rules);
-        }
+    }
+
+    public function update(User $user): void
+    {
+        $this->updateUser($user);
+        $this->updateProfile($user->profile);
+    }
+
+    public function updateUser(User $user): void
+    {
+        if ($this->username)
+            $user->username = $this->username;
+
+        if ($this->email)
+            $user->email = $this->email;
     }
 
     public function updateProfile(UserProfile $userProfile): void
     {
-        if ($this->contactNo) {
+        if ($this->contactNo)
             $userProfile->contactNo = $this->contactNo;
-        }
 
-        if ($this->dob) {
+        if ($this->dob)
             $userProfile->dob = $this->dob;
-        }
     }
 }
