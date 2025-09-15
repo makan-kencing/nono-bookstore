@@ -5,6 +5,7 @@ use App\Entity\Order\Order;
 
 assert(isset($order) && $order instanceof Order);
 ?>
+
 <style>
     .invoice-container {
         font-family: Arial, sans-serif;
@@ -51,12 +52,13 @@ assert(isset($order) && $order instanceof Order);
         color: #888;
     }
 </style>
+
 <div class="invoice-container">
     <h1>Invoice #<?= htmlspecialchars($order->refNo) ?></h1>
 
     <p><strong>Date:</strong> <?= $order->orderedAt->format('Y-m-d') ?></p>
     <p>
-        <strong>Customer:</strong> <?= htmlspecialchars($order->user->name) ?><br>
+        <strong>Customer:</strong> <?= htmlspecialchars($order->user->username) ?><br>
         <strong>Email:</strong> <?= htmlspecialchars($order->user->email) ?>
     </p>
 
@@ -82,7 +84,7 @@ assert(isset($order) && $order instanceof Order);
     </table>
 
     <p class="invoice-total">
-        Total Paid: RM <?= number_format($order->invoice->payment->amount / 100, 2) ?>
+        Total Paid: RM <?= number_format($order->invoice?->payment?->amount / 100, 2) ?>
     </p>
 
     <p class="invoice-footer">

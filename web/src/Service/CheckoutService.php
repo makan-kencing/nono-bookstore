@@ -110,6 +110,7 @@ readonly class CheckoutService extends Service
     /**
      * @throws ApiErrorException
      * @throws PaymentRequiredException
+     * @throws Throwable
      */
     public function checkout(string $sessionId): Order
     {
@@ -138,12 +139,12 @@ readonly class CheckoutService extends Service
             $this->cartService->clearCart($cart);
 
             $this->pdo->commit();
-
-            $this->sendInvoiceEmail($order);
         } catch (Throwable $e) {
             $this->pdo->rollBack();
             throw $e;
         }
+
+        $this->sendInvoiceEmail($order);
 
         return $order;
     }
