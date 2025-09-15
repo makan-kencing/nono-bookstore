@@ -191,7 +191,7 @@ readonly class CheckoutService extends Service
 
     private function sendInvoiceEmail(Order $order): void
     {
-        $html = View::render('webstore/pdf/invoice.php', ['order' => $order]);
+        $html = View::render('email/invoice.php', ['order' => $order]);
 
         $this->mailService->sendMail(
             $order->user->email,
