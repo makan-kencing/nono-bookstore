@@ -58,13 +58,9 @@ $template = new Template(
                                     </span>
                                     <span>Phone number: <?= $address->phoneNumber ?></span>
                                 </span>
-
-                                <button type="button">Edit address</button>
                             </span>
                         </label>
                     <?php endforeach; ?>
-
-                    <button type="button">Add a new delivery address</button>
                 </fieldset>
 
                 <?php $shippingGroupedItems = array_group_by(
