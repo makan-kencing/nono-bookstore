@@ -1,0 +1,33 @@
+:root {
+    font-family: Georgia, serif;
+    color: #3a2c23;
+}
+
+header {
+    a:not(:hover) {
+        text-decoration: none;
+    }
+
+    > div {
+        #store-account {
+            .dropdown-menu {
+                background: #fff;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+
+                a {
+                    text-decoration: none;
+                    color: #333;
+
+                    &:hover {
+                        background-color: #f4f4f4;
+                    }
+                }
+            }
+        }
+
+        #store-categories {
+            font-weight: bold;
+        }
+    }
+}

@@ -1,0 +1,37 @@
+main {
+    section {
+        display: flex;
+        flex-flow: column;
+        gap: 2rem;
+        width: calc(var(--content-width) - 10%);
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #4b2e14;
+        }
+
+        p {
+            margin-top: 1rem;
+        }
+
+        h2 {
+            color: #5a3e20;
+        }
+
+        .motto {
+            text-align: center;
+            font-style: italic;
+            margin: 2rem 0;
+            font-size: 1.3rem;
+            color: #7a5b3a;
+        }
+
+        .rustic-border {
+            border-top: 2px solid #d2b48c;
+            border-bottom: 2px solid #d2b48c;
+            padding: 1rem 0
+        }
+    }
+}

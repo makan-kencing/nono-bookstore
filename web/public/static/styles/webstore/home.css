@@ -1,0 +1,15 @@
+main {
+    > div {
+        > .product-list {
+            margin: 2rem;
+        }
+
+        > .product-grid {
+            margin: 2rem;
+        }
+
+        div .find-more {
+            text-align: center;
+        }
+    }
+}

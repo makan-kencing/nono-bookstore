@@ -8,34 +8,32 @@ $context = AuthService::getLoginContext();
 
 <header>
     <div>
-        <nav class="contents">
-            <ul id="store-information" class="bar-list">
-                <li><a href="/map"><i class="fa-solid fa-location-dot"></i>Stores</a></li>
-                <li><a href="/about">About</a></li>
-            </ul>
+        <ul id="store-information" class="bar-list">
+            <li><a href="/map"><i class="fa-solid fa-location-dot"></i>Stores</a></li>
+            <li><a href="/about">About</a></li>
+        </ul>
 
-            <ul id="store-account" class="bar-list">
-                <?php if ($context): ?>
-                    <li class="dropdown">
-                        <a href="/account">
-                            <i class="fa-solid fa-circle-user"></i>
-                            <?= htmlspecialchars($context->username) ?>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/account">My Account</a></li>
-                            <li><a href="/orders">My Orders</a></li>
-                            <?php if ($context->isStaff()): ?>
-                                <li><a href="/admin">Admin Dashboard</a></li>
-                            <?php endif; ?>
-                            <li><a href="/logout">Logout</a></li>
-                        </ul>
-                    </li>
-                <?php else: ?>
-                    <li><a href="/login">Login</a> | <a href="/register">Register</a></li>
-                <?php endif; ?>
-                <li><a href="/wishlist"><i class="fa-regular fa-heart show"></i>Wishlist</a></li>
-            </ul>
-        </nav>
+        <ul id="store-account" class="bar-list">
+            <?php if ($context): ?>
+                <li class="dropdown">
+                    <a href="/account">
+                        <i class="fa-solid fa-circle-user"></i>
+                        <?= htmlspecialchars($context->username) ?>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/account">My Account</a></li>
+                        <li><a href="/orders">My Orders</a></li>
+                        <?php if ($context->isStaff()): ?>
+                            <li><a href="/admin">Admin Dashboard</a></li>
+                        <?php endif; ?>
+                        <li><a href="/logout">Logout</a></li>
+                    </ul>
+                </li>
+            <?php else: ?>
+                <li><a href="/login">Login</a> | <a href="/register">Register</a></li>
+            <?php endif; ?>
+            <li><a href="/wishlist"><i class="fa-regular fa-heart show"></i>Wishlist</a></li>
+        </ul>
     </div>
 
     <div>
@@ -53,51 +51,12 @@ $context = AuthService::getLoginContext();
     </div>
 
     <div>
-        <nav class="contents">
-            <ul id="store-categories" class="bar-list">
-                <li><a href="/books/search/?category_id=10">Comics, Graphic</a></li>
-                <li><a href="/books/search/?category_id=2">Fiction</a></li>
-                <li><a href="/books/search/?category_id=7">Non-Fiction</a></li>
-                <li><a href="/books/search/?category_id=9">Young Adults</a></li>
-                <li><a href="/books/search/?category_id=8">Children's</a></li>
-            </ul>
-        </nav>
+        <ul id="store-categories" class="bar-list">
+            <li><a href="/books/search/?category_id=10">Comics, Graphic</a></li>
+            <li><a href="/books/search/?category_id=2">Fiction</a></li>
+            <li><a href="/books/search/?category_id=7">Non-Fiction</a></li>
+            <li><a href="/books/search/?category_id=9">Young Adults</a></li>
+            <li><a href="/books/search/?category_id=8">Children's</a></li>
+        </ul>
     </div>
 </header>
-
-<style>
-    #store-account .dropdown {
-        position: relative;
-        display: inline-block;
-    }
-
-    #store-account .dropdown-menu {
-        display: none;
-        position: absolute;
-        background: #fff;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        min-width: 180px;
-        padding: 10px 0;
-        z-index: 1000;
-    }
-
-    #store-account .dropdown-menu li {
-        list-style: none;
-    }
-
-    #store-account .dropdown-menu li a {
-        display: block;
-        padding: 8px 15px;
-        text-decoration: none;
-        color: #333;
-    }
-
-    #store-account .dropdown-menu li a:hover {
-        background-color: #f4f4f4;
-    }
-
-    #store-account .dropdown:hover .dropdown-menu {
-        display: block;
-    }
-</style>

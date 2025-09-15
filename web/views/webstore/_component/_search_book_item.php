@@ -4,22 +4,10 @@ declare(strict_types=1);
 
 use App\Entity\Book\Author\AuthorDefinition;
 use App\Entity\Book\Book;
-use App\Entity\Book\BookImage;
 
 assert(isset($book) && $book instanceof Book);
 
-usort(
-    $book->images,
-    fn(BookImage $o1, BookImage $o2) => $o1->imageOrder - $o2->imageOrder
-);
-usort(
-    $book->authors,
-    function (AuthorDefinition $o1, AuthorDefinition $o2) {
-        if ($o1->type === null) return -1;
-        if ($o2->type === null) return 1;
-        return $o1->type->compareTo($o2->type);
-    }
-);
+$book->normalizeOrder();
 
 $totalStocks = $book->getTotalInStock();
 $price = $book->getCurrentPrice();
@@ -27,30 +15,33 @@ $image = $book->images[0] ?? null;
 
 ?>
 
-<div style="display: flex; flex-flow: column; gap: 0.5rem;">
-    <div style="display: flex; flex-flow: column; align-items: center;">
+<div class="product-item">
+    <div class="product-image">
         <a href="/book/<?= $book->isbn ?>/<?= $book->work->slug ?>">
             <?php if ($image !== null): ?>
                 <img src="<?= $image->file->filepath ?>" alt="<?= $image->file->alt ?>">
             <?php else: ?>
-                <img src="" alt="">
+                <img src="https://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png" alt="">
             <?php endif; ?>
         </a>
     </div>
 
-    <div style="margin-top: auto;">
-        <h3 style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden"><a href="/book/<?= $book->isbn ?>/<?= $book->work->slug ?>"><?= $book->work->title ?></a></h3>
+    <div class="product-info">
+        <h3><a href="/book/<?= $book->isbn ?>/<?= $book->work->slug ?>"><?= $book->work->title ?></a></h3>
 
-        <div style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden">by
-            <?php foreach ($book->authors as $author): ?>
-                <a href="/author/<?= $author->author->slug ?>"><?= $author->author->name ?></a>,
-            <?php endforeach; ?>
+        <div>by
+            <?=
+            implode(',', array_map(
+                fn(AuthorDefinition $author) => "<span>{$author->author->name}</span>",
+                $book->authors
+            ))
+            ?>
         </div>
 
-        <p ><?= $book->coverType->title() ?></p>
+        <p><?= $book->coverType->title() ?></p>
 
         <?php if ($price !== null): ?>
-            <p style="font-weight: bold">RM <?= number_format($price->amount / 100, 2) ?></p>
+            <p class="price">RM <?= number_format($price->amount / 100, 2) ?></p>
         <?php endif; ?>
     </div>
 </div>

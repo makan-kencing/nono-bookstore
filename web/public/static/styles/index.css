@@ -3,16 +3,6 @@
 
 :root {
     font-size: 16px;
-    /* Theme Color */
-    --primary-blue: #2563eb; /* A shade of blue similar to the image */
-    --primary-blue-dark: #1d4ed8;
-    --text-gray-900: #1f2937;
-    --text-gray-600: #4b5563;
-    --text-gray-500: #6b7280;
-    --border-gray-300: #d1d5db;
-    --bg-gray-100: #f3f4f6;
-    --bg-white: #ffffff;
-    --red-500: #ef4444;
 }
 
 /*input[type='number'] {*/

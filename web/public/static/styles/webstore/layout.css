@@ -1,0 +1,132 @@
+:root {
+    --content-width: 1280px;
+
+    line-height: 1.7;
+}
+
+body {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+
+    gap: 2rem;
+
+    > * {
+        width: 100%;
+
+        > * {
+            max-width: var(--content-width);
+            width: 100%;
+        }
+    }
+}
+
+header {
+    display: flex;
+    align-items: center;
+    flex-flow: column;
+
+    border-bottom: 1px solid;
+
+    > div {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+
+        search {
+            width: 100%;
+
+            form {
+                height: 100%;
+                display: flex;
+                flex-flow: row;
+
+                input[type='search'] {
+                    padding: 0.5rem;
+                    flex-grow: 1;
+                }
+            }
+        }
+
+        #store-information {
+
+        }
+
+        #store-account {
+            margin-left: auto;
+
+            .dropdown {
+                display: block;
+                position: relative;
+
+                &:not(:hover) .dropdown-menu {
+                    display: none;
+                }
+            }
+
+            .dropdown-menu {
+                position: absolute;
+                min-width: 180px;
+                padding: 10px 0;
+
+                li {
+                    list-style: none;
+
+                    a {
+                        display: block;
+                        padding: 8px 15px;
+                    }
+                }
+            }
+        }
+
+        #store-logo {
+            white-space: nowrap;
+        }
+
+        #store-cart {
+            padding: 0 1rem;
+            margin-top: 0.5rem;
+
+            i {
+                font-size: 1.5rem;
+            }
+        }
+
+        #store-categories {
+            width: 100%;
+        }
+    }
+}
+
+main {
+    display: flex;
+    align-items: center;
+    flex-flow: column;
+    gap: 2rem;
+}
+
+footer {
+    display: flex;
+    align-items: center;
+    flex-flow: column;
+
+    padding: 2rem;
+
+    border-top: 1px solid;
+
+    > div {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        flex-flow: row;
+
+        max-width: 1280px;
+        width: 100%;
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+    }
+}

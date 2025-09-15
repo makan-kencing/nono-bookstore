@@ -15,7 +15,7 @@ $template = new Template(
 <?php $template->startFragment('header') ?>
 
 <link rel="stylesheet" href="/static/styles/webstore.css">
-<link rel="stylesheet" href="/static/styles/user-table.css">
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
@@ -26,7 +26,9 @@ $template = new Template(
 <?php $template->start() ?>
 
 <?= View::render('webstore/_header.php'); ?>
+
 <?= $body ?? '' ?>
+
 <?= View::render('webstore/_footer.php'); ?>
 
 <?= $template->end() ?>

@@ -1,17 +1,3 @@
-.vertical {
-    display: flex;
-    flex-flow: column;
-}
-
-.horizontal {
-    display: flex;
-    flex-flow: row;
-}
-
-.contents {
-    display: contents;
-}
-
 /* specify max-width when using */
 .carousel {
     overflow: hidden;
