@@ -43,9 +43,9 @@ $context = AuthService::getLoginContext();
 
                 <ul class="dropdown-menu">
                     <li><span class="menu-title"><?= $context?->role->name ?></span></li>
-                    <li><a href="/account">My Account</a></li>
-                    <li><a href="/">Webstore</a></li>
-                    <li><a href="/logout">Logout</a></li>
+                    <li><a href="/account"><i class="fa-solid fa-user"></i> My Account</a></li>
+                    <li><a href="/"><i class="fa-solid fa-store"></i> Webstore</a></li>
+                    <li><a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
                 </ul>
             </li>
 
