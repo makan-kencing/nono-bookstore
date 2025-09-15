@@ -60,7 +60,7 @@ $dialog = new Template(
                 dt.items.add(file)
         })
 
-        if (input.files.length === 0) {
+        if (dt.files.length === 0) {
             alert("Only PNG, JPG, and WEBP images are allowed.");
             return;
         }
