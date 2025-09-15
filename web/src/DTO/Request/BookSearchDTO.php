@@ -183,37 +183,37 @@ readonly class BookSearchDTO extends SearchDTO
     public function toQueryString(): string
     {
         $params = [];
+        if ($this->query !== null)
+            $params['query'] = $this->query;
+
         if ($this->format !== null)
-            $params[] = 'format=' . $this->format->name;
+            $params['format'] = $this->format->name;
 
         if ($this->categoryId !== null)
-            $params[] = 'category_id=' . $this->categoryId;
+            $params['category_id'] =  $this->categoryId;
 
         if ($this->minPrice !== null)
-            $params[] = 'min_price=' . $this->minPrice;
+            $params['min_price'] = $this->minPrice;
 
         if ($this->maxPrice !== null)
-            $params[] = 'max_price=' . $this->maxPrice;
+            $params['max_price'] = $this->maxPrice;
 
         if ($this->authorId !== null)
-            $params[] = 'author_id=' . $this->authorId;
+            $params['author_id'] = $this->authorId;
 
         if ($this->publisher !== null)
-            $params[] = 'publisher=' . $this->publisher;
+            $params['publisher'] = $this->publisher;
 
         if ($this->language !== null)
-            $params[] = 'language=' . $this->language;
+            $params['language'] = $this->language;
 
         if ($this->option !== null)
-            $params[] = 'option=' . $this->option->name;
+            $params['option'] = $this->option->name;
 
-        $params[] = 'page=' . $this->page;
-        $params[] = 'page_size=' . $this->pageSize;
+        $params['page'] = $this->page;
+        $params['page_size'] = $this->pageSize;
 
-        return '?' . implode('&', array_map(
-                fn(string $value) => htmlspecialchars($value),
-                $params
-            ));
+        return '?' . http_build_query($params);
     }
 
     public function isIsbnQuery(): bool
