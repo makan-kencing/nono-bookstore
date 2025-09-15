@@ -70,6 +70,7 @@ $template = new Template(
                                         <h3>
                                             <a href="/book/<?= $book->isbn ?>/<?= $book->work->slug ?>"><?= $book->work->title ?></a>
                                         </h3>
+
                                         <p>by
                                             <?=
                                             implode(', ', array_map(
@@ -78,6 +79,7 @@ $template = new Template(
                                             ))
                                             ?>
                                         </p>
+
                                         <p style="font-weight: bold"><?= $book->coverType->title() ?></p>
 
                                         <?php if ($totalStocks > 20): ?>
@@ -140,11 +142,8 @@ $template = new Template(
                         </b>
                     </div>
 
-                    <button type="submit"
-                        <?php if (!$cart->canCheckout()): ?>
-                            disabled
-                        <?php endif; ?>
-                    >Checkout
+                    <button type="submit"<?= !$cart->canCheckout() ? 'disabled' : '' ?>>
+                        Checkout
                     </button>
                 </form>
             </aside>

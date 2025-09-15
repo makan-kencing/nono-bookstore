@@ -3,7 +3,8 @@
     align-items: start;
     gap: 2rem;
 
-    > * {
+    section,
+    aside {
         border: 1px black solid;
 
         padding: 1rem;
@@ -36,6 +37,13 @@
                     padding: 1rem;
                 }
 
+                td:nth-child(2) {
+                    display: flex;
+                    flex-flow: column;
+
+                    height: 100%;
+                }
+
                 th:last-child,
                 td:last-child {
                     text-align: right;
@@ -52,10 +60,7 @@
             }
 
             form {
-                display: flex;
-                flex-flow: column;
-
-                height: 100%;
+                display: contents;
             }
         }
     }

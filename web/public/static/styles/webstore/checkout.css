@@ -1,0 +1,17 @@
+.cart {
+    form {
+        display: contents;
+
+        legend:first-child {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        &:invalid button[type=submit] {
+            opacity: 50%;
+            pointer-events: none;
+        }
+    }
+}
+
+
