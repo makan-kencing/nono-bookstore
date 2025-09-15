@@ -41,7 +41,7 @@ $image = $book->images[0] ?? null;
     <div>
         <h3><a href="/book/<?= $book->isbn ?>/<?= $book->work->slug ?>"><?= $book->work->title ?></a></h3>
         <p>by <?= $author->author->name ?></p>
-        <p>RM <?=number_format($item->order->getTotal() / 100, 2)?></p>
+        <p>RM <?=number_format($item->unitPrice / 100, 2)?></p>
 
     </div>
 </div>
