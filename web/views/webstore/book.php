@@ -133,35 +133,6 @@ $template = new Template(
                         );
                     });
                 </script>
-
-                <form action="/api/wishlist" method="post" id="wishlisting" data-wishlist="0">
-                    <input type="hidden" name="book_id" value="<?= $book->id ?>">
-
-                    <button id="wishlist" type="submit" class="double-icon">
-                        <i class="fa-solid fa-heart hide"></i>
-                        <i class="fa-regular fa-heart show"></i>
-
-                        <span>Add to wishlist</span>
-                    </button>
-
-                    <div id="wishlisted">
-                        <i class="fa-solid fa-heart"></i>
-
-                        <span>Wishlisted</span>
-                    </div>
-                </form>
-
-                <script>
-                    $("#wishlisting").submit(/** @param {jQuery.Event} e */(e) => {
-                        e.preventDefault();
-
-                        const data = new FormData(e.target);
-                        console.log(data);
-                        // TODO: do stuff
-
-                        e.target.dataset.wishlist = '1';
-                    });
-                </script>
             </div>
         </section>
 

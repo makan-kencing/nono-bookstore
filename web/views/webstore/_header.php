@@ -32,7 +32,6 @@ $context = AuthService::getLoginContext();
             <?php else: ?>
                 <li><a href="/login">Login</a> | <a href="/register">Register</a></li>
             <?php endif; ?>
-            <li><a href="/wishlist"><i class="fa-regular fa-heart show"></i>Wishlist</a></li>
         </ul>
     </div>
 
