@@ -189,6 +189,9 @@ readonly class UserService extends Service
         if ($user == null)
             throw new NotFoundException();
 
+        if ($user->id === $id)
+            throw new ForbiddenException(['message' => 'You can\'t delete your own account']);
+
         if (!$this->canModifyAs($context, $user))
             throw new ForbiddenException();
 
