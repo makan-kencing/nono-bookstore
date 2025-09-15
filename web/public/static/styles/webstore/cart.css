@@ -22,7 +22,12 @@
             border-collapse: collapse;
             width: 100%;
 
+
             thead, tbody {
+                tr {
+                    height: 100%;
+                }
+
                 th, td {
                     border-bottom: 1px black solid;
                 }
