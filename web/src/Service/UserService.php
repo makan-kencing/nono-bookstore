@@ -219,6 +219,9 @@ readonly class UserService extends Service
         if ($user == null)
             throw new NotFoundException();
 
+        if ($user->id === $context->id)
+            throw new ForbiddenException(['message' => 'You can\'t delete your own account']);
+
         if (!$this->canModifyAs($context, $user))
             throw new ForbiddenException();
 
@@ -386,8 +389,27 @@ readonly class UserService extends Service
         return $file;
     }
 
+    /**
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     * @throws ForbiddenException
+     */
     public function toggleBlock(int $userId): void
     {
+        $context = $this->getSessionContext();
+        if ($context === null)
+            throw new UnauthorizedException();
+
+        $user = $this->getPlainUser($userId);
+        if ($user === null)
+            throw new NotFoundException();
+
+        if ($user->id === $context->id)
+            throw new ForbiddenException(['message' => 'You can\'t delete your own account']);
+
+        if (!$this->canModifyAs($context, $user))
+            throw new ForbiddenException();
+
         $this->userRepository->toggleBlock($userId);
     }
 

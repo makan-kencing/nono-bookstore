@@ -186,6 +186,11 @@ readonly class  UserController extends ApiController
     }
 
 
+    /**
+     * @throws ForbiddenException
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     */
     #[PUT]
     #[Path('/{id}/block/toggle')]
     public function toggleBlock(string $id): void
