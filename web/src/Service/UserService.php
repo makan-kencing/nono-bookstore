@@ -197,6 +197,27 @@ readonly class UserService extends Service
     }
 
     /**
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     * @throws ForbiddenException
+     */
+    public function softDelete(int $id): void
+    {
+        $context = $this->getSessionContext();
+        if ($context === null)
+            throw new UnauthorizedException();
+
+        $user = $this->getPlainUser($id);
+        if ($user == null)
+            throw new NotFoundException();
+
+        if (!$this->canModifyAs($context, $user))
+            throw new ForbiddenException();
+
+        $this->userRepository->softDeleteById($id);
+    }
+
+    /**
      * @param UserProfileUpdateDTO $dto
      * @param int $id
      * @return void

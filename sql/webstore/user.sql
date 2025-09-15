@@ -12,6 +12,7 @@ create or replace table user
     session_flag       uuid                                     default uuid() not null,
     image_id           bigint unsigned                                         null,
     default_address_id bigint unsigned                                         null,
+    deleted_at         timestamp                                               null,
     constraint email
         unique (email),
     constraint session_flag

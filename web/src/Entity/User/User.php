@@ -15,6 +15,7 @@ use App\Orm\Attribute\Id;
 use App\Orm\Attribute\OneToMany;
 use App\Orm\Attribute\OneToOne;
 use App\Orm\Entity;
+use DateTime;
 
 class User extends Entity
 {
@@ -36,6 +37,8 @@ class User extends Entity
     public ?string $totpSecret;
 
     public string $sessionFlag;
+
+    public ?DateTime $deletedAt;
 
     #[OneToOne]
     public ?File $image;

@@ -6,6 +6,7 @@ namespace App\Controller\Api;
 
 use App\Core\View;
 use App\DTO\Request\SearchDTO;
+use App\DTO\Request\UserCreateDTO;
 use App\DTO\Request\UserPasswordUpdateDTO;
 use App\DTO\Request\UserProfileUpdateDTO;
 use App\DTO\Request\UserUpdateDTO;
@@ -19,6 +20,7 @@ use App\Exception\NotFoundException;
 use App\Exception\UnauthorizedException;
 use App\Exception\UnprocessableEntityException;
 use App\Router\AuthRule;
+use App\Router\Method\DELETE;
 use App\Router\Method\GET;
 use App\Router\Method\POST;
 use App\Router\Method\PUT;
@@ -53,6 +55,43 @@ readonly class  UserController extends ApiController
     {
         header('Content-Type: application/json');
         echo json_encode(['exists' => $this->userService->checkEmailExists($email)]);
+    }
+
+
+    /**
+     * @throws ConflictException
+     * @throws ForbiddenException
+     * @throws UnprocessableEntityException
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     */
+    #[POST]
+    public function addUser(): void
+    {
+        $dto = UserCreateDTO::jsonDeserialize(self::getJsonBody());
+        $dto->validate();
+
+        $this->userService->create($dto);
+
+        http_response_code(201);
+    }
+
+    /**
+     * @throws UnauthorizedException
+     * @throws ForbiddenException
+     * @throws NotFoundException
+     */
+    #[DELETE]
+    #[Path('/{id}')]
+    public function delUser(string $id): void
+    {
+        try {
+            $this->userService->delete((int)$id);
+        } catch (ConflictException) {
+            $this->userService->softDelete((int)$id);
+        }
+
+        http_response_code(204);
     }
 
     /**

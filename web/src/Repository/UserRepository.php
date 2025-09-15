@@ -55,6 +55,19 @@ readonly class UserRepository extends Repository
         $stmt->execute();
     }
 
+    public function softDeleteById(int $id): void
+    {
+
+        $stmt = $this->conn->prepare('
+            UPDATE user
+            SET deleted_at = CURRENT_TIMESTAMP
+            WHERE id = :id;
+        ');
+        $stmt->execute([
+            ':id' => $id
+        ]);
+    }
+
     public function setProfileImage(int $user_id, int $file_id): void
     {
         $stmt = $this->conn->prepare('
