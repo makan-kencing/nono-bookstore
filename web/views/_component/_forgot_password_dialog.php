@@ -17,7 +17,7 @@ declare(strict_types=1);
         </button>
     </div>
     <div class="modal-body">
-        <p>Enter your email address and we'll send you a link to reset your password.</p>
+        <p>Enter your email address, and we'll send you a link to reset your password.</p>
         <form id="forgot-password-form">
             <div class="form-group">
                 <label for="forgot-email">Email address</label>
