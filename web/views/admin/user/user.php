@@ -79,6 +79,40 @@ ob_start();
     </div>
 
     <script>
+        $("button#block-user").click(/** @param {jQuery.Event} e */ (e) => {
+           const button=e.currentTarget;
+           const isBlocked=button.innerText==="Unblock";
+            console.log("isBlocked:", isBlocked);
+
+            $.ajax(
+                "/api/user/<?= $user->id ?>/block/toggle",
+                {
+                    method: "PUT",
+                    error: (jqXHR, textStatus, errorThrown) => {
+                        console.error(jqXHR, textStatus, errorThrown);
+
+                        switch (jqXHR.status) {
+                            case 401:
+                                alert("You are not logged. ");
+                                break;
+                            case 403:
+                                alert("You do not have permission to block this user.");
+                                break;
+                            case 409:
+                                alert("You cannot block the user as it is referenced in other places.");
+                                break;
+                            default:
+                                alert("Block failed.");
+                        }
+                    },
+                    success: (data, textStatus, jqXHR) => {
+                        alert("Block user")
+                        window.location.reload();
+                    }
+                }
+            );
+        });
+
         $("input#username").change(/** @param {jQuery.Event} e */ (e) => {
             console.log(e);
 
@@ -95,7 +129,7 @@ ob_start();
                     }
                 }
             )
-        })
+        });
 
         $("form#profileForm").submit(/** @param {jQuery.Event} e */ (e) =>{
             e.preventDefault();
